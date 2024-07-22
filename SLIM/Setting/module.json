@@ -1,0 +1,11 @@
+{
+    "name": "Setting",
+    "alias": "setting",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "SLIM\\Setting\\App\\Providers\\SettingServiceProvider"
+    ],
+    "files": []
+}

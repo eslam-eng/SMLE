@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/abbreviation",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SLIM\\Abbreviation\\": "",
+            "SLIM\\Abbreviation\\App\\": "app/",
+            "SLIM\\Abbreviation\\Database\\Factories\\": "database/factories/",
+            "SLIM\\Abbreviation\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SLIM\\Abbreviation\\Tests\\": "tests/"
+        }
+    }
+}

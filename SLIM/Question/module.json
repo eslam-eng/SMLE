@@ -1,0 +1,11 @@
+{
+    "name": "Question",
+    "alias": "question",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "SLIM\\Question\\App\\Providers\\QuestionServiceProvider"
+    ],
+    "files": []
+}

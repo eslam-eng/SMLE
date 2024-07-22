@@ -1,0 +1,11 @@
+{
+    "name": "Abbreviation",
+    "alias": "abbreviation",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "SLIM\\Abbreviation\\App\\Providers\\AbbreviationServiceProvider"
+    ],
+    "files": []
+}

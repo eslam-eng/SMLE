@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/payment",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SLIM\\Payment\\": "",
+            "SLIM\\Payment\\App\\": "app/",
+            "SLIM\\Payment\\Database\\Factories\\": "database/factories/",
+            "SLIM\\Payment\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SLIM\\Payment\\Tests\\": "tests/"
+        }
+    }
+}

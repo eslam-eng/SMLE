@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/trainee",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SLIM\\Trainee\\": "",
+            "SLIM\\Trainee\\App\\": "app/",
+            "SLIM\\Trainee\\Database\\Factories\\": "database/factories/",
+            "SLIM\\Trainee\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SLIM\\Trainee\\Tests\\": "tests/"
+        }
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "Specialization": true,
+    "Category": true,
+    "Abbreviation": true,
+    "Trainee": true,
+    "Admin": true,
+    "Subspecialties": true,
+    "Question": true,
+    "Quiz": true,
+    "Package": true,
+    "Role": true,
+    "Permission": true,
+    "Technical": true,
+    "Message": true,
+    "Notification": true,
+    "Setting": true,
+    "Payment": true,
+    "Feedback": true,
+    "Migration": true,
+    "AddNewColumnIsComplete": true,
+    "AbbreviationQuestion": true
+}

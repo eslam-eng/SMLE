@@ -1,0 +1,11 @@
+{
+    "name": "Package",
+    "alias": "package",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "SLIM\\Package\\App\\Providers\\PackageServiceProvider"
+    ],
+    "files": []
+}

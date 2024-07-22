@@ -1,0 +1,11 @@
+{
+    "name": "Trainee",
+    "alias": "trainee",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "SLIM\\Trainee\\App\\Providers\\TraineeServiceProvider"
+    ],
+    "files": []
+}

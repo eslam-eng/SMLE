@@ -1,0 +1,11 @@
+{
+    "name": "Subspecialties",
+    "alias": "subspecialties",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "SLIM\\Subspecialties\\App\\Providers\\SubspecialtiesServiceProvider"
+    ],
+    "files": []
+}

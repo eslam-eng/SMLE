@@ -1,0 +1,11 @@
+{
+    "name": "Category",
+    "alias": "category",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "SLIM\\Category\\App\\Providers\\CategoryServiceProvider"
+    ],
+    "files": []
+}

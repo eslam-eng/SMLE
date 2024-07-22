@@ -1,0 +1,11 @@
+{
+    "name": "Specialization",
+    "alias": "specialization",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "SLIM\\Specialization\\App\\Providers\\SpecializationServiceProvider"
+    ],
+    "files": []
+}

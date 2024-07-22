@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/permission",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "SLIM\\Permission\\": "",
+            "SLIM\\Permission\\App\\": "app/",
+            "SLIM\\Permission\\Database\\Factories\\": "database/factories/",
+            "SLIM\\Permission\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "SLIM\\Permission\\Tests\\": "tests/"
+        }
+    }
+}
