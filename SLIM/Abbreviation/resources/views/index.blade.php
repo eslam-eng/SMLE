@@ -77,7 +77,7 @@
                 <div class="col-12">
                     <div class="card mt-2">
                         <div class="card-header">
-                            <a href="{{route('export.abbreviation')}}" role="button" class="btn btn-info ms-2"><i class="fa fa-download"></i>Export</a>
+                            <a href="{{route('export.abbreviation')}}" role="button" class="btn btn-info ms-2"><i class="fa fa-download"></i>Export Data</a>
                             <a href="{{route('abbreviation.download-template')}}" role="button" class="btn btn-info ms-2"><i class="fa fa-download"></i>download Empty Template</a>
                             <a role="button" class="btn btn-warning ms-2"><i class="fa fa-upload"></i>import</a>
                         </div>
