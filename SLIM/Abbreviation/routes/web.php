@@ -16,4 +16,6 @@ use SLIM\Abbreviation\App\Http\Controllers\AbbreviationController;
 
 Route::group(['middleware'=>'auth'], function () {
     Route::resource('abbreviation', AbbreviationController::class)->names('abbreviation');
+    Route::get('export/abbreviation', [AbbreviationController::class, 'export'])->name('export.abbreviation');
+    Route::get('download-template', [AbbreviationController::class, 'downloadTemplate'])->name('abbreviation.download-template');
 });

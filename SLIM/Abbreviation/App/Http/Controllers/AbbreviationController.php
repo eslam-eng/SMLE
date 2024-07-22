@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use SLIM\Abbreviation\App\Exports\AbbreviationExport;
 use SLIM\Abbreviation\App\Http\Requests\AbbreviationRequest;
 use SLIM\Abbreviation\App\Models\Abbreviation;
 use SLIM\Abbreviation\Interfaces\AbbreviationServiceInterface;
@@ -82,5 +83,18 @@ class AbbreviationController extends Controller
         $this->abbreviationServiceInterface->delete($abbreviation);
         return $this->index($request);
 
+    }
+
+    public function export()
+    {
+        $file_name = 'abbreviations'.now()->format('YmdHis').'.xlsx';
+        $abbreviations = $this->abbreviationServiceInterface->getAll();
+        return (new AbbreviationExport($abbreviations))->download($file_name);
+    }
+    public function downloadTemplate()
+    {
+        $file_name = 'abbreviations'.now()->format('YmdHis').'.xlsx';
+        $abbreviations = collect();
+        return (new AbbreviationExport($abbreviations))->download($file_name);
     }
 }
