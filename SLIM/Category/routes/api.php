@@ -21,5 +21,5 @@ Route::prefix('v1')->name('api.')
         Route::post('question-classification', 'questionClassification')->middleware('auth:api');
         Route::get('question-classification', 'getQuestionClassification')->middleware('auth:api');
         Route::delete('question-classification', 'destroy')->middleware('auth:api');
-        Route::get('question-classification-details', 'classification_details')->middleware('auth:api');
+        Route::get('question-classification-details/{id}', 'classification_details');
     });

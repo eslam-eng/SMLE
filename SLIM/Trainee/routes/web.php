@@ -27,5 +27,6 @@ Route::group(['middleware' => 'auth'], function ()
     Route::post('subscribe-trainee/update/{id}', [TraineeSubscribeController::class, 'update'])->name('subscribe-trainee.update');
     Route::get('get/subscribe-cost', [TraineeSubscribeController::class, 'getCost']);
     Route::get('get/subscribe-end-date', [TraineeSubscribeController::class, 'getEndDate']);
+    Route::get('export/trainee', [TraineeController::class, 'export'])->name('trainee.export');
 
 });

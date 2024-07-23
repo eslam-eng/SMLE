@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use SLIM\Constants\App;
 use SLIM\Question\App\Http\Requests\QuestionNoteRequest;
 use SLIM\Question\App\Http\Requests\QuestionSuggestRequest;
+use SLIM\Question\App\Models\QuestionNote;
 use SLIM\Question\App\resources\QuestionNoteResource;
 use SLIM\Question\App\resources\QuestionSuggestResource;
 use SLIM\Traits\GeneralTrait;
@@ -18,13 +19,13 @@ class QuestionController extends Controller
 
     public function questionNote(QuestionNoteRequest $questionNoteRequest)
     {
-        auth()->user()->Notesquestions()->sync([
-            $questionNoteRequest->question_id => [
-                'quiz_id' => $questionNoteRequest->quiz_id,
-                'note'    => $questionNoteRequest->note
-            ]
-        ]
-        );
+        $user_id = auth()->id();
+        //delete old note for the user in the same question and quiz if exists
+        QuestionNote::query()->updateOrCreate([
+            "user_id" => $user_id,
+            "question_id" => $questionNoteRequest->question_id,
+            "quiz_id" => $questionNoteRequest->quiz_id,
+        ], ['note' => $questionNoteRequest->note]);
         return $this->returnSuccessMessage('Added Successfully');
 
     }
@@ -56,12 +57,12 @@ class QuestionController extends Controller
     public function questionSuggest(QuestionSuggestRequest $questionSuggestRequest)
     {
         auth()->user()->Suggestsquestions()->sync([
-            $questionSuggestRequest->question_id => [
-                'quiz_id' => $questionSuggestRequest->quiz_id,
-                'suggest' => $questionSuggestRequest->suggest,
-                'answer'  => $questionSuggestRequest->answer
+                $questionSuggestRequest->question_id => [
+                    'quiz_id' => $questionSuggestRequest->quiz_id,
+                    'suggest' => $questionSuggestRequest->suggest,
+                    'answer' => $questionSuggestRequest->answer
+                ]
             ]
-        ]
         );
         return $this->returnSuccessMessage('Added Successfully');
 

@@ -1,10 +1,11 @@
-<span class="btn btn-dark" style="margin:10px 10px 10px 10px">Total ({{ $question_note->total() }})</span>
+<span class="btn btn-dark" style="margin:10px 10px 10px 10px">Total ({{ $questions_note->total() }})</span>
 
 <table class="table table-vcenter table-mobile-md card-table">
     <thead>
         <tr>
             <th>#</th>
             <th>Trainee name</th>
+            <th>quiz number</th>
             <th>Question Id</th>
             <th>Question</th>
             <th>Answers</th>
@@ -14,7 +15,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach ($question_note as $index => $note)
+        @foreach ($questions_note as $index => $note)
             <tr>
                 <td class="text-secondary">
                     {{ ++$index }}
@@ -23,10 +24,13 @@
                     {{ $note->trainee?->full_name }}
                 </td>
                 <td class="text-secondary" data-label="Role">
+                    {{ $note->quiz_id }}
+                </td>
+                <td class="text-secondary" data-label="Role">
                     <a href="{{ route('question.edit', $note->question_id) }}">{{ $note->question_id }} </a>
                 </td>
                 <td class="text-secondary" data-label="Role">
-                    {{ Str::limit($note->question?->question, 100) }}
+                    {{ Str::limit($note->question?->question, 50) }}
                 </td>
                 <td class="text-secondary" data-label="Role">
                     {{ $note?->question?->answer_a }}<br />
@@ -38,7 +42,7 @@
                     {{ $note->question?->model_answer }}
                 </td>
                 <td class="text-secondary" data-label="Role">
-                    {{ Str::limit($note->note, 100) }}
+                    {{ Str::limit($note->note, 50) }}
                 </td>
                 <td>
                     <div class="btn-list flex-nowrap">
@@ -68,4 +72,4 @@
 
 </table>
 
-{!! $question_note->render() !!}
+{!! $questions_note->render() !!}

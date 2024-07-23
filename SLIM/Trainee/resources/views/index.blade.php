@@ -103,9 +103,9 @@
                             </div>
                         </div>
                         <div class="card-footer text-end">
+                            <a href="{{route('trainee.export')}}" class="btn btn-info"><i class="fa fa-download"></i>Export</a>
                             <button type="submit" class="btn btn-dark" id="searchBtn">Search</button>
                             <button type="reset" class="btn btn-default" id="Resetsearch">Reset</button>
-
                         </div>
                     </form>
                 </div>
@@ -114,7 +114,6 @@
 
                 <div class="col-12">
                     <div class="card">
-
                         <div class="table-responsive">
                             @include('trainee::partial')
 

@@ -35,14 +35,14 @@ class QuestionNoteController extends Controller
         $specializations     = $this->specializationService->getAll();
         $sub_specializations = $this->subSpecializationService->getAll();
 
-        $question_note = $this->questionNoteService->getAllPaginated($request->all(), 15);
+        $questions_note = $this->questionNoteService->getAllPaginated(search: $request->all(),withRelations:['question','trainee'] );
 
         if ($request->ajax())
         {
-            return view('question::question_note.partial', compact('question_note'));
+            return view('question::question_note.partial', compact('questions_note'));
         }
 
-        return view('question::question_note.index', compact('question_note', 'specializations', 'sub_specializations'));
+        return view('question::question_note.index', compact('questions_note', 'specializations', 'sub_specializations'));
 
     }
 

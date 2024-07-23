@@ -4,8 +4,10 @@ namespace SLIM\Question\App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use SLIM\Abbreviation\App\Models\Abbreviation;
 use SLIM\Question\Database\factories\QuestionFactory;
+use SLIM\Quiz\App\Models\Quiz;
 use SLIM\Specialization\App\Models\Specialization;
 use SLIM\Subspecialties\App\Models\SubSpecialties;
 
@@ -36,9 +38,9 @@ class Question extends Model
         return $this->belongsTo(SubSpecialties::class,'sub_specialist_id');
     }
 
-    public function Quizes()
+    public function quizzes(): BelongsToMany
     {
-        return $this->belongsToMany(Question::class, 'quiz_question', 'question_id', 'quiz_id')
+        return $this->belongsToMany(Quiz::class, 'quiz_question', 'question_id', 'quiz_id')
             ->withPivot('is_correct', 'answer','user_answer');
     }
     public function abbreviations()

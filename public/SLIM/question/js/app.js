@@ -133,29 +133,32 @@ $(document).on('click', '.delete', function (e) {
 });
 $(document).on('change', '.specialization', function (e) {
 
-    $.ajax({
-        type: "GET",
-        url: '/get/sub-specialization',
-        data: {
-            'specialist_id': $(this).val(),
-        },
-        beforeSend: function () {
-        },
-        complete: function () {
-        },
-        success: function (response) {
-            $('.sub-specialization').html(response);
-        },
-        error: function (reject) {
-        }
-    });
+    let specialist_id = $(this).val();
+    $('#sub_specialist_id option').addClass('d-none')
+    $('#sub_specialist_id .'+specialist_id).removeClass('d-none')
+    // $.ajax({
+    //     type: "GET",
+    //     url: '/get/sub-specialization',
+    //     data: {
+    //         'specialist_id': $(this).val(),
+    //     },
+    //     beforeSend: function () {
+    //     },
+    //     complete: function () {
+    //     },
+    //     success: function (response) {
+    //         $('.sub-specialization').html(response);
+    //     },
+    //     error: function (reject) {
+    //     }
+    // });
 
 });
 
 
 
 var page = 1;
-$('body').on('click', '.pagination a , #searchBtn', function (e) {
+$(document).on('click', '.pagination a , #searchBtn', function (e) {
     page = $(this).is("a") ? $(this).attr('href').split('page=')[1] : "";
     e.preventDefault();
     $.ajax({
@@ -167,6 +170,20 @@ $('body').on('click', '.pagination a , #searchBtn', function (e) {
             "specialist_id": $("#specialist_id").val(),
             "sub_specialist_id": $("#sub_specialist_id").val(),
             "is_active": $("#is_active").val(),
+        },
+        success: function (data) {
+            $('.table-responsive').html(data);
+
+        }
+    });
+});
+$(document).on('click', '#Resetsearch', function (e) {
+    page = $(this).is("a") ? $(this).attr('href').split('page=')[1] : "";
+    $.ajax({
+        dataType: 'html',
+        url: '/question',
+        data: {
+            "page": $(this).is("a") ? $(this).attr('href').split('page=')[1] : "",
         },
         success: function (data) {
             $('.table-responsive').html(data);

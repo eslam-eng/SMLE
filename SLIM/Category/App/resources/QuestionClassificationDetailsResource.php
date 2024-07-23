@@ -13,17 +13,17 @@ class QuestionClassificationDetailsResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'question_classified_id' =>  $this->id,
-            'Question' =>$this->getQuestion($this->question_id)->question,
-            'answers'=>array(
-                ['answer'=>'A','name'=> $this->getQuestion($this->question_id)->answer_a],
-                ['answer'=>'B','name'=> $this->getQuestion($this->question_id)->answer_b],
-                ['answer'=>'C','name'=> $this->getQuestion($this->question_id)->answer_c],
-                ['answer'=>'D','name'=> $this->getQuestion($this->question_id)->answer_d]
-            ),
-            'user_answer' =>$this->getUserAnswer($this->quiz_id, $this->question_id),
-            'model_answer' =>$this->getQuestion($this->question_id)->model_answer,
-
+            'question_classified_id' => $this->id,
+            'quiz_title' => $this->title,
+            'Question' => $this->question,
+            'answers' => [
+                ['answer' => 'A', 'name' => $this->answer_a],
+                ['answer' => 'B', 'name' => $this->answer_b],
+                ['answer' => 'C', 'name' => $this->answer_c],
+                ['answer' => 'D', 'name' => $this->answer_d]
+            ],
+            'user_answer' => $this->answer,
+            'model_answer' => $this->model_answer,
 
 
         ];
@@ -31,18 +31,19 @@ class QuestionClassificationDetailsResource extends JsonResource
 
     public function getQuestion($quetionId)
     {
-        return Question::where('id',$quetionId)->first();
+        return Question::where('id', $quetionId)->first();
 
     }
 
-    public function getUserAnswer($quizId, $questionId){
+    public function getUserAnswer($quizId, $questionId)
+    {
 
-        $answer= \DB::table('quiz_question')->where([
-            'quiz_id'=>$quizId,
-            'question_id' =>$questionId
-        ])->first() ;
+        $answer = \DB::table('quiz_question')->where([
+            'quiz_id' => $quizId,
+            'question_id' => $questionId
+        ])->first();
 
-        return $answer ? $answer->answer :'';
+        return $answer ? $answer->answer : '';
 
     }
 

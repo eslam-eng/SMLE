@@ -42,7 +42,7 @@
                     {{ $question->is_active ? 'Yes' : 'No' }}
                 </td>
                 <td class="text-secondary" data-label="Role">
-                    {{ $question->Quizes ? $question->Quizes()->count() :0}}
+                    {{ $question->quizzes_count}}
                 </td>
                 <td>
                     <div class="btn-list flex-nowrap">

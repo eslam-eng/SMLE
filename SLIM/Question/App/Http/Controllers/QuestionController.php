@@ -39,7 +39,10 @@ class QuestionController extends Controller
         $specializations     = $this->specializationService->getAll();
         $sub_specializations = $this->subSpecializationService->getAll();
 
-        $questions = $this->questionservice->getAllPaginated($request->all(), 15);
+        $questions = $this->questionservice
+            ->getAllPaginated(
+            search: $request->all(),
+            withCountRelations: ['quizzes']);
 
         if ($request->ajax())
         {

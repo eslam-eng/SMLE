@@ -5,6 +5,7 @@
         <tr>
             <th>#</th>
             <th>Trainee name</th>
+            <th>Quiz number</th>
             <th>Question Id</th>
             <th>Question</th>
             <th>Answers</th>
@@ -24,10 +25,13 @@
                     {{ $suggest->trainee?->full_name }}
                 </td>
                 <td class="text-secondary" data-label="Role">
+                    {{ $suggest->quiz_id }}
+                </td>
+                <td class="text-secondary" data-label="Role">
                     <a href="{{ route('question.edit', $suggest->question_id) }}">{{ $suggest->question_id }} </a>
                 </td>
                 <td class="text-secondary" data-label="Role">
-                    {{ Str::limit($suggest->question?->question, 100) }}
+                    {{ Str::limit($suggest->question?->question, 60) }}
                 </td>
                 <td class="text-secondary" data-label="Role">
                     {{ $suggest?->question?->answer_a }}<br />
@@ -42,7 +46,7 @@
                     {{ $suggest->answer }}
                 </td>
                 <td class="text-secondary" data-label="Role">
-                    {{ Str::limit($suggest->suggest, 100) }}
+                    {{ Str::limit($suggest->suggest, 60) }}
                 </td>
                 <td>
                     <div class="btn-list flex-nowrap">

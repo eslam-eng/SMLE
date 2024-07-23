@@ -35,7 +35,10 @@ class QuestionSuggestController extends Controller
         $specializations     = $this->specializationService->getAll();
         $sub_specializations = $this->subSpecializationService->getAll();
 
-        $question_suggest = $this->questionSuggestService->getAllPaginated($request->all(), 15);
+        $question_suggest = $this->questionSuggestService->getAllPaginated(
+            search: $request->all(),
+            pageSize:  15,
+            withRelations: ['trainee','question']);
 
         if ($request->ajax())
         {

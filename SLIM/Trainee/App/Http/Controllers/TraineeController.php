@@ -4,11 +4,13 @@ namespace SLIM\Trainee\App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use SLIM\Abbreviation\App\Exports\AbbreviationExport;
 use SLIM\Category\Service\CategoryService;
 use SLIM\Package\App\Models\Package;
 use SLIM\Quiz\App\Models\Quiz;
 use SLIM\Specialization\Service\SpecializationService;
 use SLIM\Subspecialties\Interfaces\SubSpecializationServiceInterface;
+use SLIM\Trainee\App\Exports\TraineeExport;
 use SLIM\Trainee\App\Http\Requests\TraineeRequest;
 use SLIM\Trainee\App\Http\Requests\TraineeUpdateRequest;
 use SLIM\Trainee\App\Models\Trainee;
@@ -161,6 +163,13 @@ class TraineeController extends Controller
         }
 
         return $endDate;
+    }
+
+    public function export()
+    {
+        $file_name = 'trainee' . now()->format('YmdHis') . '.xlsx';
+        $trainees = $this->traineeService->getAll();
+        return (new TraineeExport($trainees))->download($file_name);
     }
 
 }
