@@ -37,8 +37,8 @@ class AbbreviationExport implements FromCollection, WithHeadings, WithMapping
     {
         return [
             'abbreviation',
-            'abbreviation for',
-            'abbreviation description',
+            'abbreviation_for',
+            'abbreviation_description',
             'status',
         ];
     }
