@@ -20,13 +20,13 @@ class AbbreviationImport implements ToModel, WithHeadingRow, WithValidation
      */
     public function model(array $row)
     {
-        return new Abbreviation([
-            'char_abbreviations' => $row['abbreviation'],
+        return  Abbreviation::query()
+            ->updateOrCreate(['char_abbreviations'=>$row['abbreviation']],[
             'word_abbreviations' => $row['abbreviation_for'],
             'description_abbreviations' => $row['abbreviation_description'],
-            'is_active' => $row['status'],
-
+            'is_active' => $row['status'] ?? 1,
         ]);
+
     }
 
 
@@ -36,7 +36,7 @@ class AbbreviationImport implements ToModel, WithHeadingRow, WithValidation
             'abbreviation' => 'required|string',
             'abbreviation_for' => 'required|string',
             'abbreviation_description' => 'nullable|string',
-            'status' => 'required|in:0,1',
+            'status' => 'nullable|integer|in:0,1',
         ];
     }
 }

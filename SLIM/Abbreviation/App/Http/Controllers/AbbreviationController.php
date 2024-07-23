@@ -3,34 +3,33 @@
 namespace SLIM\Abbreviation\App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use SLIM\Abbreviation\App\Exports\AbbreviationExport;
 use SLIM\Abbreviation\App\Http\Requests\AbbreviationRequest;
 use SLIM\Abbreviation\App\Http\Requests\ImportAbbreviationRequest;
 use SLIM\Abbreviation\App\Imports\AbbreviationImport;
 use SLIM\Abbreviation\App\Models\Abbreviation;
 use SLIM\Abbreviation\Interfaces\AbbreviationServiceInterface;
-use Maatwebsite\Excel\Facades\Excel;
+
 class AbbreviationController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    private  AbbreviationServiceInterface $abbreviationServiceInterface;
-    public function  __construct(AbbreviationServiceInterface $abbreviationServiceInterface)
+    private AbbreviationServiceInterface $abbreviationServiceInterface;
+
+    public function __construct(AbbreviationServiceInterface $abbreviationServiceInterface)
     {
-        $this->abbreviationServiceInterface =$abbreviationServiceInterface;
+        $this->abbreviationServiceInterface = $abbreviationServiceInterface;
     }
 
     public function index(Request $request)
     {
-        $abbreviations= $this->abbreviationServiceInterface->getAllPaginated($request->all(),15);
-           if($request->ajax())
-               return view('abbreviation::partial',compact('abbreviations'));
+        $abbreviations = $this->abbreviationServiceInterface->getAllPaginated($request->all(), 15);
+        if ($request->ajax())
+            return view('abbreviation::partial', compact('abbreviations'));
 
-        return view('abbreviation::index',compact('abbreviations'));
+        return view('abbreviation::index', compact('abbreviations'));
 
     }
 
@@ -74,7 +73,7 @@ class AbbreviationController extends Controller
     public function update(AbbreviationRequest $abbreviationRequest, Abbreviation $abbreviation)
     {
         $this->abbreviationServiceInterface->update($abbreviation, $abbreviationRequest->all());
-    //  return  $this->index($abbreviationRequest);
+        //  return  $this->index($abbreviationRequest);
     }
 
     /**
@@ -89,37 +88,37 @@ class AbbreviationController extends Controller
 
     public function export()
     {
-        $file_name = 'abbreviations'.now()->format('YmdHis').'.xlsx';
+        $file_name = 'abbreviations' . now()->format('YmdHis') . '.xlsx';
         $abbreviations = $this->abbreviationServiceInterface->getAll();
         return (new AbbreviationExport($abbreviations))->download($file_name);
     }
+
     public function downloadTemplate()
     {
-        $file_name = 'abbreviations'.now()->format('YmdHis').'.xlsx';
+        $file_name = 'abbreviations' . now()->format('YmdHis') . '.xlsx';
         $abbreviations = collect();
         return (new AbbreviationExport($abbreviations))->download($file_name);
     }
 
     public function importForm()
     {
-
+        return view('abbreviation::import.import');
     }
 
     public function import(ImportAbbreviationRequest $request)
     {
-        $file = $request->file('file');
+        $file = $request->file('file');;
         try {
             $import = new AbbreviationImport();
             $import->import($file);
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
+            session()->flash('failures', $failures);
+            return back();
 
-            foreach ($failures as $failure) {
-                $failure->row(); // row that went wrong
-                $failure->attribute(); // either heading key (if using heading row concern) or column index
-                $failure->errors(); // Actual error messages from Laravel validator
-                $failure->values(); // The values of the row that has failed.
-            }
+        } catch (\Exception $e) {
+            session()->flash('server_error', 'there is an error while importing abbreviations');
+            return back();
         }
 
     }
