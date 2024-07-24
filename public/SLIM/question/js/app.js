@@ -132,9 +132,9 @@ $(document).on('click', '.delete', function (e) {
     })
 });
 $(document).on('change', '.specialization', function (e) {
-
     let specialist_id = $(this).val();
     $('#sub_specialist_id option').addClass('d-none')
+    $('#sub_specialist_id .select_sub_specialist').removeClass('d-none')
     $('#sub_specialist_id .'+specialist_id).removeClass('d-none')
     // $.ajax({
     //     type: "GET",
