@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('packages', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->decimal('price');
             $table->decimal('monthly_price');
             $table->decimal('yearly_price');
             $table->bigInteger('num_available_quiz');

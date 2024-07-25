@@ -23,6 +23,6 @@ class PackageController extends Controller
     public function index()
     {
         $packages =PackageResource::collection($this->packageService->getAll(['is_active' => 1]));
-        return $this->returnDate($packages,'Packages List');
+        return $this->returnData($packages,'Packages List');
     }
 }

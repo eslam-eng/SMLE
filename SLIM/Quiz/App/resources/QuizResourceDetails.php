@@ -7,7 +7,7 @@ use SLIM\Abbreviation\App\resources\AbbreviationResource;
 use SLIM\Specialization\App\resources\SpecilizationResource;
 use SLIM\Subspecialties\App\resources\subSpecializationResorce;
 
-class QuizResorceDetails extends JsonResource
+class QuizResourceDetails extends JsonResource
 {
     /**
      * Transform the resource into an array.

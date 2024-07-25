@@ -31,13 +31,6 @@
                                 <div class="row row-cards">
                                     <div class="col-md-4">
                                         <div class="mb-3">
-                                            <label class="form-label">permanent subscription price</label>
-                                            <input type="number" class="form-control" name="price"
-                                                placeholder="Final Price" min="0">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
                                             <label class="form-label">Monthly Price for all specialities</label>
                                             <input type="number" class="form-control" name="monthly_price" value="0"
                                                 placeholder="Monthly Price">

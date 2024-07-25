@@ -50,7 +50,7 @@ class QuestionController extends Controller
             auth()->user()->Notesquestions()->where('question_notes.id', $request->question_note_id)->first()
         );
 
-        return $this->returnDate($NotedQuestion, 'Noted Questions');
+        return $this->returnData($NotedQuestion, 'Noted Questions');
 
     }
 
@@ -88,7 +88,7 @@ class QuestionController extends Controller
             auth()->user()->Suggestsquestions()->where('question_suggests.id', $request->question_suggest_id)->first()
         );
 
-        return $this->returnDate($SuggestedQuestion, 'Suggested Questions');
+        return $this->returnData($SuggestedQuestion, 'Suggested Questions');
 
     }
 

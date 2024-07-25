@@ -28,7 +28,7 @@ Trait GeneralTrait
 
     }
 
-    public function returnDate($value, $message): JsonResponse
+    public function returnData($value, $message): JsonResponse
     {
         return response()->json([
             'status' => true,

@@ -77,9 +77,9 @@ class Trainee extends Authenticatable implements JWTSubject
 
     public function packages()
     {
-        return $this->belongsToMany(Package::class, 'trainee_subscribes', 'trainee_id', 'package_id')
-            ->withPivot('package_type', 'is_paid', 'payment_method', 'amount',
-                'invoice_file', 'start_date', 'end_date', 'is_active', 'for_all_specialities', 'specialist_id');
+        return $this->belongsToMany(Package::class, 'trainee_subscribes', 'trainee_id', 'package_id');
+        //->withPivot('package_type', 'is_paid', 'payment_method', 'amount',
+        //                'invoice_file', 'start_date', 'end_date', 'is_active', 'for_all_specialities')
     }
 
     public function messages()
@@ -119,6 +119,12 @@ class Trainee extends Authenticatable implements JWTSubject
     public function subscribes()
     {
         return $this->hasMany(TraineeSubscribe::class, 'trainee_id');
+    }
+
+    public function activeSubscribe(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(TraineeSubscribe::class, 'trainee_id')
+            ->where('is_active', 1)->where('is_paid', 1)->latest('id');
     }
 
 }

@@ -14,13 +14,11 @@ class SubscribeTraineeRequest extends FormRequest
     public function rules(): array {
         return [
             'package_id'     => 'required|numeric',
-            'amount'         => 'required',
-            'package_type'   => 'required|in:m,p,y',
-            'start_date'     => 'required|date',
+            'package_type'   => 'required|in:m,y',
             'payment_method' => 'required|string',
-            // 'for_all_specialities' => 'sometimes|nullable|numeric',
-            'specialist_id'  => 'sometimes|nullable|exists:specializations,id',
-            'invoice_file'   => 'sometimes|nullable|file'
+            'invoice_file'   => 'sometimes|nullable|file',
+            'specialist_ids'   => 'required|array|min:1',
+            'specialist_ids.*'   => 'required|exists:specializations,id',
         ];
     }
 

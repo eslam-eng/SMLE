@@ -5,6 +5,7 @@ namespace SLIM\Quiz\App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 use SLIM\Constants\App;
 use SLIM\Question\App\Models\Question;
 use SLIM\Quiz\App\Http\Requests\QuestionAnswerRequest;
@@ -12,11 +13,10 @@ use SLIM\Quiz\App\Http\Requests\QuizRequest;
 use SLIM\Quiz\App\Models\Quiz;
 use SLIM\Quiz\App\resources\QuizAnalysisResource;
 use SLIM\Quiz\App\resources\QuizResorce;
-use SLIM\Quiz\App\resources\QuizResorceDetails;
+use SLIM\Quiz\App\resources\QuizResourceDetails;
 
 use SLIM\Quiz\App\resources\StatisticQuizResource;
 use SLIM\Traits\GeneralTrait;
-use DB;
 class QuizController extends Controller
 {
     use GeneralTrait;
@@ -32,9 +32,9 @@ class QuizController extends Controller
             $this->generateQuiz($quizRequest->subSpecialists, $quiz);
 
             DB::commit();
-            $quiz = QuizResorceDetails::make($quiz);
+            $quiz = QuizResourceDetails::make($quiz);
 
-            return $this->returnDate($quiz, 'Quiz Created Successfully');
+            return $this->returnData($quiz, 'Quiz Created Successfully');
 
         }
         catch (\Exception $exception)
@@ -45,23 +45,15 @@ class QuizController extends Controller
 
     }
 
-    public function show(Request $request)
+    public function show($id)
     {
-
-        DB::beginTransaction();
+        $user_id = auth()->id();
         try {
-            $quiz = auth()->user()->quizzes()->
-            where('id', $request->id)
-                ->first();
-            DB::commit();
-            $quiz = QuizResorceDetails::make($quiz);
-
-            return $this->returnDate($quiz, 'Quiz');
-
+            $quiz = Quiz::query()->where('id',$id)->where('trainee_id',$user_id)->first();
+            return new QuizResourceDetails($quiz);
         }
         catch (\Exception $exception)
         {
-            DB::rollBack();
             return $this->returnError($exception->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
@@ -91,7 +83,7 @@ class QuizController extends Controller
     public function Statistics()
     {
         $Statistic = StatisticQuizResource::make(auth()->user());
-        return $this->returnDate($Statistic, 'Statistic');
+        return $this->returnData($Statistic, 'Statistic');
 
     }
 
@@ -147,7 +139,7 @@ class QuizController extends Controller
     {
         $quiz         = Quiz::where('id', $request->quiz_id)->first();
         $QuizAnalysis = QuizAnalysisResource::make($quiz);
-        return $this->returnDate($QuizAnalysis, 'Quiz Analysis');
+        return $this->returnData($QuizAnalysis, 'Quiz Analysis');
 
     }
 

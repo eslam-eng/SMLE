@@ -5,6 +5,7 @@ namespace SLIM\Trainee\App\resources;
 use Illuminate\Http\Resources\Json\JsonResource;
 use SLIM\Package\App\Models\Package;
 use SLIM\Package\App\resources\PackageResource;
+use SLIM\Package\App\resources\SpecialistResource;
 
 class TraineeResource extends JsonResource
 {
@@ -19,11 +20,8 @@ class TraineeResource extends JsonResource
             'phone'=>$this->phone,
             'user_name'=>$this->user_name,
             'degree'=>$this->degree,
-            'package' =>$this->packages()->count() > 0 ? PackageResource::make($this->packages()->first()):
-                PackageResource::make(Package::where('price',0)->first())
+            'package' => PackageResource::make($this->activeSubscribe->package),
 
-      //      'specialist'=>$this->specialist->name,
-        //    'specialist'=>$this->sub_specialist->name,
         ];
     }
 }

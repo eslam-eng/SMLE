@@ -23,6 +23,6 @@ class SubsSpecialistController extends Controller
     {
         $subSpecialists = subSpecializationResorce::collection( $this->subSpecializationService->getAll($request->all()));
 
-        return $this->returnDate($subSpecialists,'subSpecialists List');
+        return $this->returnData($subSpecialists,'subSpecialists List');
     }
 }

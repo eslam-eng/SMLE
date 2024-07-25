@@ -18,7 +18,7 @@ class SettingController extends Controller
         $setting = Setting::
         select('is_difficult', 'timer' ,'automatic_correct' ,'try_answer')
        ->orderby('id','desc')->first();
-        return $this->returnDate($setting,'Setting Quiz');
+        return $this->returnData($setting,'Setting Quiz');
     }
 
     public function AppSetting()
@@ -28,6 +28,6 @@ class SettingController extends Controller
             'url_play_store','url_apple_store'
             )
        ->orderby('id','desc')->first();
-        return $this->returnDate($setting,'App Quiz');
+        return $this->returnData($setting,'App Quiz');
     }
 }

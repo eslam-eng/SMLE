@@ -20,6 +20,6 @@ class SpecializationController extends Controller
     {
         $data['is_active'] = 1;
         $specialists       = SpecilizationResource::collection($this->specializationService->getAll($data));
-        return $this->returnDate($specialists, 'Lsit specialists');
+        return $this->returnData($specialists, 'Lsit specialists');
     }
 }

@@ -24,6 +24,11 @@ class PaymentController extends Controller
     public function index()
     {
         $payments =PaymentResource::collection($this->paymentServiceInterfaces->getAll(['is_active' => 1]));
-        return $this->returnDate($payments,'Payment List');
+        return $this->returnData($payments,'Payment List');
+    }
+
+    public function handlePaymentForSubscription(Request $request)
+    {
+       return 'thanks';
     }
 }

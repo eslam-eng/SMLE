@@ -66,7 +66,7 @@ class CategoryController extends Controller
             ])
             ->first();
         $classified = new QuestionClassificationDetailsResource($classified);
-        return $this->returnDate($classified, 'Classified Details');
+        return $this->returnData($classified, 'Classified Details');
     }
 
     public function saveClasify($classify, $question, $quiz)
