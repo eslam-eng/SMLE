@@ -2,13 +2,15 @@
 
 namespace SLIM\Payment\App\Http\Controllers;
 
+use App\Enum\SubscribeStatusEnum;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\RedirectResponse;
+use App\Services\MyfatoorahService;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 use SLIM\Payment\App\Http\Requests\PaymentRequest;
 use SLIM\Payment\App\Models\Payment;
 use SLIM\Payment\Interfaces\PaymentServiceInterfaces;
+use SLIM\Trainee\App\Models\TraineeSubscribe;
 
 class PaymentController extends Controller
 {
@@ -18,18 +20,19 @@ class PaymentController extends Controller
      * Display a listing of the resource.
      */
     protected PaymentServiceInterfaces $paymentServiceInterfaces;
-    public function  __construct(PaymentServiceInterfaces $paymentServiceInterfaces)
+
+    public function __construct(PaymentServiceInterfaces $paymentServiceInterfaces)
     {
-        $this->paymentServiceInterfaces=$paymentServiceInterfaces;
+        $this->paymentServiceInterfaces = $paymentServiceInterfaces;
 
     }
 
     public function index(Request $request)
     {
         $payments = $this->paymentServiceInterfaces->getAllPaginated($request->all(), 15);
-        if($request->ajax())
-            return view('payment::partial',compact('payments'));
-        return view('payment::index',compact('payments'));
+        if ($request->ajax())
+            return view('payment::partial', compact('payments'));
+        return view('payment::index', compact('payments'));
     }
 
     /**
@@ -70,7 +73,7 @@ class PaymentController extends Controller
      */
     public function update(PaymentRequest $paymentRequest, Payment $payment)
     {
-        $this->paymentServiceInterfaces->update($payment,$paymentRequest->all());
+        $this->paymentServiceInterfaces->update($payment, $paymentRequest->all());
         return $this->index($paymentRequest);
     }
 
@@ -82,5 +85,34 @@ class PaymentController extends Controller
         $this->paymentServiceInterfaces->delete($payment);
         return $this->index($request);
 
+    }
+
+    public function myfatoorahCallback(Request $request)
+    {
+        $paymentId = Arr::get($request->all(), 'paymentId');
+        try {
+            $response = (new MyfatoorahService())->checkMyfatoorhPayment($paymentId);
+            if (isset($response) && $response['IsSuccess']) {
+                TraineeSubscribe::query()->where('id', Arr::get($response,'Data.CustomerReference'))
+                    ->update([
+                        'is_paid' => true,
+                        'is_active' => true,
+                        'subscribe_status' => SubscribeStatusEnum::INPROGRESS->value,
+                        'payment_transaction_id' => Arr::last(Arr::get($response, 'Data.InvoiceTransactions'))['TransactionId'],
+                        'payment_invoice_number' => Arr::get($response, 'Data.InvoiceId'),
+                    ]);
+                return response()->json([
+                    'data' => null,
+                    'message' => 'payment successes , your subscribe is confirmed',
+                    'status' => true
+                ]);
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'data' => $exception->getMessage(),
+                'message' => 'payment successes , your subscribe is confirmed',
+                'status' => true
+            ]);
+        }
     }
 }

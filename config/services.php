@@ -31,7 +31,7 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
     'myfatoorah' => [
-        'url' => env('MYFATOORAH_API_URL','https://apitest.myfatoorah.com/'),
+        'url' => env('MYFATOORAH_API_URL','https://apitest.myfatoorah.com'),
         'api_key' => env('MYFATOORAH_API_key'),
         'call_back_url' => env('MYFATOORAH_CAll_BACK_URL'),
     ],

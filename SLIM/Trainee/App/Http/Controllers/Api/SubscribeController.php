@@ -6,6 +6,7 @@ use App\Enum\SubscribeStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Services\MyfatoorahService;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use SLIM\Package\App\Models\Package;
 use SLIM\Trainee\App\Http\Requests\SubscribeTraineeRequest;
@@ -59,7 +60,11 @@ class SubscribeController extends Controller
 
             $this->createTraineeSubscribeSpecialization($traineeSubscribe, $package, $request->specialist_ids);
             DB::commit();
-            return $this->returnData(['trainee_subscribe_id' => $traineeSubscribe->id, 'payment_link' => fake()->url()], 'Subscribe Successfully');
+            $invoicePaymentData = (new MyfatoorahService())->handleInvoiceLink($subscriber, $traineeSubscribe);
+
+            return $this->returnData([
+                'trainee_subscribe_id' => $traineeSubscribe->id, 'payment_link' => Arr::get($invoicePaymentData,'Data.InvoiceURL')
+            ], 'Subscribe Successfully will approve after confirm payment');
         } catch (\Exception $exception) {
             return $this->returnError($exception->getMessage(), 500);
         }
@@ -93,4 +98,5 @@ class SubscribeController extends Controller
         $sum_column = $request->package_type == 'm' ? 'monthly_price' : 'yearly_price';
         return $package->specialist->whereIn('id', $request->specialist_ids)->sum($sum_column);
     }
+
 }

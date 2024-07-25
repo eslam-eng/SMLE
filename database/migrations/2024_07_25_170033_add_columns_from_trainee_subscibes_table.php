@@ -14,7 +14,8 @@ return new class extends Migration
     {
         Schema::table('trainee_subscribes', function (Blueprint $table) {
             $table->string('subscribe_status')->default(SubscribeStatusEnum::PENDING->value);
-            $table->string('payment_reference_number')->nullable();
+            $table->string('payment_transaction_id')->comment('from bank system')->nullable();
+            $table->string('payment_invoice_number')->comment('from payment getway')->nullable();
         });
     }
 
