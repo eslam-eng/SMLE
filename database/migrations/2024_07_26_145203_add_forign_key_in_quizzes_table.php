@@ -13,6 +13,11 @@ return new class extends Migration {
     {
         DB::statement('SET FOREIGN_KEY_CHECKS = 0');
         \SLIM\Quiz\App\Models\Quiz::query()->truncate();
+        DB::table('quiz_question')->truncate();
+        DB::table('quiz_specialist')->truncate();
+        DB::table('quiz_sub_specialist')->truncate();
+        DB::table('trainee_subscribes')->truncate();
+        DB::table('trainee_subscribe_specializes')->truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS = 1');
         Schema::table('quizzes', function (Blueprint $table) {
             $table->foreignId('trainee_subscribe_id')->constrained('trainee_subscribes');
