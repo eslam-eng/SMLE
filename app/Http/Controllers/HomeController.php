@@ -46,7 +46,7 @@ class HomeController extends Controller
         // trainee most has quiz with correct answers
         $specializatMostHasSubscription = Specialization::withCount(['subscribes' => function ($q)
         {
-            $q->where('is_active', 1)->where('is_paid', 1);
+            $q->whereHas('traineeSubscribe', fn($query)=>$query->where('is_active',1)->where('is_paid', 1));
         }, 'questions'])->orderBy('subscribes_count', 'desc')->take(5)->get();
 
         return view('admin::home', compact('traineeCount', 'questionCount', 'subscriptionCount',

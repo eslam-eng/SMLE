@@ -20,7 +20,6 @@ class QuestionController extends Controller
     public function questionNote(QuestionNoteRequest $questionNoteRequest)
     {
         $user_id = auth()->id();
-        //delete old note for the user in the same question and quiz if exists
         QuestionNote::query()->updateOrCreate([
             "user_id" => $user_id,
             "question_id" => $questionNoteRequest->question_id,

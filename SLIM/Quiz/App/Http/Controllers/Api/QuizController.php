@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
-use SLIM\Constants\App;
 use SLIM\Question\App\Models\Question;
 use SLIM\Quiz\App\Http\Requests\QuestionAnswerRequest;
 use SLIM\Quiz\App\Http\Requests\QuizRequest;
@@ -160,7 +159,12 @@ class QuizController extends Controller
 
     public function QuizAnalysis(Request $request)
     {
-        $quiz = Quiz::where('id', $request->quiz_id)->first();
+        $quiz = Quiz::withCount([
+            'answers as correct_answers_count' => fn($q) => $q->where('is_correct', 1),
+            'answers as incorrect_answers_count' => fn($q) => $q->where('is_correct', 0),
+            'listQuestions'
+        ])->where('id', $request->quiz_id)->first();
+
         $QuizAnalysis = QuizAnalysisResource::make($quiz);
         return $this->returnData($QuizAnalysis, 'Quiz Analysis');
 
@@ -168,8 +172,19 @@ class QuizController extends Controller
 
     public function getAllQuiz(Request $request)
     {
-        $quizzes = auth()->user()->quizzes()->paginate(App::PAGINATE_LENGTH);
-        return $this->returnDateWithPaginate($quizzes, QuizResorce::class, 'Quizzes List');
+        $filters = array_filter([
+            'title' => $request->title,
+            'is_complete' => $request->is_complete,
+            'start_date' => $request->start_date,
+            'end_date' => $request->end_date,
+        ]);
+        $quizzes = Quiz::query()
+            ->when(Arr::get($filters, 'title') !== null, fn($q) => $q->where('title', 'like', '%' . $filters['title'] . '%'))
+            ->when(Arr::get($filters, 'is_complete') !== null, fn($q) => $q->where('is_complete', $filters['is_complete']))
+            ->when(Arr::get($filters, 'start_date') !== null, fn($q) => $q->whereDate('quiz_date', '>=', $filters['start_date']))
+            ->when(Arr::get($filters, 'end_date') !== null, fn($q) => $q->whereDate('quiz_date', '<=', $filters['end_date']))
+            ->paginate();
+        return $this->returnData(QuizResorce::collection($quizzes), 'Quizzes List');
     }
 
     public function SetTakenTime(Request $request)

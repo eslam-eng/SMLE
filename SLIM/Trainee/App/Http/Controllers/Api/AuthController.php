@@ -74,11 +74,15 @@ class AuthController extends Controller
 
     public function sendOtp(Request $request)
     {
-        $generator = 123456789;
-        $trainee = Trainee::where('email', $request->provider)
-            ->orwhere('phone', $request->provider)->first();
+        //to do send otp to mail or phone
+        $trainee = Trainee::where('email', $request->provider)->first();
+        if (!$trainee)
+            $this->returnError('email not found',404);
+
+        $otp = rand(1000, 9999);
+
         if ($trainee) {
-            $otp = rand(1000, 9999);
+
             if (filter_var($request->provider, FILTER_VALIDATE_EMAIL)) {
                 // $this->sendMailOtp($otp,$request->provider);
                 $this->authService->saveOtp($otp, $request->provider);

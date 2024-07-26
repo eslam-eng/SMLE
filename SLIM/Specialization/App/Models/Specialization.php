@@ -10,6 +10,7 @@ use SLIM\Specialization\Database\factories\SpecializationFactory;
 use SLIM\Subspecialties\App\Models\SubSpecialties;
 use SLIM\Trainee\App\Models\Trainee;
 use SLIM\Trainee\App\Models\TraineeSubscribe;
+use SLIM\Trainee\App\Models\TraineeSubscribeSpecialize;
 
 class Specialization extends Model
 {
@@ -32,7 +33,7 @@ class Specialization extends Model
 
     public function subscribes()
     {
-        return $this->hasMany(TraineeSubscribe::class, 'specialist_id');
+        return $this->hasMany(TraineeSubscribeSpecialize::class, 'specialist_id')->distinct();
     }
 
     public function questions()

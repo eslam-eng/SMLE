@@ -2,6 +2,7 @@
 
 namespace SLIM\Quiz\App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use SLIM\Question\App\Models\Question;
@@ -19,9 +20,11 @@ class Quiz extends Model
      */
     protected $guarded = [];
 
-    protected static function newFactory(): QuizFactory
+    public function scopeFilters(Builder $query, ?array $filters = []): void
     {
-        //return QuizFactory::new();
+        foreach ($filters as $field => $value) {
+            $query->where($field, $value);
+        }
     }
 
     public function specialist()
@@ -37,7 +40,7 @@ class Quiz extends Model
     public function listQuestions()
     {
         return $this->belongsToMany(Question::class, 'quiz_question', 'quiz_id', 'question_id')
-            ->withPivot('is_correct', 'answer','user_answer');
+            ->withPivot('is_correct', 'answer', 'user_answer');
     }
 
     public function correctAnswers()
@@ -46,12 +49,18 @@ class Quiz extends Model
             ->wherePivot('is_correct', 1);
     }
 
+    public function answers(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(QuizQuestion::class, 'quiz_id');
+    }
+
     public function inCorrectAnswers()
     {
-        return  $this->belongsToMany(Question::class,'quiz_question','quiz_id','question_id')
-            ->wherePivot('is_correct',0);
+        return $this->belongsToMany(Question::class, 'quiz_question', 'quiz_id', 'question_id')
+            ->wherePivot('is_correct', 0);
 
     }
+
     public function trainee()
     {
         return $this->belongsTo(Trainee::class, 'trainee_id');
