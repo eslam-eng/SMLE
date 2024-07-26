@@ -104,7 +104,7 @@
                                             <label class="form-label">Correct Answer Percentage</label>
                                             <input type="text" class="form-control" name="degree"
                                                 placeholder="Quiz date" disabled
-                                                value="{{ ($quiz->CorrectAnswers->count() / $quiz->question_no) * 100 }}">
+                                                value="{{ ($quiz->correctAnswers->count() / $quiz->question_no) * 100 }}">
                                         </div>
                                     </div>
                                 </div>
@@ -123,7 +123,7 @@
                                             <label class="form-label">Number of Correct answers</label>
                                             <input type="text" class="form-control" name="quiz_id"
                                                 placeholder="Number of questions" disabled
-                                                value="{{ $quiz->CorrectAnswers->count() }}">
+                                                value="{{ $quiz->correctAnswers->count() }}">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
@@ -131,7 +131,7 @@
                                             <label class="form-label">Number of InCorrect answers</label>
                                             <input type="text" class="form-control" name="quiz_id"
                                                 placeholder="Number of questions" disabled
-                                                value="{{ $quiz->InCorrectAnswers->count() }}">
+                                                value="{{ $quiz->inCorrectAnswers->count() }}">
                                         </div>
                                     </div>
                                     <div class="col-md-3">

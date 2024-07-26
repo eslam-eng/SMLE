@@ -13,10 +13,10 @@ use SLIM\Constants\HttpStatus;
 use SLIM\Package\App\Models\Package;
 use SLIM\Trainee\App\Http\Requests\LoginRequest;
 use SLIM\Trainee\App\Http\Requests\RegisterRequest;
+use SLIM\Trainee\App\Http\resources\TraineeResource;
 use SLIM\Trainee\App\Models\Trainee;
 use SLIM\Trainee\App\Models\TraineeSubscribe;
 use SLIM\Trainee\App\Models\TraineeSubscribeSpecialize;
-use SLIM\Trainee\App\resources\TraineeResource;
 use SLIM\Trainee\services\AuthService;
 use SLIM\Traits\GeneralMail;
 use SLIM\Traits\GeneralTrait;
@@ -125,17 +125,20 @@ class AuthController extends Controller
     {
         $traineeSubscribeSpecializeData = [];
         $start_date = date('Y-m-d');
-        $end_date = Carbon::parse($start_date)->addMonth()->format('Y-m-d');
+        $end_date = Carbon::parse($start_date)->addYear()->format('Y-m-d');
         $traineeSubscribe = TraineeSubscribe::create([
                 'package_id' => $package->id,
                 'trainee_id' => $trainee->id,
-                'package_type' => 'm',
+                'package_type' => 'y',
                 'is_paid' => 1,
                 'amount' => 0,
                 'start_date' => $start_date,
                 'end_date' => $end_date,
                 'is_active' => true,
                 'for_all_specialities' => true,
+                'quizzes_count' => $package->num_available_quiz,
+                'remaining_quizzes' => $package->num_available_quiz,
+                'num_available_question' => $package->num_available_question,
                 'subscribe_status'=>SubscribeStatusEnum::INPROGRESS->value
             ]
         );

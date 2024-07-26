@@ -39,7 +39,7 @@ class QuizController extends Controller
         $specializations     = $this->specializationService->getAll();
         $sub_specializations = $this->subSpecializationService->getAll();
 
-        $quizs = $this->quizService->with(['CorrectAnswers', 'trainee'])->getAllPaginated($request->all(), 15);
+        $quizs = $this->quizService->with(['correctAnswers', 'trainee'])->getAllPaginated($request->all(), 15);
 
         if ($request->ajax())
         {

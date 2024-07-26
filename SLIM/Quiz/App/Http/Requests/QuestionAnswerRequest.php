@@ -14,11 +14,9 @@ class QuestionAnswerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'quiz_id'=>'required',
-            'answers' =>'required|array|min:1',
-            'answers.*.question_id' =>'required|numeric|distinct|exists:questions,id',
-            'answers.*.answer' =>'required|string|in:A,B,C,D',
-
+            'quiz_id'=>'required|integer|exists:quiz_question,quiz_id',
+            'question_id'=>'required|integer|exists:quiz_question,question_id',
+            'answer' =>'required|string|in:A,B,C,D',
         ];
     }
 

@@ -14,9 +14,9 @@ class StatisticQuizResource extends JsonResource
         return [
             'quiz_count' =>$this->quizzes()->count(),
             'question_count' =>$this->quizzes()->count(),
-            'correct_answer' =>$this->CorrectAnswers ? $this->CorrectAnswers()->count() :0,
-            'Incorrect_answer' =>$this->CorrectAnswers ? $this->InCorrectAnswers()->count() :0,
-            'result' =>$this->CorrectAnswers ? $this->CorrectAnswers()->count() / $this->quizzes()->count() *100 :0,
+            'correct_answer' =>$this->correctAnswers ? $this->correctAnswers()->count() :0,
+            'Incorrect_answer' =>$this->correctAnswers ? $this->inCorrectAnswers()->count() :0,
+            'result' =>$this->correctAnswers ? $this->correctAnswers()->count() / $this->quizzes()->count() *100 :0,
         ];
 
 

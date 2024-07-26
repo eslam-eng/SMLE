@@ -2,43 +2,62 @@
 
 namespace SLIM\Quiz\App\Http\Controllers\Api;
 
+use App\Enum\SubscribeStatusEnum;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use SLIM\Constants\App;
 use SLIM\Question\App\Models\Question;
 use SLIM\Quiz\App\Http\Requests\QuestionAnswerRequest;
 use SLIM\Quiz\App\Http\Requests\QuizRequest;
 use SLIM\Quiz\App\Models\Quiz;
+use SLIM\Quiz\App\Models\QuizQuestion;
 use SLIM\Quiz\App\resources\QuizAnalysisResource;
 use SLIM\Quiz\App\resources\QuizResorce;
 use SLIM\Quiz\App\resources\QuizResourceDetails;
-
 use SLIM\Quiz\App\resources\StatisticQuizResource;
+use SLIM\Trainee\App\Models\TraineeSubscribe;
 use SLIM\Traits\GeneralTrait;
+
 class QuizController extends Controller
 {
     use GeneralTrait;
 
     public function SaveQuiz(QuizRequest $quizRequest)
     {
-
-        DB::beginTransaction();
         try {
-            $quiz = auth()->user()->quizzes()->create($quizRequest->except('specialists', 'subSpecialists'));
+            $user = auth()->user();
+            //get trainner subscrip active plan
+            $trainerSubscribePlan = TraineeSubscribe::query()
+                ->where(['is_paid' => true, 'is_active' => true, 'subscribe_status' => SubscribeStatusEnum::INPROGRESS->value, 'trainee_id' => $user->id])
+                ->first();
+            $quizData = $quizRequest->except('specialists', 'subSpecialists');
+            $quizData['trainee_subscribe_id'] = $trainerSubscribePlan->id;
+            $quizData['quiz_date'] = date('Y-m-d');
+
+            if ($trainerSubscribePlan->num_available_question < $quizRequest->question_no)
+                return $this->returnError("you cannont exceed available question number $trainerSubscribePlan->num_available_question", 422);
+
+            if (!$trainerSubscribePlan->remaining_quizzes)
+                return $this->returnError("There is no quizzes available , please upgrade or renew plan", 422);
+
+            DB::beginTransaction();
+            $quiz = auth()->user()->quizzes()
+                ->create($quizData);
+
             $quiz->specialist()->sync($quizRequest->specialists);
             $quiz->Subspecialist()->sync($quizRequest->subSpecialists);
-            $this->generateQuiz($quizRequest->subSpecialists, $quiz);
-
+            $this->generateQuiz($quizRequest, $quiz, $trainerSubscribePlan);
+            $quiz->load('listQuestions')->loadCount(['correctAnswers', 'incorrectAnswers', 'listQuestions']);
+            //increment available quizzes
+            $trainerSubscribePlan->decrement('remaining_quizzes');
             DB::commit();
             $quiz = QuizResourceDetails::make($quiz);
-
             return $this->returnData($quiz, 'Quiz Created Successfully');
 
-        }
-        catch (\Exception $exception)
-        {
+        } catch (\Exception $exception) {
             DB::rollBack();
             return $this->returnError($exception->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
@@ -49,35 +68,54 @@ class QuizController extends Controller
     {
         $user_id = auth()->id();
         try {
-            $quiz = Quiz::query()->where('id',$id)->where('trainee_id',$user_id)->first();
+            $quiz = Quiz::query()->where('id', $id)->where('trainee_id', $user_id)->first();
             return new QuizResourceDetails($quiz);
-        }
-        catch (\Exception $exception)
-        {
+        } catch (\Exception $exception) {
             return $this->returnError($exception->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
         }
 
     }
 
-    public function generateQuiz($subSpecialists = [], Quiz $quiz)
+    public function generateQuiz(QuizRequest $quizRequest, Quiz $quiz, $trainerSubscribePlan)
     {
-
-        $questions = Question::whereIn('sub_specialist_id', $subSpecialists)
-            ->limit($quiz->question_no)->pluck('id');
-
-        if ($questions)
-        {
-            $questions = Question::inRandomOrder()
-                ->limit($quiz->question_no)->pluck('id');
+        $quizQuestionData = [];
+        $isThereSpecialists = collect($quizRequest->specialists)->count() + collect($quizRequest->subSpecialists)->count();
+        if ($isThereSpecialists) {
+            $filters = ['specialist_id' => $quizRequest->specialists, 'sub_specialist_id' => $quizRequest->subSpecialists];
+        } else {
+            $filters = ['specialist_id' => $trainerSubscribePlan->tranineeSubscribeSpecialization()->pluck('specialist_id')->toArray()];
         }
+        $filters = array_filter($filters);
 
 
+        $questions = Question::query()
+            ->where(function ($query) use ($filters) {
+                $query->when(Arr::get($filters, 'specialist_id') !== null, function ($q) use ($filters) {
+                    $q->whereIn('specialist_id', $filters['specialist_id']);
+                })->when(Arr::get($filters, 'sub_specialist_id') !== null, function ($q) use ($filters) {
+                    $q->whereIn('sub_specialist_id', $filters['sub_specialist_id']);
+                });
+            })
+            ->when($quizRequest->level, fn($q) => $q->where('level', $quizRequest->level))
+            ->inRandomOrder()
+            ->limit($quizRequest->question_no)
+            ->get();
 
+        if (!count($questions))
+            return $this->returnError('There is no questions available', 422);
 
-        $quiz->listQuestions()->sync($questions);
-        $quiz->listQuestions()->update([
-            'trainee_id'=>auth()->user()->id,
-        ]);
+        $questions->each(function ($question) use (&$quizQuestionData, $trainerSubscribePlan, $quiz) {
+            $quizQuestionData[] = [
+                'trainee_id' => $trainerSubscribePlan->trainee_id,
+                'quiz_id' => $quiz->id,
+                'question_id' => $question->id,
+                'answer' => $question->model_answer,
+                'created_at' => now(),
+                'updated_at' => now()
+            ];
+        });
+
+        return DB::table('quiz_question')->insert($quizQuestionData);
     }
 
     public function Statistics()
@@ -89,55 +127,40 @@ class QuizController extends Controller
 
     public function SaveQuestionAnswer(QuestionAnswerRequest $questionAnswerRequest)
     {
-        foreach ($questionAnswerRequest->answers as $answer)
-        {
-            $question = Question::find($answer['question_id']);
+        try {
+            $returnedData = [];
+            $questionAnswer = QuizQuestion::query()
+                ->where([
+                    'quiz_id' => $questionAnswerRequest->quiz_id,
+                    'question_id' => $questionAnswerRequest->question_id,
+                    'trainee_id' => auth()->id(),
+                ])
+                ->with('quiz')
+                ->first();
+            $questionAnswer->update([
+                'user_answer' => $questionAnswerRequest->answer,
+                'is_correct' => $questionAnswer->answer == $questionAnswerRequest->answer
+            ]);
 
-            if($question->model_answer ==  $answer['answer'])
-                $answer['is_correct']=true;
-            else
-                $answer['is_correct']=false;
-
-            $questionAnswer = \DB::table('quiz_question')->where([
-                'quiz_id'      => $questionAnswerRequest->quiz_id,
-                'question_id'  => $answer['question_id'],
-                'trainee_id'              =>auth()->user()->id,
-            ])->first();
-
-
-
-            if($questionAnswer){
-                $questionAnswer = \DB::table('quiz_question')->where([
-                    'quiz_id'      => $questionAnswerRequest->quiz_id,
-                    'question_id'  => $answer['question_id'],
-                    'trainee_id'              =>auth()->user()->id,
-                ])->update([
-                    'quiz_id'      => $questionAnswerRequest->quiz_id,
-                    'question_id'  => $answer['question_id'],
-                    'answer'       => $answer['answer'],
-                    'is_correct'   => $answer['is_correct'],
-                    'trainee_id'              =>auth()->user()->id,
-                ]);
+            if ($questionAnswer->quiz->auto_correction) {
+                $returnedData = [
+                    'model_answer' => $questionAnswer->answer,
+                    'question_id' => $questionAnswerRequest->question_id,
+                    'user_answer' => $questionAnswer->user_answer,
+                    'is_correct' => $questionAnswer->is_correct
+                ];
             }
-            else{
-//                \DB::table('quiz_question')->insert([
-//                    'quiz_id'      => $questionAnswerRequest->quiz_id,
-//                    'question_id'  => $answer['question_id'],
-//                    'answer'       => $answer['answer'],
-//                    'is_correct'   => $answer['is_correct'],
-//                    'trainee_id'              =>auth()->user()->id,
-//                ]);
-            }
+            return $this->returnData($returnedData, 'answer saved successfully');
 
 
+        } catch (\Exception $exception) {
+            return $this->returnError('there is an error', 500);
         }
-        return $this->returnSuccessMessage('Question Answer Saved');
-
     }
 
     public function QuizAnalysis(Request $request)
     {
-        $quiz         = Quiz::where('id', $request->quiz_id)->first();
+        $quiz = Quiz::where('id', $request->quiz_id)->first();
         $QuizAnalysis = QuizAnalysisResource::make($quiz);
         return $this->returnData($QuizAnalysis, 'Quiz Analysis');
 
@@ -161,8 +184,8 @@ class QuizController extends Controller
 
     public function CompleteQuiz(Request $request)
     {
-        Quiz::where('id',$request->quiz_id)->update([
-            'is_complete' =>true
+        Quiz::where('id', $request->quiz_id)->update([
+            'is_complete' => true
         ]);
         return $this->returnSuccessMessage('Quiz Complete Successfully');
 

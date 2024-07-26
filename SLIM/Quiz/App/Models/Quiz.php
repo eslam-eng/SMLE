@@ -40,13 +40,13 @@ class Quiz extends Model
             ->withPivot('is_correct', 'answer','user_answer');
     }
 
-    public function CorrectAnswers()
+    public function correctAnswers()
     {
         return $this->belongsToMany(Question::class, 'quiz_question', 'quiz_id', 'question_id')
             ->wherePivot('is_correct', 1);
     }
 
-    public function InCorrectAnswers()
+    public function inCorrectAnswers()
     {
         return  $this->belongsToMany(Question::class,'quiz_question','quiz_id','question_id')
             ->wherePivot('is_correct',0);

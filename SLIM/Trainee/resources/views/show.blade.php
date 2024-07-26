@@ -170,7 +170,7 @@
                                                     </td>
 
                                                     <td class="text-secondary" data-label="Role">
-                                                        {{ ($quiz->CorrectAnswers->count() / $quiz->question_no) * 100 }}%
+                                                        {{ ($quiz->correctAnswers->count() / $quiz->question_no) * 100 }}%
                                                     </td>
 
                                                     <td>

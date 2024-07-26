@@ -41,7 +41,7 @@
                 </td>
 
                 <td class="text-secondary" data-label="Role">
-                    {{ floor(($quiz->CorrectAnswers->count() / $quiz->question_no) * 100) }}%
+                    {{ floor(($quiz->correctAnswers->count() / $quiz->question_no) * 100) }}%
                 </td>
 
                 <td class="text-secondary" data-label="Role">

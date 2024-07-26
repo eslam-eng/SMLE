@@ -19,9 +19,9 @@ class QuizAnalysisResource extends JsonResource
             'quiz_level' =>$this->level,
             'quiz_duration' =>$this->time_taken ?? 0,
             'question_count' =>$this->listQuestions()->count(),
-            'correct_answer_count' =>$this->CorrectAnswers()->count(),
-            'Incorrect_answer_count' =>$this->InCorrectAnswers()->count(),
-            'result' =>$this->listQuestions()->count() ? ($this->CorrectAnswers()->count() / $this->listQuestions()->count()) * 100 :0,
+            'correct_answer_count' =>$this->correctAnswers()->count(),
+            'Incorrect_answer_count' =>$this->incorrectAnswers()->count(),
+            'result' =>$this->listQuestions()->count() ? ($this->correctAnswers()->count() / $this->listQuestions()->count()) * 100 :0,
             'specialists' =>SpecilizationResource::collection($this->specialist),
             'SubSpecialists' =>subSpecializationResorce::collection($this->Subspecialist),
 

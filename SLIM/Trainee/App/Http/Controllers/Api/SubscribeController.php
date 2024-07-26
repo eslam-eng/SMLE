@@ -55,15 +55,18 @@ class SubscribeController extends Controller
                     'start_date' => $start_date,
                     'end_date' => $end_date,
                     'is_active' => false,
+                    'quizzes_count' => $package->num_available_quiz,
+                    'remaining_quizzes' => $package->num_available_quiz,
+                    'num_available_question' => $package->num_available_question,
                 ]
             );
 
             $this->createTraineeSubscribeSpecialization($traineeSubscribe, $package, $request->specialist_ids);
             DB::commit();
             $invoicePaymentData = (new MyfatoorahService())->handleInvoiceLink($subscriber, $traineeSubscribe);
-
             return $this->returnData([
-                'trainee_subscribe_id' => $traineeSubscribe->id, 'payment_link' => Arr::get($invoicePaymentData,'Data.InvoiceURL')
+                'trainee_subscribe_id' => $traineeSubscribe->id,
+                'payment_link' => Arr::get($invoicePaymentData,'Data.InvoiceURL')
             ], 'Subscribe Successfully will approve after confirm payment');
         } catch (\Exception $exception) {
             return $this->returnError($exception->getMessage(), 500);
