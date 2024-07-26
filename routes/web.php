@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +21,12 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->middlewa
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/migrate',function (){
+    try {
+        Artisan::call('migrate');
+        return  'data migrated successfully';
+    }catch (\Exception $e){
+        return $e->getMessage();
+    }
+
+});
