@@ -23,11 +23,6 @@ class TraineeSubscribe extends Model
         'start_date', 'end_date', 'remaining_quizzes',
         'is_active', 'for_all_specialities', 'subscribe_status'];
 
-    protected static function newFactory(): TraineeSubscribeFactory
-    {
-        //return TraineeSubscribeFactory::new();
-    }
-
     public function package()
     {
         return $this->belongsTo(Package::class);
@@ -43,8 +38,4 @@ class TraineeSubscribe extends Model
         return $this->hasMany(TraineeSubscribeSpecialize::class, 'trainee_subscribe_id');
     }
 
-//    public function specialists(): HasManyThrough
-//    {
-//        return $this->hasManyThrough(Specialization::class,TraineeSubscribeSpecialize::class,'trainee_subscribe_id','id','id','specialist_id');
-//    }
 }

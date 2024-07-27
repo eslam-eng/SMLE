@@ -162,8 +162,10 @@ class QuizController extends Controller
         $quiz = Quiz::withCount([
             'answers as correct_answers_count' => fn($q) => $q->where('is_correct', 1),
             'answers as incorrect_answers_count' => fn($q) => $q->where('is_correct', 0),
+            'answers as unanswered_count' => fn($q) => $q->whereNull('is_correct'),
             'listQuestions'
-        ])->where('id', $request->quiz_id)->first();
+        ])->where('id', $request->quiz_id)
+            ->first();
 
         $QuizAnalysis = QuizAnalysisResource::make($quiz);
         return $this->returnData($QuizAnalysis, 'Quiz Analysis');

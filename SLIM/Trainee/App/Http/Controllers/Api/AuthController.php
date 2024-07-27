@@ -4,11 +4,12 @@ namespace SLIM\Trainee\App\Http\Controllers\Api;
 
 use App\Enum\SubscribeStatusEnum;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\UserResource;
+use App\Mail\PasswordRestMail;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use SLIM\Constants\HttpStatus;
 use SLIM\Package\App\Models\Package;
 use SLIM\Trainee\App\Http\Requests\LoginRequest;
@@ -43,8 +44,9 @@ class AuthController extends Controller
         $data = $this->authService->createToken($token);
         $user = auth('api')->user()->load(['activeSubscribe']);
         $active_subscribe_specialization_ids = $user->activeSubscribe->tranineeSubscribeSpecialization()->pluck('specialist_id')->toArray();
-        $user->load(['activeSubscribe.package.specialist'=>fn($query)=>$query->whereIn('specializations.id', $active_subscribe_specialization_ids)]);
-        $data['trainee'] = new TraineeResource($user);
+        $user->load(['activeSubscribe.package.specialist' => fn($query) => $query->whereIn('specializations.id', $active_subscribe_specialization_ids)]);
+
+        return new TraineeResource($user);
         return $data;
 
     }
@@ -77,22 +79,12 @@ class AuthController extends Controller
         //to do send otp to mail or phone
         $trainee = Trainee::where('email', $request->provider)->first();
         if (!$trainee)
-            $this->returnError('email not found',404);
+            return $this->returnError('email not found', 404);
 
         $otp = rand(1000, 9999);
-
-        if ($trainee) {
-
-            if (filter_var($request->provider, FILTER_VALIDATE_EMAIL)) {
-                // $this->sendMailOtp($otp,$request->provider);
-                $this->authService->saveOtp($otp, $request->provider);
-                return $this->returnSuccessMessage('Otp send Successfully check Your Mail');
-            } else {
-
-            }
-        }
-
-        return $this->returnError('Invalid Provider', HttpStatus::PRECONDITION_FAILED);
+        DB::table('otp')->updateOrInsert(['provider' => $trainee->email], ['otp' => $otp]);
+        Mail::to($trainee->email)->send(new PasswordRestMail(otp: $otp, receiver: $trainee));
+        return $this->returnSuccessMessage('Code send successfully check your mail');
     }
 
     public function ValidateOtp(Request $request)
@@ -143,7 +135,7 @@ class AuthController extends Controller
                 'quizzes_count' => $package->num_available_quiz,
                 'remaining_quizzes' => $package->num_available_quiz,
                 'num_available_question' => $package->num_available_question,
-                'subscribe_status'=>SubscribeStatusEnum::INPROGRESS->value
+                'subscribe_status' => SubscribeStatusEnum::INPROGRESS->value
             ]
         );
         $package->specialists->each(function ($specialist) use ($traineeSubscribe, &$traineeSubscribeSpecializeData, $package) {

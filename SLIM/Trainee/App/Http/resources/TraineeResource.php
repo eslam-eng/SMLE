@@ -18,7 +18,7 @@ class TraineeResource extends JsonResource
             'phone' => $this->phone,
             'user_name' => $this->user_name,
             'degree' => $this->degree,
-            'subscription_data' => TraineeSubscribeResource::make($this->activeSubscribe),
+            'subscription_data' => new TraineeSubscribeResource($this->activeSubscribe),
         ];
     }
 }
