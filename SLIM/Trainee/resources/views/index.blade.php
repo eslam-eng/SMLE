@@ -50,32 +50,19 @@
                                         <input type="text" class="form-control" placeholder="Phone" id="phone">
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="mb-3">
-                                        <label class="form-label">specialization</label>
-                                        <select class="form-control specialization" name="specialist_id" id="specialist_id">
-                                            <option disabled="disabled" selected> select specialist</option>
-                                            @foreach($specializations as $specialization)
-                                                <option value="{{$specialization->id}}">{{$specialization->name}}</option>
-                                            @endforeach
-                                        </select>
-
-                                    </div>
-                                </div>
-
-
 {{--                                <div class="col-md-4">--}}
 {{--                                    <div class="mb-3">--}}
-{{--                                        <label class="form-label">sub specializations</label>--}}
-{{--                                        <select class="form-control specialization sub-specialization" name="sub_specialist_id" id="sub_specialist_id">--}}
-{{--                                            <option disabled="disabled" selected> select Sub specialist</option>--}}
-{{--                                            @foreach($sub_specializations as $sub_specialization)--}}
-{{--                                                <option value="{{$sub_specialization->id}}">{{$sub_specialization->name}}</option>--}}
+{{--                                        <label class="form-label">specialization</label>--}}
+{{--                                        <select class="form-control specialization" name="specialist_id" id="specialist_id">--}}
+{{--                                            <option disabled="disabled" selected> select specialist</option>--}}
+{{--                                            @foreach($specializations as $specialization)--}}
+{{--                                                <option value="{{$specialization->id}}">{{$specialization->name}}</option>--}}
 {{--                                            @endforeach--}}
 {{--                                        </select>--}}
 
 {{--                                    </div>--}}
 {{--                                </div>--}}
+
                                 <div class="col-md-4">
                                     <div class="mb-3">
                                         <label class="form-label">Is Active</label>

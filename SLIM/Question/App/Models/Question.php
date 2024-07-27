@@ -24,11 +24,6 @@ class Question extends Model
     ];
 
 
-    protected static function newFactory(): QuestionFactory
-    {
-        //return QuestionFactory::new();
-    }
-
     public function specialist()
     {
         return $this->belongsTo(Specialization::class,'specialist_id');

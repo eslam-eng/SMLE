@@ -130,6 +130,31 @@ $(document).on('click', '.delete', function (e) {
         }
     })
 });
+
+$(document).on('change', '.specialization', function (e) {
+    let specialist_id = $(this).val();
+    $('.sub_specialization option').addClass('d-none')
+    $('.sub_specialization .select_sub_specialist').removeClass('d-none')
+    $('.sub_specialization .'+specialist_id).removeClass('d-none')
+    // $.ajax({
+    //     type: "GET",
+    //     url: '/get/sub-specialization',
+    //     data: {
+    //         'specialist_id': $(this).val(),
+    //     },
+    //     beforeSend: function () {
+    //     },
+    //     complete: function () {
+    //     },
+    //     success: function (response) {
+    //         $('.sub-specialization').html(response);
+    //     },
+    //     error: function (reject) {
+    //     }
+    // });
+
+});
+
 $(document).on('change', '.specialization', function (e) {
 
     $.ajax({

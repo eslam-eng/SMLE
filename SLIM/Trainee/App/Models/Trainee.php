@@ -39,11 +39,6 @@ class Trainee extends Authenticatable implements JWTSubject
     protected $fillable = ['full_name', 'email', 'phone', 'user_name', 'degree', 'password', 'is_active',
         'specialist_id', 'category_id', 'sub_specialist_id', 'phone_code'];
 
-    protected static function newFactory(): TraineeFactory
-    {
-        //return TraineeFactory::new();
-    }
-
     /**
      * @inheritDoc
      */

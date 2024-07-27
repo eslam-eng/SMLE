@@ -87,9 +87,9 @@
                                 </div>
                             </div>
                             <div class="card-footer text-end">
+                                <a href="{{ route('questions.export') }}" class="btn btn-info" role="button"><i class="fa fa-download"></i>Download excel</a>
                                 <button type="submit" class="btn btn-dark" id="searchBtn">Search</button>
-                                <button type="reset" class="btn btn-default" id="Resetsearch">Reset</button>
-
+                                <button type="reset" class="btn btn-danger" id="Resetsearch">Reset</button>
                             </div>
                         </form>
                     </div>

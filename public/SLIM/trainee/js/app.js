@@ -179,3 +179,11 @@ $(document).on('change', '.specialization', function(e) {
     });
 
 });
+
+$(document).on('click','.toggle_show_password',function () {
+
+    // Toggle the type attribute
+    const passwordField = $('#passwordField');
+    const type = passwordField.attr('type') === 'password' ? 'text' : 'password';
+    passwordField.attr('type', type);
+});

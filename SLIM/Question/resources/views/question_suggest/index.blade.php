@@ -49,12 +49,12 @@
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label">sub specializations</label>
-                                            <select class="form-control specialization" name="sub_specialist_id"
+                                            <select class="form-control sub_specialization" name="sub_specialist_id"
                                                 id="sub_specialist_id">
-                                                <option disabled="disabled" selected value=""> select Sub specialist
+                                                <option class="select_sub_specialist"  selected value=""> select Sub specialist
                                                 </option>
                                                 @foreach ($sub_specializations as $sub_specialization)
-                                                    <option value="{{ $sub_specialization->id }}">
+                                                    <option class="d-none {{$sub_specialization->specialist_id}}" value="{{ $sub_specialization->id }}">
                                                         {{ $sub_specialization->name }}</option>
                                                 @endforeach
                                             </select>

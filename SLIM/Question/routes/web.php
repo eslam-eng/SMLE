@@ -20,6 +20,7 @@ use SLIM\Subspecialties\App\Http\Controllers\SubspecialtiesController;
 Route::group(['middleware' => 'auth'], function ()
 {
     Route::resource('question', QuestionController::class)->names('question');
+    Route::get('export/question', [QuestionController::class,'export'])->name('questions.export');
     Route::resource('question_note', QuestionNoteController::class)->names('question_note');
     Route::resource('question_suggest', QuestionSuggestController::class)->names('question_suggest');
     Route::get('get/sub-specialization', [SubspecialtiesController::class, 'getSubSpecialization']);

@@ -5,6 +5,7 @@ namespace SLIM\Question\App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use SLIM\Abbreviation\Interfaces\AbbreviationServiceInterface;
+use SLIM\Question\App\Exports\QuestionsExport;
 use SLIM\Question\App\Http\Requests\QuestionRequest;
 use SLIM\Question\App\Models\Question;
 use SLIM\Question\services\QuestionService;
@@ -138,6 +139,13 @@ class QuestionController extends Controller
     {
         $this->questionservice->delete($question);
         return $this->index($request);
+    }
+
+    public function export()
+    {
+        $file_name = 'abbreviations' . now()->format('YmdHis') . '.xlsx';
+        $questions = Question::with(['specialist','sub_specialist'])->get();
+        return (new QuestionsExport($questions))->download($file_name);
     }
 
 }

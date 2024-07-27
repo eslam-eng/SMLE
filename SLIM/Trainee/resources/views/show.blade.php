@@ -14,205 +14,179 @@
             <div class="container-xl">
                 <div class="row row-cards">
                     <div class="col-12">
-                        <form class="card" id="updateForm" action="{{ route('trainee.update', $trainee->id) }}">
-                            @csrf
-                            {{ method_field('PUT') }}
-                            <div class="card-body">
-                                <h3 class="card-title">Trainee Profile</h3>
-                                <div class="row row-cards">
-                                    <div class="col-md-12">
-                                        <div class="mb-3">
-                                            <label class="form-label">Full Name</label>
-                                            <input type="text" class="form-control" name="full_name" disabled
-                                                placeholder="Full Name" value="{{ $trainee->full_name }}">
-                                        </div>
+                        <div class="card-body">
+                            <h3 class="card-title">Trainee Profile</h3>
+                            <div class="row row-cards">
+                                <div class="col-md-12">
+                                    <div class="mb-3">
+                                        <label class="form-label">Full Name</label>
+                                        <p class="form-control">{{ $trainee->full_name }}</p>
                                     </div>
                                 </div>
-                                <div class="row row-cards">
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label class="form-label">User name</label>
-                                            <input type="text" class="form-control" name="user_name" disabled
-                                                placeholder="User Name" value="{{ $trainee->user_name }}">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label class="form-label">E-mail</label>
-                                            <input type="email" class="form-control" name="email" placeholder="E-mail"
-                                                disabled value="{{ $trainee->email }}">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label class="form-label">Phone</label>
-                                            <input type="phone" class="form-control" name="phone" placeholder="Phone"
-                                                disabled value="{{ $trainee->phone }}">
-                                        </div>
+                            </div>
+                            <div class="row row-cards">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">User name</label>
+                                        <p class="form-control">{{ $trainee->user_name }}</p>
                                     </div>
                                 </div>
-                                <div class="row row-cards">
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label class="form-label">Educational Degree</label>
-                                            <input type="text" class="form-control" name="degree" placeholder="Degree"
-                                                disabled value="{{ $trainee->degree }}">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label class="form-label">status</label>
-                                            <select class="form-control" name="is_active" disabled>
-                                                <option disabled="disabled" selected>select status</option>
-                                                <option value="1" {{ $trainee->is_active ? 'selected' : '' }}>Active
-                                                </option>
-                                                <option value="0" {{ !$trainee->is_active ? 'selected' : '' }}>In
-                                                    Active
-                                                </option>
-                                            </select>
-                                        </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">E-mail</label>
+                                        <p class="form-control">{{ $trainee->email }}</p>
                                     </div>
                                 </div>
-                                <div class="row row-cards">
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label class="form-label">specialist</label>
-                                            <input type="text" name="specialist_id" class="form-control" disabled
-                                                value="{{ $trainee->specialist?->name }}">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label class="form-label">sub specialist</label>
-                                            <input type="text" name="sub_specialist_id" class="form-control" disabled
-                                                value="{{ $trainee->sub_specialist?->name }}">
-                                        </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Phone</label>
+                                        <p class="form-control">{{ $trainee->phone }}</p>
                                     </div>
                                 </div>
-                                <hr />
+                            </div>
+                            <div class="row row-cards">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Educational Degree</label>
+                                        <p class="form-control">{{ $trainee->degree }}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">status</label>
+                                        <p class="form-control">
+                                            {{$trainee->is_active ? 'Active' : 'Inactive'}}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <hr/>
+                            <div class="container">
+                                <h2>Trainee Subscription Package</h2>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card mb-3">
+                                            <div class="card-body">
+                                                @isset($trainee->activeSubscribe)
+                                                    <h5 class="card-title">{{ $trainee->activeSubscribe?->package?->name}}</h5>
+                                                    <p class="card-text">Paid:
+                                                        {{ $trainee->activeSubscribe?->is_paid ? 'Yes' : 'No' }}
+                                                    </p>
+                                                    <p class="card-text">Package quizes count:
+                                                        {{ $trainee->activeSubscribe->quizzes_count}}
+                                                    </p>
+                                                    <p class="card-text">Trainee quezes available:
+                                                        {{ $trainee->activeSubscribe->remaining_quizzes}}
+                                                    </p>
+                                                    <p class="card-text">
+                                                        Amount: {{ $trainee->activeSubscribe->amount }}</p>
+                                                    <p class="card-text">Period:
+                                                        {{  $trainee->activeSubscribe->package_type === 'm' ? 'Monthly' : 'Yearly' }}
+                                                    </p>
+                                                    <p class="card-text">Start Date:
+                                                        {{  $trainee->activeSubscribe->start_date }}</p>
+                                                    <p class="card-text">End
+                                                        Date: {{  $trainee->activeSubscribe->end_date }}
+                                                    </p>
+                                                    <p class="card-text">Payment method:
+                                                        {{  $trainee->activeSubscribe->payment_method }}
+                                                    </p>
+                                                    <p class="card-text">Active:
+                                                        {{  $trainee->activeSubscribe->is_active ? 'Yes' : 'No' }}</p>
+                                                    @if ( $trainee->activeSubscribe->invoice_file)
+                                                        <a href="{{$trainee->activeSubscribe->invoice_file }}"
+                                                           class="btn btn-primary">View Invoice</a>
+                                                    @endif
+                                                @else
+                                                    <p class="alert alert-info">there is no subscribe</p>
+                                                @endisset
 
-                                <div class="container">
-                                    <h2>Packages</h2>
-                                    <hr width="50%" />
-                                    <div class="row">
-                                        @foreach ($trainee->packages as $index => $package)
-                                            <div class="col-md-6">
-                                                <div class="card mb-3">
-                                                    <div class="card-body">
-                                                        <h5 class="card-title">{{ $package->name }}</h5>
-                                                        <p class="card-text">Paid:
-                                                            {{ $package?->pivot?->is_paid ? 'Yes' : 'No' }}
-                                                        </p>
-                                                        <p class="card-text">Package quizes count:
-                                                            {{ $package->no_limit_for_quiz ? 'No limit' : $package->num_available_quiz }}
-                                                        </p>
-                                                        <p class="card-text">Trainee quezes available:
-                                                            {{ $package->no_limit_for_quiz ? '-' : $package->num_available_quiz - $trainee->quizzes->count() }}
-                                                        </p>
-                                                        <p class="card-text">Amount: {{ $package?->pivot?->amount }}</p>
-                                                        <p class="card-text">Period:
-                                                            {{ $package?->pivot?->package_type === 'm' ? 'Monthly' : 'Yearly' }}
-                                                        </p>
-                                                        <p class="card-text">Start Date:
-                                                            {{ $package?->pivot?->start_date }}</p>
-                                                        <p class="card-text">End Date: {{ $package?->pivot?->end_date }}
-                                                        </p>
-                                                        <p class="card-text">Payment method:
-                                                            {{ $package?->pivot?->payment_method }}
-                                                        </p>
-                                                        <p class="card-text">Active:
-                                                            {{ $package?->pivot?->is_active ? 'Yes' : 'No' }}</p>
-                                                        @if ($package?->pivot?->invoice_file)
-                                                            <a href="{{ $package?->pivot?->invoice_file }}"
-                                                                class="btn btn-primary">View Invoice</a>
-                                                        @endif
-                                                    </div>
-                                                </div>
+
                                             </div>
-                                        @endforeach
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="container">
-                                    <hr width="50%" />
-                                    <h2>Quizes</h2>
-                                    <span class="btn btn-dark" style="margin:10px 10px 10px 10px">Quizes count
-                                        ({{ $quizes->total() }})</span>
+                            </div>
+                            <div class="container">
+                                <h2>Quizes</h2>
+                                <span class="btn btn-dark" style="margin:10px 10px 10px 10px">Quizes count({{ $trainee->quizzes_count }})</span>
 
-                                    <table class="table table-vcenter table-mobile-md card-table">
-                                        <thead>
+                                <table class="table table-vcenter table-mobile-md card-table">
+                                    <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Title</th>
+                                        <th>Quiz date</th>
+                                        <th>Trainee name</th>
+                                        <th>Number of questions</th>
+                                        <th>Correct answers percentage</th>
+                                        <th class="w-1">Control</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @if($trainee->quizzes_count)
+                                        @foreach ($quizzes as $index => $quiz)
                                             <tr>
-                                                <th>#</th>
-                                                <th>Title</th>
-                                                <th>Quiz date</th>
-                                                <th>Trainee name</th>
-                                                <th>Number of questions</th>
-                                                <th>Correct answers percentage</th>
-                                                <th class="w-1">Control</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            @foreach ($quizes as $index => $quiz)
-                                                <tr>
-                                                    <td class="text-secondary">
-                                                        {{ ++$index }}
-                                                    </td>
-                                                    <td class="text-secondary" data-label="Role">
-                                                        {{ $quiz->title }}
-                                                    </td>
-                                                    <td class="text-secondary" data-label="Role">
-                                                        {{ $quiz->quiz_date }}
-                                                    </td>
-                                                    <td class="text-secondary" data-label="Role">
-                                                        {{ $quiz->trainee?->full_name }}
-                                                    </td>
-                                                    <td class="text-secondary" data-label="Role">
-                                                        {{ $quiz->question_no }}
-                                                    </td>
+                                                <td class="text-secondary">
+                                                    {{ ++$index }}
+                                                </td>
+                                                <td class="text-secondary" data-label="Role">
+                                                    {{ $quiz->title }}
+                                                </td>
+                                                <td class="text-secondary" data-label="Role">
+                                                    {{ $quiz->quiz_date }}
+                                                </td>
+                                                <td class="text-secondary" data-label="Role">
+                                                    {{ $quiz->trainee?->full_name }}
+                                                </td>
+                                                <td class="text-secondary" data-label="Role">
+                                                    {{ $quiz->question_no }}
+                                                </td>
 
-                                                    <td class="text-secondary" data-label="Role">
-                                                        {{ ($quiz->correctAnswers->count() / $quiz->question_no) * 100 }}%
-                                                    </td>
+                                                <td class="text-secondary" data-label="Role">
+                                                    {{ ($quiz->correctAnswers->count() / $quiz->question_no) * 100 }}%
+                                                </td>
 
-                                                    <td>
-                                                        <div class="btn-list flex-nowrap">
-                                                            <div class="dropdown">
-                                                                <button class="btn dropdown-toggle align-text-top"
+                                                <td>
+                                                    <div class="btn-list flex-nowrap">
+                                                        <div class="dropdown">
+                                                            <button class="btn dropdown-toggle align-text-top"
                                                                     data-bs-toggle="dropdown">
-                                                                    Actions
-                                                                </button>
-                                                                <div class="dropdown-menu dropdown-menu-end">
-                                                                    <a href="{{ route('quiz.show', $quiz->id) }}"
-                                                                        class="dropdown-item">
-                                                                        Show
-                                                                    </a>
-                                                                    <a class="dropdown-item delete"
-                                                                        href="{{ route('quiz.destroy', $quiz->id) }}">
-                                                                        Delete
-                                                                    </a>
+                                                                Actions
+                                                            </button>
+                                                            <div class="dropdown-menu dropdown-menu-end">
+                                                                <a href="{{ route('quiz.show', $quiz->id) }}"
+                                                                   class="dropdown-item">
+                                                                    Show
+                                                                </a>
+                                                                <a class="dropdown-item delete"
+                                                                   href="{{ route('quiz.destroy', $quiz->id) }}">
+                                                                    Delete
+                                                                </a>
 
-                                                                    @if ($quiz->trainee_id)
-                                                                        <a class="dropdown-item"
-                                                                            href="{{ route('trainee.show', $quiz->trainee_id) }}">
-                                                                            Trainee profile
-                                                                        </a>
-                                                                    @endif
-                                                                </div>
+                                                                @if ($quiz->trainee_id)
+                                                                    <a class="dropdown-item"
+                                                                       href="{{ route('trainee.show', $quiz->trainee_id) }}">
+                                                                        Trainee profile
+                                                                    </a>
+                                                                @endif
                                                             </div>
                                                         </div>
-                                                    </td>
-                                                </tr>
-                                            @endforeach
-                                        </tbody>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr class="text-center text-danger">
+                                            <td colspan="7">no quizzes found</td>
+                                        </tr>
+                                    @endif
+                                    </tbody>
 
-                                    </table>
-
-                                    {!! $quizes->render() !!}
-                                </div>
+                                </table>
+                                {!! $quizzes->render() !!}
                             </div>
-                            <div class="card-footer text-center">
-                                <a href="{{ URL::previous() }}" class="btn btn-default">Back</a>
-                            </div>
-                        </form>
+                        </div>
                     </div>
                 </div>
 

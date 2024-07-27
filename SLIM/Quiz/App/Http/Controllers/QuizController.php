@@ -71,6 +71,7 @@ class QuizController extends Controller
      */
     public function show(Quiz $quiz)
     {
+        $quiz->load('listQuestions');
         return view('quiz::show', compact('quiz'));
     }
 

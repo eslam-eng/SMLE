@@ -64,7 +64,12 @@
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label">Password</label>
-                                            <input type="password" class="form-control" name="password" placeholder="Password">
+                                            <div class="input-group">
+                                                <input type="password" class="form-control" id="passwordField" placeholder="password" aria-label="Input group example" aria-describedby="btnGroupAddon">
+                                                <div class="input-group-prepend toggle_show_password">
+                                                    <div class="input-group-text" id="toggle_show_password"><i class="fa fa-eye" style="cursor: pointer"></i></div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -90,30 +95,6 @@
                                             </select>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="row row-cards">
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label class="form-label">specialization</label>
-                                            <select class="form-control specialization" name="specialist_id">
-                                                <option disabled="disabled" selected> select specialist</option>
-                                                @foreach($specializations as $specialization)
-                                                    <option value="{{$specialization->id}}">{{$specialization->name}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label class="form-label">sub specialist</label>
-                                            <select class="form-control sub-specialization" name="sub_specialist_id">
-                                                <option disabled="disabled" selected> select sub specialist</option>
-
-                                            </select>
-                                        </div>
-                                    </div>
-
                                 </div>
                             </div>
                             <div class="card-footer text-center">
