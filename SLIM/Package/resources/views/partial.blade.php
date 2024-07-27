@@ -10,8 +10,9 @@
             <th>Specialities</th>
             <th>Monthly Price</th>
             <th>Yearly Price</th>
-            <th>No.Quiz available</th>
-            <th>No.Question available Quiz </th>
+            <th>No.Quiz </th>
+            <th>No.Questions </th>
+            <th>No.subscribed users </th>
             <th>Is Active</th>
             <th class="w-1">Control</th>
         </tr>
@@ -42,6 +43,9 @@
                 </td>
                 <td class="text-secondary" data-label="Role">
                     {{ $package->no_limit_for_question ? 'No Limit' : $package->num_available_question }}
+                </td>
+                <td class="text-secondary" data-label="Role">
+                    {{ $package->trainees_count}}
                 </td>
                 <td class="text-secondary" data-label="Role">
                     {{ $package->is_active ? 'Yes' : 'No' }}

@@ -36,16 +36,21 @@
 
                                 </div>
 
-                                  <input type="checkbox" name="check_all" class="checkAll" id="checkAll"> All
-                                <br>
-                                Permissions
+                                <div class="form-check">
+                                    <input class="form-check-input checkAll" name="check_all" type="checkbox"  id="checkAll">
+                                    <label class="form-check-label" for="checkAll">
+                                        All Permissions
+                                    </label>
+                                </div>
                                 <hr>
                                 <div class="row row-cards">
                                     @foreach($permissions as $permission)
-                                    <div class="col-md-3">
-                                        <div class="mb-3">
-                                            <input type="checkbox" name="permissions[]" value="{{$permission->name}}">
-                                            {{$permission->name}}
+                                    <div class="col-md-3" >
+                                        <div class="form-check">
+                                            <input class="form-check-input" style="cursor:pointer;" name="permissions[]" type="checkbox" value="{{$permission->name}}" id="permission_{{$permission->id}}">
+                                            <label style="cursor:pointer;" class="form-check-label" for="permission_{{$permission->id}}">
+                                                {{$permission->name}}
+                                            </label>
                                         </div>
                                     </div>
                                         @endforeach

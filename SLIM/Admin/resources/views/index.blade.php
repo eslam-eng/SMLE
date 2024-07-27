@@ -70,7 +70,7 @@
                         </div>
                         <div class="card-footer text-end">
                             <button type="submit" class="btn btn-dark" id="searchBtn">Search</button>
-                            <button type="reset" class="btn btn-default">Reset</button>
+                            <button type="reset" class="btn btn-default" id="ResetSearch">Reset</button>
                         </div>
                     </form>
                 </div>

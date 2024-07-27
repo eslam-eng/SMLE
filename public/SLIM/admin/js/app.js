@@ -1,4 +1,3 @@
-
 $(document).ready(function () {
 
     $("#createForm").submit(function (m) {
@@ -31,7 +30,7 @@ $(document).ready(function () {
                     $('.table-responsive').html(response);
 
                 }
-                window.location.href="/admin"
+                window.location.href = "/admin"
 
             },
             error: function (reject) {
@@ -78,7 +77,7 @@ $(document).ready(function () {
 
 
                 }
-                window.location.href="/admin"
+                window.location.href = "/admin"
             },
             error: function (reject) {
                 if (reject.status === 422) {
@@ -94,8 +93,7 @@ $(document).ready(function () {
 });
 
 
-
-$(document).on('click', '.delete', function(e) {
+$(document).on('click', '.delete', function (e) {
     var url = $(this).attr('href');
     page = $(this).is("a") ? $(this).attr('href').split('page=')[1] : "";
 
@@ -118,9 +116,9 @@ $(document).on('click', '.delete', function(e) {
                     "_token": token,
                     "page": page,
                 },
-            }).done(function(data) {
+            }).done(function (data) {
                 if (data.errors) {
-                    jQuery.each(data.errors, function(key, value) {
+                    jQuery.each(data.errors, function (key, value) {
                         toastr.error(value);
                     });
                 } else {
@@ -131,7 +129,6 @@ $(document).on('click', '.delete', function(e) {
         }
     })
 });
-
 
 
 var page = 1;
@@ -154,5 +151,21 @@ $('body').on('click', '.pagination a , #searchBtn', function (e) {
         }
     });
 });
+$(document).on('click', '#ResetSearch', function (e) {
+    page = $(this).is("a") ? $(this).attr('href').split('page=')[1] : "";
+    $.ajax({
+        dataType: 'html',
+        url: '/admin',
+        data: {
+            "page": $(this).is("a") ? $(this).attr('href').split('page=')[1] : "",
+        },
+        success: function (data) {
+            $('.table-responsive').html(data);
+        }
+    });
+});
+
+
+
 
 

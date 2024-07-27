@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use SLIM\Package\Database\factories\PackageFactory;
 use SLIM\Specialization\App\Models\Specialization;
+use SLIM\Trainee\App\Models\Trainee;
+use SLIM\Trainee\App\Models\TraineeSubscribe;
 use SLIM\Trainee\App\Models\TraineeSubscribeSpecialize;
 
 class Package extends Model
@@ -22,11 +24,6 @@ class Package extends Model
         'num_available_quiz', 'num_available_question', 'is_active', 'description',
     ];
 
-    protected static function newFactory(): PackageFactory
-    {
-        //return PackageFactory::new();
-    }
-
     public function specialist()
     {
         return $this->belongsToMany(Specialization::class, 'packages_specialities', 'package_id', 'specialist_id')
@@ -41,6 +38,11 @@ class Package extends Model
     public function activeTraineeSubscribeSpecialists(): HasMany
     {
         return $this->hasMany(TraineeSubscribeSpecialize::class, 'package_id');
+    }
+
+    public function trainees()
+    {
+        return $this->hasManyThrough(Trainee::class, TraineeSubscribe::class, 'package_id', 'id', 'id', 'trainee_id');
     }
 
 }

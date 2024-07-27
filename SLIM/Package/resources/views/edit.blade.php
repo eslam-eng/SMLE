@@ -28,15 +28,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <hr />
                                 <div class="row row-cards">
-                                    <div class="col-md-4">
-                                        <div class="mb-3">
-                                            <label class="form-label">permanent subscription price</label>
-                                            <input type="number" class="form-control" name="price"
-                                                placeholder="Final Price" value="{{ $package->price }}">
-                                        </div>
-                                    </div>
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label">Monthly Price for all specialities</label>
@@ -52,9 +44,13 @@
                                                 placeholder="Yearly Price">
                                         </div>
                                     </div>
+                                    <hr />
+                                    <div class="col-md-4">
+                                        <button class="btn btn-primary add-button">Add</button>
+                                    </div>
                                     @if ($package->specialist()->count() > 0)
                                         <div class="for_specific_specialities col-md-12">
-                                            @foreach ($package->specialist as $specialist)
+                                            @foreach ($package->specialists as $specialist)
                                                 <div class="row specialist">
                                                     <div class="col-md-4">
                                                         <label class="form-label">specialisation</label>
@@ -65,34 +61,32 @@
                                                             </option>
                                                             @foreach ($specializations as $specialization)
                                                                 <option value="{{ $specialization->id }}"
-                                                                    {{ $specialization->id == $specialist?->pivot?->specialist_id ? 'selected' : '' }}>
+                                                                    {{ $specialization->id == $specialist?->specialist_id ? 'selected' : '' }}>
                                                                     {{ $specialization->name }}
                                                                 </option>
                                                             @endforeach
                                                         </select>
                                                     </div>
-                                                    <div class="col-md-4">
+                                                    <div class="col-md-3">
                                                         <div class="mb-3">
                                                             <label class="form-label">Monthly Price</label>
                                                             <input type="number" class="form-control"
                                                                 name="specialist[monthly_price][]"
                                                                 placeholder="Monthly Price" required
-                                                                value="{{ $specialist?->pivot?->monthly_price }}">
+                                                                value="{{ $specialist?->monthly_price }}">
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-4">
+                                                    <div class="col-md-3">
                                                         <div class="mb-3">
                                                             <label class="form-label">Yearly Price</label>
                                                             <input type="number" class="form-control"
                                                                 name="specialist[yearly_price][]" placeholder="Yearly Price"
-                                                                required value="{{ $specialist?->pivot?->yearly_price }}">
+                                                                required value="{{ $specialist?->yearly_price }}">
                                                         </div>
                                                     </div>
-                                                    @if ($loop->first)
-                                                        <div class="col-md-4">
-                                                            <button class="btn btn-primary add-button">Add</button>
-                                                        </div>
-                                                    @endif
+                                                    <div class="col-md-2">
+                                                        <div class="mb-3"><button class="btn btn-danger mt-5 remove-button"><i class="fa fa-trash"></i></button></div>
+                                                    </div>
                                                 </div>
                                             @endforeach
                                         </div>

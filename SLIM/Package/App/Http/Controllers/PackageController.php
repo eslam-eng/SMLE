@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use SLIM\Constants\App;
 use SLIM\Package\App\Http\Requests\PackageRequest;
+use SLIM\Package\App\Http\Requests\UpdatePackageRequest;
 use SLIM\Package\App\Models\Package;
 use SLIM\Package\Service\PackageService;
 use SLIM\Specialization\Service\SpecializationService;
@@ -29,7 +30,8 @@ class PackageController extends Controller
     public function index(Request $request)
     {
 
-        $packages = $this->packageService->getAllPaginated($request->all(), App::PAGINATE_LENGTH);
+        $packages = $this->packageService->withCount(['trainees'])
+            ->getAllPaginated($request->all(), App::PAGINATE_LENGTH);
 
         if ($request->ajax())
         {
@@ -98,14 +100,14 @@ class PackageController extends Controller
     public function edit(Package $package)
     {
         $specializations = $this->specializationService->getAll();
-
+        $package->load('specialists');
         return view('package::edit', compact('package', 'specializations'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(PackageRequest $packageRequest, Package $package)
+    public function update(UpdatePackageRequest $packageRequest, Package $package)
     {
         DB::beginTransaction();
 

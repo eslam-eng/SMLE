@@ -17,11 +17,6 @@ class PackageSpecialist extends Model
      */
     protected $fillable = ['specialist_id', 'package_id', 'monthly_price', 'yearly_price'];
 
-    protected static function newFactory(): PackageFactory
-    {
-        //return PackageFactory::new();
-    }
-
     public function specialist()
     {
         return $this->belongsToMany(Specialization::class, 'packages_specialities', 'package_id', 'specialist_id')

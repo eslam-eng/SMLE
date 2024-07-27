@@ -19,14 +19,14 @@
             <td class="text-secondary">
                 {{++$index}}
             </td>
-            <td class="text-secondary" >
+            <td class="text-secondary">
                 {{$admin->name}}
             </td>
             <td class="text-secondary">
                 {{$admin->email}}
             </td>
 
-            <td class="text-secondary" >
+            <td class="text-secondary">
                 {{ implode(' ',$admin->roles()->pluck('name')->toArray()) }}
             </td>
 
@@ -34,24 +34,26 @@
                 {{$admin->is_active?  'Yes' :'No' }}
             </td>
             <td>
-                <div class="btn-list flex-nowrap">
-                    <div class="dropdown">
-                        <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">
-                            Actions
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <a
-                                href="{{route('admin.edit',$admin->id)}}"
-                                class="dropdown-item">
-                                edit
-                            </a>
-                            <a class="dropdown-item delete"
-                               href="{{route('admin.destroy',$admin->id)}}">
-                                Delete
-                            </a>
+                @if(!in_array('Super Admin',$admin->roles()->pluck('name')->toArray()))
+                    <div class="btn-list flex-nowrap">
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">
+                                Actions
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a
+                                    href="{{route('admin.edit',$admin->id)}}"
+                                    class="dropdown-item">
+                                    edit
+                                </a>
+                                <a class="dropdown-item delete"
+                                   href="{{route('admin.destroy',$admin->id)}}">
+                                    Delete
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
             </td>
         </tr>
     @endforeach

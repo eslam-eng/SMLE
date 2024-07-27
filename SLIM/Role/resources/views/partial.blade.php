@@ -32,24 +32,28 @@
                 {{$role->is_active?  'Yes' :'No' }}
             </td>
             <td>
-                <div class="btn-list flex-nowrap">
-                    <div class="dropdown">
-                        <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">
-                            Actions
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <a
-                                href="{{route('role.edit',$role->id)}}"
-                                class="dropdown-item">
-                                edit
-                            </a>
-                            <a class="dropdown-item delete"
-                               href="{{route('role.destroy',$role->id)}}">
-                                Delete
-                            </a>
+                @if($role->name != 'Super Admin')
+                    <div class="btn-list flex-nowrap">
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">
+                                Actions
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a
+                                    href="{{route('role.edit',$role->id)}}"
+                                    class="dropdown-item">
+                                    edit
+                                </a>
+
+                                <a class="dropdown-item delete"
+                                   href="{{route('role.destroy',$role->id)}}">
+                                    Delete
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
+                @endif
+
             </td>
         </tr>
     @endforeach

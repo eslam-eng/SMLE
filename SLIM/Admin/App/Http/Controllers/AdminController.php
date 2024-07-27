@@ -29,7 +29,6 @@ class AdminController extends Controller
 
     public function index(Request $request)
     {
-        dd($request->all());
         $admins = $this->adminService->getAllPaginated($request->all(), 15);
         $roles  = $this->roleService->getAll();
 

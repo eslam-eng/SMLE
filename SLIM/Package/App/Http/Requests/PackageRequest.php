@@ -11,10 +11,9 @@ class PackageRequest extends FormRequest
      */
     public function rules(): array {
         return [
-            'name'                       => 'required|string|max:100',
-            'price'                      => 'required|numeric',
-            'monthly_price'              => 'required|numeric',
-            'yearly_price'               => 'required|numeric',
+            'name'                       => 'required|string|max:100|unique:packages,name',
+            'monthly_price'              => 'required|numeric|min:0',
+            'yearly_price'               => 'required|numeric|min:0',
             'num_available_quiz'         => 'required_if:no_limit_for_quiz,==,null|numeric',
             'num_available_question'     => 'required_if:no_limit_for_question,==,null|numeric',
             'is_active'                  => 'required|in:1,0',

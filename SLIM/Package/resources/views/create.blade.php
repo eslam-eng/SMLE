@@ -32,14 +32,14 @@
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label">Monthly Price for all specialities</label>
-                                            <input type="number" class="form-control" name="monthly_price" value="0"
+                                            <input type="number" min="0" class="form-control" name="monthly_price" value="0"
                                                 placeholder="Monthly Price">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label">Yearly Price for all specialities</label>
-                                            <input type="number" class="form-control" name="yearly_price" value="0"
+                                            <input type="number" min="0" class="form-control" name="yearly_price" value="0"
                                                 placeholder="Yearly Price">
                                         </div>
                                     </div>

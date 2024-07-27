@@ -1,4 +1,3 @@
-
 $(document).ready(function () {
     if ($('#no_limit_for_quiz').is(':checked')) {
         $('#num_available_quiz').val(0);
@@ -31,7 +30,7 @@ $(document).ready(function () {
         e.preventDefault();
         var newRow = $('.specialist:eq(0)').clone();
         // Append the cloned row
-        $('.for_specific_specialities').append(newRow);
+        $('.for_specific_specialities').prepend(newRow);
         // Change the button text to remove
         newRow.find('.add-button').text('Remove')
             .removeClass('add-button').addClass('remove-button btn btn-danger mb-2');
@@ -41,7 +40,6 @@ $(document).ready(function () {
     $(document).on('click', '.remove-button', function (e) {
         // Remove the row
         e.preventDefault();
-
         $(this).closest('.specialist').remove();
     });
 
@@ -138,7 +136,6 @@ $(document).ready(function () {
 });
 
 
-
 $(document).on('click', '.delete', function (e) {
     var url = $(this).attr('href');
     page = $(this).is("a") ? $(this).attr('href').split('page=')[1] : "";
@@ -183,7 +180,6 @@ $(document).on('click', '.delete', function (e) {
 });
 
 
-
 var page = 1;
 $('body').on('click', '.pagination a , #searchBtn', function (e) {
     page = $(this).is("a") ? $(this).attr('href').split('page=')[1] : "";
@@ -198,6 +194,22 @@ $('body').on('click', '.pagination a , #searchBtn', function (e) {
         },
         success: function (data) {
             $('.table-responsive').html(data);
+
+        }
+    });
+});
+$(document).on('click', '#Resetsearch', function (e) {
+    page = $(this).is("a") ? $(this).attr('href').split('page=')[1] : "";
+    $.ajax({
+        dataType: 'html',
+        url: '/package',
+        data: {
+            "page": $(this).is("a") ? $(this).attr('href').split('page=')[1] : "",
+        },
+        success: function (data) {
+            $('.table-responsive').html(data);
+            $("#name").val('');
+            $("#is_active").val('').attr('selected');
 
         }
     });
