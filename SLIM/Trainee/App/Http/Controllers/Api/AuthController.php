@@ -44,9 +44,8 @@ class AuthController extends Controller
         $data = $this->authService->createToken($token);
         $user = auth('api')->user()->load(['activeSubscribe']);
         $active_subscribe_specialization_ids = $user->activeSubscribe->tranineeSubscribeSpecialization()->pluck('specialist_id')->toArray();
-        $user->load(['activeSubscribe.package.specialist' => fn($query) => $query->whereIn('specializations.id', $active_subscribe_specialization_ids)]);
-
-        return new TraineeResource($user);
+        $user->loadMissing(['activeSubscribe.package.specialist' => fn($query) => $query->whereIn('specializations.id', $active_subscribe_specialization_ids)]);
+        $data['trainee'] = new TraineeResource($user);
         return $data;
 
     }
