@@ -14,7 +14,7 @@ class QuestionNote extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = [];
+    protected $fillable = ['question_id', 'trainee_id','quiz_id','note'];
 
     public function trainee()
     {
