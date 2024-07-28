@@ -18,6 +18,8 @@ class TraineeSubscribeResource extends JsonResource
             'description' => $this->package->description,
             'package_type' => $this->package_type,
             'amount' => $this->amount,
+            'no_limit_for_quiz' => $this->package->no_limit_for_quiz,
+            'no_limit_for_question' => $this->package->no_limit_for_question,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,
             'is_active' => $this->is_active,
