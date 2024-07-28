@@ -22,7 +22,7 @@ Route::prefix('v1')->name('api.')
         Route::get('show-quiz/{id}', 'show');
         Route::get('statistics', 'Statistics');
         Route::post('save-question-answer', 'SaveQuestionAnswer');
-       // Route::get('quiz-analysis', 'QuizAnalysis');
+        Route::get('quiz-analysis', 'QuizAnalysis');
         Route::post('set-taken-time','SetTakenTime');
         Route::get('complete/quiz','CompleteQuiz');
     });
