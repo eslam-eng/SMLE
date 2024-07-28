@@ -21,7 +21,7 @@ class QuestionController extends Controller
     {
         $user_id = auth()->id();
         QuestionNote::query()->updateOrCreate([
-            "user_id" => $user_id,
+            "trainee_id" => $user_id,
             "question_id" => $questionNoteRequest->question_id,
             "quiz_id" => $questionNoteRequest->quiz_id,
         ], ['note' => $questionNoteRequest->note]);

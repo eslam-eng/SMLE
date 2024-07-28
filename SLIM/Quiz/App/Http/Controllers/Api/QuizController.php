@@ -49,7 +49,7 @@ class QuizController extends Controller
             $quiz->specialist()->sync($quizRequest->specialists);
             $quiz->Subspecialist()->sync($quizRequest->subSpecialists);
             $this->generateQuiz($quizRequest, $quiz, $trainerSubscribePlan);
-            $quiz->load('listQuestions')->loadCount(['correctAnswers', 'incorrectAnswers', 'listQuestions']);
+            $quiz->loadCount(['correctAnswers', 'incorrectAnswers', 'listQuestions']);
             //increment available quizzes
             $trainerSubscribePlan->decrement('remaining_quizzes');
             DB::commit();
@@ -67,7 +67,10 @@ class QuizController extends Controller
     {
         $user_id = auth()->id();
         try {
-            $quiz = Quiz::query()->where('id', $id)->where('trainee_id', $user_id)->first();
+            $quiz = Quiz::query()->with('listQuestions')
+                ->where('id', $id)
+                ->where('trainee_id', $user_id)
+                ->first();
             return new QuizResourceDetails($quiz);
         } catch (\Exception $exception) {
             return $this->returnError($exception->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);

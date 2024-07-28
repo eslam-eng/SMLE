@@ -19,7 +19,6 @@ class QuizResourceDetails extends JsonResource
             'question_no' => $this->question_no,
             'level' => $this->level,
             'quiz_date' => $this->quiz_date,
-            //  'quiz_time' =>$this->quiz_time,
             'question_stop_watch' => $this->question_stop_watch,
             'question_time' => $this->question_time,
             'auto_correction' => $this->auto_correction,
@@ -30,11 +29,10 @@ class QuizResourceDetails extends JsonResource
             'Incorrect_answer_count' => $this->incorrect_answers_count,
             'specialists' => SpecilizationResource::collection($this->specialist),
             'SubSpecialists' => subSpecializationResorce::collection($this->Subspecialist),
-            'taken_time' => $this->time_taken ?? 0,
-            'quiz_duration' => $this->time_taken ?? 0,
+            'quiz_time' => (bool)$this->quiz_time,
             'is_complete' => $this->is_complete,
             'result' => $this->list_questions_count ? ($this->correct_answers_count / $this->list_questions_count) * 100 : 0,
-            'question' => QuestionQuizResource::collection($this->listQuestions),
+            'question' => QuestionQuizResource::collection($this->whenLoaded('listQuestions')),
         ];
     }
 
