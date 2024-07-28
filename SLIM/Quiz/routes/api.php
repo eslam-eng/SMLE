@@ -19,7 +19,7 @@ Route::prefix('v1')->name('api.')
     ->controller(QuizController::class)->group(function () {
         Route::post('save-quiz', 'SaveQuiz');
         Route::get('getAll-quiz', 'getAllQuiz');
-        Route::get('show-quiz', 'show');
+        Route::get('show-quiz/{id}', 'show');
         Route::get('statistics', 'Statistics');
         Route::post('save-question-answer', 'SaveQuestionAnswer');
        // Route::get('quiz-analysis', 'QuizAnalysis');
