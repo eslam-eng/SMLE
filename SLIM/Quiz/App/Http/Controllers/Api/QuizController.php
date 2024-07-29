@@ -188,11 +188,14 @@ class QuizController extends Controller
             'start_date' => $request->start_date,
             'end_date' => $request->end_date,
         ]);
+        $user_id = auth()->id();
+
         $quizzes = Quiz::query()
             ->when(Arr::get($filters, 'title') !== null, fn($q) => $q->where('title', 'LIKE', '%' . $filters['title'] . '%'))
             ->when(Arr::get($filters, 'is_complete') !== null, fn($q) => $q->where('is_complete', $filters['is_complete']))
             ->when(Arr::get($filters, 'start_date') !== null, fn($q) => $q->whereDate('quiz_date', '>=', $filters['start_date']))
             ->when(Arr::get($filters, 'end_date') !== null, fn($q) => $q->whereDate('quiz_date', '<=', $filters['end_date']))
+            ->where('trainee_id',$user_id)
             ->paginate();
         return $this->returnData(QuizResorce::collection($quizzes), 'Quizzes List');
     }
