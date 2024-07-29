@@ -27,8 +27,6 @@ class CategoryController extends Controller
     {
         $categories = $this->categoryServiceInterfaces->getAllPaginated(['is_active' => 1], App::PAGINATE_LENGTH);
         return $this->returnDateWithPaginate($categories, CategoryResource::class, 'Lsit Classifications');
-
-
     }
 
     public function getQuestionClassification(Request $request)

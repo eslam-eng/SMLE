@@ -66,7 +66,8 @@ class SubscribeController extends Controller
             $invoicePaymentData = (new MyfatoorahService())->handleInvoiceLink($subscriber, $traineeSubscribe);
             return $this->returnData([
                 'trainee_subscribe_id' => $traineeSubscribe->id,
-                'payment_link' => Arr::get($invoicePaymentData,'Data.InvoiceURL')
+                'amount' => $traineeSubscribe->amount,
+                'payment_link' => Arr::get($invoicePaymentData, 'Data.InvoiceURL')
             ], 'Subscribe Successfully will approve after confirm payment');
         } catch (\Exception $exception) {
             return $this->returnError($exception->getMessage(), 500);
