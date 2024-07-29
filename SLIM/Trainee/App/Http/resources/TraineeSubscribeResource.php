@@ -28,7 +28,8 @@ class TraineeSubscribeResource extends JsonResource
             'quizzes_count' => $this->quizzes_count,
             'remaining_quizzes' => $this->remaining_quizzes,
             'num_available_question' => $this->num_available_question,
-            'specialists'=>SpecialistResource::collection($this->package->specialist),
+            'invoice_file' => isset($this->invoice_file) ? asset('storage/'.$this->invoice_file) : null,
+            'specialists' => SpecialistResource::collection($this->package->specialist),
         ];
     }
 }

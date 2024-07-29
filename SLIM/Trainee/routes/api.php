@@ -33,6 +33,7 @@ Route::middleware(['middleware' => 'auth:api'])->prefix('v1')->name('api.')
     })
     ->controller(SubscribeController::class)->group(function () {
         Route::post('subscribe', 'subscribe');
+        Route::post('confirm/external-paid', 'confirmExternalPaid');
     });
 
 

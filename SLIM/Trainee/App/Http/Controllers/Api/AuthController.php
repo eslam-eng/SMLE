@@ -107,8 +107,11 @@ class AuthController extends Controller
 
     public function profile()
     {
-        $trainee = new TraineeResource(auth('api')->user());
-        return $this->returnData($trainee, 'Trainee Data');
+        $user = auth('api')->user()->load(['activeSubscribe']);
+        $active_subscribe_specialization_ids = $user->activeSubscribe->tranineeSubscribeSpecialization()->pluck('specialist_id')->toArray();
+        $user->loadMissing(['activeSubscribe.package.specialist' => fn($query) => $query->whereIn('specializations.id', $active_subscribe_specialization_ids)]);
+        return new TraineeResource($user);
+
     }
 
     public function change_password(Request $request)

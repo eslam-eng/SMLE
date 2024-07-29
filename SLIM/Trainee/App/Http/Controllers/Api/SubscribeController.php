@@ -6,8 +6,10 @@ use App\Enum\SubscribeStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Services\MyfatoorahService;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use SLIM\Package\App\Models\Package;
 use SLIM\Trainee\App\Http\Requests\SubscribeTraineeRequest;
 use SLIM\Trainee\App\Models\TraineeSubscribe;
@@ -63,7 +65,8 @@ class SubscribeController extends Controller
 
             $this->createTraineeSubscribeSpecialization($traineeSubscribe, $package, $request->specialist_ids);
             DB::commit();
-            $invoicePaymentData = (new MyfatoorahService())->handleInvoiceLink($subscriber, $traineeSubscribe);
+            if ($request->payment_method != 'external')
+                $invoicePaymentData = (new MyfatoorahService())->handleInvoiceLink($subscriber, $traineeSubscribe);
             return $this->returnData([
                 'trainee_subscribe_id' => $traineeSubscribe->id,
                 'amount' => $traineeSubscribe->amount,
@@ -72,6 +75,41 @@ class SubscribeController extends Controller
         } catch (\Exception $exception) {
             return $this->returnError($exception->getMessage(), 500);
         }
+
+    }
+
+    public function confirmExternalPaid(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'trainee_subscribe_id' => 'required|exists:trainee_subscribes,id',
+            'invoice_file' => 'required|image'
+        ]);
+
+        if ($validator->fails()) {
+            $firstError = $validator->errors()->first();
+
+            return $this->returnError($firstError, 422);
+        }
+        $traineeSubscribe = TraineeSubscribe::query()
+            ->find($request->trainee_subscribe_id);
+
+        if (!$traineeSubscribe)
+            return $this->returnError('resource not found', 404);
+
+        $path = '';
+        if ($request->hasFile('invoice_file')) {
+            $image = $request->file('invoice_file');
+            $path = $image->store('invoices', 'public');
+        }
+
+
+        $traineeSubscribe->update([
+            'invoice_file' => $path ?: null,
+            'payment_method' => 'external',
+            'subscribe_status' => SubscribeStatusEnum::IN_REVIEW->value,
+        ]);
+
+        return $this->returnSuccessMessage('The receipt will be reviewed and payment will confirmed.');
 
     }
 
