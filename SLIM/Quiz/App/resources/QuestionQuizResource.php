@@ -17,7 +17,7 @@ class QuestionQuizResource extends JsonResource
             'question' => $this->question,
             'description' => $this->description,
             'model_answer' => $this->model_answer,
-            'user_answer' => $this->pivot ? $this->pivot->answer : '',
+            'user_answer' => $this->pivot?->user_answer,
             'image' => url($this->image),
             'abbreviations' => AbbreviationResource::collection($this->abbreviations),
             'answers' => array(

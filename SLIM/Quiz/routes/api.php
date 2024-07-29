@@ -1,8 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use SLIM\Quiz\App\Http\Controllers\Api\QuizController;
+
 /*
     |--------------------------------------------------------------------------
     | API Routes
@@ -23,6 +23,6 @@ Route::prefix('v1')->name('api.')
         Route::get('statistics', 'Statistics');
         Route::post('save-question-answer', 'SaveQuestionAnswer');
         Route::get('quiz-analysis', 'QuizAnalysis');
-        Route::post('set-taken-time','SetTakenTime');
-        Route::get('complete/quiz','CompleteQuiz');
+        Route::post('set-taken-time', 'SetTakenTime');
+        Route::get('finish/quiz/{id}', 'finishQuiz');
     });

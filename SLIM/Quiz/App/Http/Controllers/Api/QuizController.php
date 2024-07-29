@@ -67,7 +67,9 @@ class QuizController extends Controller
     {
         $user_id = auth()->id();
         try {
-            $quiz = Quiz::query()->with('listQuestions')
+            $quiz = Quiz::query()
+                ->withCount(['listQuestions','correctAnswers','inCorrectAnswers'])
+                ->with(['listQuestions'])
                 ->where('id', $id)
                 ->where('trainee_id', $user_id)
                 ->first();
@@ -184,7 +186,7 @@ class QuizController extends Controller
             'end_date' => $request->end_date,
         ]);
         $quizzes = Quiz::query()
-            ->when(Arr::get($filters, 'title') !== null, fn($q) => $q->where('title', 'like', '%' . $filters['title'] . '%'))
+            ->when(Arr::get($filters, 'title') !== null, fn($q) => $q->where('title', 'LIKE', '%' . $filters['title'] . '%'))
             ->when(Arr::get($filters, 'is_complete') !== null, fn($q) => $q->where('is_complete', $filters['is_complete']))
             ->when(Arr::get($filters, 'start_date') !== null, fn($q) => $q->whereDate('quiz_date', '>=', $filters['start_date']))
             ->when(Arr::get($filters, 'end_date') !== null, fn($q) => $q->whereDate('quiz_date', '<=', $filters['end_date']))
@@ -202,12 +204,15 @@ class QuizController extends Controller
         return $this->returnSuccessMessage('Quiz Taken Time set Successfully');
     }
 
-    public function CompleteQuiz(Request $request)
+    public function finishQuiz($id)
     {
-        Quiz::where('id', $request->quiz_id)->update([
-            'is_complete' => true
-        ]);
-        return $this->returnSuccessMessage('Quiz Complete Successfully');
+        $quiz = Quiz::query()->withCount(['listQuestions', 'correctAnswers', 'inCorrectAnswers'])->find($id);
+        if (!$quiz)
+            return $this->returnError('resource not found');
+
+        $is_completed = $quiz->list_questions_count <= $quiz->correct_answers_count + $quiz->in_correct_answers_count ? true : false;
+        $quiz->update(['is_completed' => $is_completed]);
+        return $this->returnSuccessMessage('Quiz status updated Successfully');
 
     }
 }

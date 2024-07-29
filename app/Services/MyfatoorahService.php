@@ -28,6 +28,7 @@ class MyfatoorahService
             "CustomerMobile" => $customer->phone,
             "CustomerEmail" => $customer->email,
             "InvoiceValue" => $created_trainee_subscribe->amount,
+            "MobileCountryCode"=> "966",
             "DisplayCurrencyIso" => "SAR",
             "CustomerReference" => $created_trainee_subscribe->id,
             "CallBackUrl" => $this->myfatoorah_call_back_url,

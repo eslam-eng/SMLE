@@ -3,6 +3,7 @@
 namespace SLIM\Trainee\App\Http\resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use SLIM\Package\App\resources\SpecialistResource;
 
 class TraineeSubscribeResource extends JsonResource
 {
@@ -27,6 +28,7 @@ class TraineeSubscribeResource extends JsonResource
             'quizzes_count' => $this->quizzes_count,
             'remaining_quizzes' => $this->remaining_quizzes,
             'num_available_question' => $this->num_available_question,
+            'specialists'=>SpecialistResource::collection($this->package->specialist),
         ];
     }
 }

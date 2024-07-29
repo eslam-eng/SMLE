@@ -29,10 +29,24 @@ class QuestionController extends Controller
 
     }
 
-    public function getQuestionNote()
+    public function getQuestionNote(Request $request)
     {
-        $NotedQuestions = auth()->user()->Notesquestions()->paginate(App::PAGINATE_LENGTH);
-        return $this->returnDateWithPaginate($NotedQuestions, QuestionNoteResource::class, 'Noted Questions');
+        $user_id = auth()->id();
+        $questionNotes = QuestionNote::query()
+            ->with(['question', 'quiz'])
+            ->where('trainee_id', $user_id);
+        if (count($request->all()) > 0) {
+            $questionNotes->where(function ($query) use ($request) {
+                if (isset($request->note)) {
+                    $query->where("note", 'LIKE', "%" . $request->note . "%");
+                }
+                if (isset($request->question)) {
+                    $query->whereHas('question', fn($subQuery) => $subQuery->where('question', 'LIKE', "%" . $request->question . "%"));
+                }
+            });
+        }
+        $questionNotes = $questionNotes->paginate(10);
+        return $this->returnDateWithPaginate($questionNotes, QuestionNoteResource::class, 'Noted Questions');
 
     }
 

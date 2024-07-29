@@ -21,8 +21,9 @@ class AbbreviationController extends Controller
 
     public function index(Request $request)
     {
+        $request = $request->all();
         $request['is_active'] = 1;
-        $abbreviations = $this->abbreviationService->getAllPaginated($request->all(), 15);
+        $abbreviations = $this->abbreviationService->getAllPaginated($request, 10);
         return $this->returnDateWithPaginate($abbreviations,AbbreviationResource::Class,'Abbreviation List');
     }
 }

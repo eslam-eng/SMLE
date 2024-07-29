@@ -2,11 +2,9 @@
 
 namespace SLIM\Quiz\App\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use SLIM\Question\App\Models\Question;
-use SLIM\Quiz\Database\factories\QuizFactory;
 use SLIM\Specialization\App\Models\Specialization;
 use SLIM\Subspecialties\App\Models\SubSpecialties;
 use SLIM\Trainee\App\Models\Trainee;
@@ -19,13 +17,6 @@ class Quiz extends Model
      * The attributes that are mass assignable.
      */
     protected $guarded = [];
-
-    public function scopeFilters(Builder $query, ?array $filters = []): void
-    {
-        foreach ($filters as $field => $value) {
-            $query->where($field, $value);
-        }
-    }
 
     public function specialist()
     {

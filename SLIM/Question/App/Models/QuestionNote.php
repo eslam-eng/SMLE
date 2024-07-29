@@ -4,7 +4,9 @@ namespace SLIM\Question\App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use SLIM\Question\Database\factories\QuestionNoteFactory;
+use SLIM\Quiz\App\Models\Quiz;
 use SLIM\Trainee\App\Models\Trainee;
 
 class QuestionNote extends Model
@@ -21,13 +23,13 @@ class QuestionNote extends Model
         return $this->belongsTo(Trainee::class, 'trainee_id');
     }
 
-    public function question()
+    public function question(): BelongsTo
     {
         return $this->belongsTo(Question::class, 'question_id');
     }
-
-    protected static function newFactory(): QuestionNoteFactory
+    public function quiz(): BelongsTo
     {
-        //return QuestionNoteFactory::new();
+        return $this->belongsTo(Quiz::class, 'quiz_id');
     }
+
 }

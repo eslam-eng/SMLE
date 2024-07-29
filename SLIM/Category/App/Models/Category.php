@@ -2,10 +2,10 @@
 
 namespace SLIM\Category\App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 use SLIM\Category\Database\factories\CategoryFactory;
-use SLIM\Specialization\App\Models\Specialization;
+use SLIM\Question\App\Models\QuestionCategory;
 
 class Category extends Model
 {
@@ -17,12 +17,11 @@ class Category extends Model
 
     protected $fillable = ['name', 'color', 'num_question', 'is_active'];
 
-    protected static function newFactory(): CategoryFactory
+
+    public function questionCategory()
     {
-        //return CategoryFactory::new();
+        return $this->hasMany(QuestionCategory::class, 'category_id');
     }
-
-
 
 
 }
