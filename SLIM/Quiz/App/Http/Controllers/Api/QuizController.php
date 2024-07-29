@@ -30,7 +30,8 @@ class QuizController extends Controller
             $user = auth()->user();
             //get trainner subscrip active plan
             $trainerSubscribePlan = TraineeSubscribe::query()
-                ->where(['is_paid' => true, 'is_active' => true, 'subscribe_status' => SubscribeStatusEnum::INPROGRESS->value, 'trainee_id' => $user->id])
+                ->where(['is_paid' => true, 'is_active' => true,'trainee_id' => $user->id])
+                ->latest()
                 ->first();
             $quizData = $quizRequest->except('specialists', 'subSpecialists');
             $quizData['trainee_subscribe_id'] = $trainerSubscribePlan->id;
@@ -73,6 +74,8 @@ class QuizController extends Controller
                 ->where('id', $id)
                 ->where('trainee_id', $user_id)
                 ->first();
+            if (!$quiz)
+                return $this->returnError('quiz not found');
             return new QuizResourceDetails($quiz);
         } catch (\Exception $exception) {
             return $this->returnError($exception->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
