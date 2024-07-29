@@ -197,7 +197,7 @@ class QuizController extends Controller
             ->when(Arr::get($filters, 'end_date') !== null, fn($q) => $q->whereDate('quiz_date', '<=', $filters['end_date']))
             ->where('trainee_id',$user_id)
             ->paginate();
-        return $this->returnData(QuizResorce::collection($quizzes), 'Quizzes List');
+        return QuizResorce::collection($quizzes);
     }
 
     public function SetTakenTime(Request $request)
