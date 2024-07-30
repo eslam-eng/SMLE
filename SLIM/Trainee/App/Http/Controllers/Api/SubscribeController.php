@@ -66,6 +66,7 @@ class SubscribeController extends Controller
 
             $this->createTraineeSubscribeSpecialization($traineeSubscribe, $package, $request->specialist_ids);
             DB::commit();
+            $invoicePaymentData = [];
             if ($request->payment_method != 'external')
                 $invoicePaymentData = (new MyfatoorahService())->handleInvoiceLink($subscriber, $traineeSubscribe);
             return $this->returnData([
