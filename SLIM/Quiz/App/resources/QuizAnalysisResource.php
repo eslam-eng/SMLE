@@ -14,8 +14,10 @@ class QuizAnalysisResource extends JsonResource
     public function toArray($request): array
     {
         return [
+            'id' => $this->id,
             'quiz_title' => $this->title,
             'quiz_date' => $this->quiz_date,
+            'is_complete' => $this->is_complete,
             'quiz_level' => $this->level,
             'quiz_duration' => $this->time_taken ?? 0,
             'question_count' => $this->list_questions_count,
@@ -26,6 +28,8 @@ class QuizAnalysisResource extends JsonResource
             'result' => $this->list_questions_count ? ($this->correct_answers_count / $this->list_questions_count) * 100 : 0,
             'specialists' => SpecilizationResource::collection($this->specialist),
             'SubSpecialists' => subSpecializationResorce::collection($this->Subspecialist),
+            'question' => QuestionQuizResource::collection($this->whenLoaded('listQuestions')),
+
 
         ];
     }

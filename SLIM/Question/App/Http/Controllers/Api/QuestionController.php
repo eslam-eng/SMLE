@@ -46,8 +46,7 @@ class QuestionController extends Controller
             });
         }
         $questionNotes = $questionNotes->paginate(10);
-        return $this->returnDateWithPaginate($questionNotes, QuestionNoteResource::class, 'Noted Questions');
-
+        return QuestionNoteResource::collection($questionNotes);
     }
 
     public function deleteQuestionNote(Request $request)
@@ -57,14 +56,12 @@ class QuestionController extends Controller
 
     }
 
-    public function QuestionNoteDetails(Request $request)
+    public function QuestionNoteDetails($id)
     {
-        $NotedQuestion = QuestionNoteResource::make(
-            auth()->user()->Notesquestions()->where('question_notes.id', $request->question_note_id)->first()
-        );
-
-        return $this->returnData($NotedQuestion, 'Noted Questions');
-
+        $questionNote = QuestionNote::query()
+            ->with(['question', 'quiz'])
+            ->find($id);
+        return new QuestionNoteResource($questionNote);
     }
 
     public function questionSuggest(QuestionSuggestRequest $questionSuggestRequest)

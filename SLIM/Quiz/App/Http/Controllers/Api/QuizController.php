@@ -172,7 +172,7 @@ class QuizController extends Controller
             'answers as incorrect_answers_count' => fn($q) => $q->where('is_correct', 0),
             'answers as unanswered_count' => fn($q) => $q->whereNull('is_correct'),
             'listQuestions'
-        ])->where('id', $request->quiz_id)
+        ])->with('listQuestions')->where('id', $request->quiz_id)
             ->first();
 
         $QuizAnalysis = QuizAnalysisResource::make($quiz);
@@ -195,8 +195,9 @@ class QuizController extends Controller
             ->when(Arr::get($filters, 'is_complete') !== null, fn($q) => $q->where('is_complete', $filters['is_complete']))
             ->when(Arr::get($filters, 'start_date') !== null, fn($q) => $q->whereDate('quiz_date', '>=', $filters['start_date']))
             ->when(Arr::get($filters, 'end_date') !== null, fn($q) => $q->whereDate('quiz_date', '<=', $filters['end_date']))
-            ->where('trainee_id',$user_id)
-            ->paginate();
+            ->where('trainee_id',$user_id);
+
+        $quizzes = $quizzes->paginate();
         return QuizResorce::collection($quizzes);
     }
 

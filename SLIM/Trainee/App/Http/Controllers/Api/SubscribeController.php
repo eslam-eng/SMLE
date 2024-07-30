@@ -34,7 +34,7 @@ class SubscribeController extends Controller
                 $this->returnError('package not found', 404);
 
 
-            if (count($request->specialist_ids) < $package->specialist->count()) {
+            if (count($request->specialist_ids) < $package->specialists->count()) {
                 $amount = $this->getTraineeSubscribeAmount($package, $request);
             } else {
                 $amount = $request->package_type == 'm' ? $package->monthly_price : $package->yearly_price;
@@ -52,6 +52,7 @@ class SubscribeController extends Controller
                     'package_id' => $package->id,
                     'trainee_id' => $subscriber->id,
                     'package_type' => $request->package_type,
+                    'payment_method' => $request->payment_method,
                     'is_paid' => 0,
                     'amount' => $amount,
                     'start_date' => $start_date,
@@ -138,7 +139,7 @@ class SubscribeController extends Controller
     private function getTraineeSubscribeAmount($package, $request)
     {
         $sum_column = $request->package_type == 'm' ? 'monthly_price' : 'yearly_price';
-        return $package->specialist->whereIn('id', $request->specialist_ids)->sum($sum_column);
+        return $package->specialists->whereIn('specialist_id', $request->specialist_ids)->sum($sum_column);
     }
 
 }

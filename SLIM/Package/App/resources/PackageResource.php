@@ -21,7 +21,8 @@ class PackageResource extends JsonResource
             'no_limit_for_quiz' => $this->no_limit_for_quiz,
             'no_limit_for_question' => $this->no_limit_for_question,
             'specialities' => (isset($this->specialist)) ? SpecialistResource::collection($this->specialist) : null,
-            'description' => $this->description
+            'description' => $this->description,
+            'is_free_package' => ($this->monthly_price && $this->yearly_price),
         ];
     }
 }
