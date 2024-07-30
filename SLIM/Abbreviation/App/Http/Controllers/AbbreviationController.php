@@ -111,11 +111,12 @@ class AbbreviationController extends Controller
         try {
             $import = new AbbreviationImport();
             $import->import($file);
+            session()->flash('success', 'imported successffuly');
+            return back();
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
             session()->flash('failures', $failures);
             return back();
-
         } catch (\Exception $e) {
             session()->flash('server_error', 'there is an error while importing abbreviations');
             return back();
