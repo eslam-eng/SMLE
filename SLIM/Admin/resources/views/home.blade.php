@@ -144,12 +144,9 @@
                                             <th>Full Name</th>
                                             <th>Phone</th>
                                             <th>UserName</th>
-{{--                                            <th>Specialist</th>--}}
-{{--                                            <th>Sub Specialist</th>--}}
                                             <th>Educational degree</th>
-                                            <th>Quiz</th>
+                                            <th>quizzes number</th>
                                             <th>Is Active</th>
-
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -169,14 +166,6 @@
                                                     {{ $trainee->user_name }}
                                                 </td>
 
-                                                <td class="text-secondary" data-label="Role">
-                                                    {{ $trainee['specialist'] ? $trainee['specialist']['name'] : '-' }}
-                                                </td>
-
-
-{{--                                                <td class="text-secondary" data-label="Role">--}}
-{{--                                                    {{ $trainee['sub_specialist'] ? $trainee['sub_specialist']['name'] : '-' }}--}}
-{{--                                                </td>--}}
                                                 <td class="text-secondary" data-label="Role">
                                                     {{ $trainee->degree }}
                                                 </td>

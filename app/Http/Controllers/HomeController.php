@@ -42,12 +42,17 @@ class HomeController extends Controller
         $yearlySubscriptionCount  = TraineeSubscribe::where('is_active', 1)->where('is_paid', 1)->where('package_type', 'y')->count();
 
         // trainee most has quiz
-        $traineesMostHasQuiz = Trainee::with(['sub_specialist', 'specialist'])->withCount('quizzes')->orderBy('quizzes_count', 'desc')->take(5)->get();
+        $traineesMostHasQuiz = Trainee::query()
+            ->withCount('quizzes')
+            ->orderBy('quizzes_count', 'desc')
+            ->take(5)->get();
+
         // trainee most has quiz with correct answers
         $specializatMostHasSubscription = Specialization::withCount(['subscribes' => function ($q)
         {
             $q->whereHas('traineeSubscribe', fn($query)=>$query->where('is_active',1)->where('is_paid', 1));
-        }, 'questions'])->orderBy('subscribes_count', 'desc')->take(5)->get();
+        }, 'questions'])
+            ->orderBy('subscribes_count', 'desc')->take(5)->get();
 
         return view('admin::home', compact('traineeCount', 'questionCount', 'subscriptionCount',
             'monthlySubscriptionCount', 'yearlySubscriptionCount',
