@@ -20,7 +20,7 @@ Route::prefix('v1')->name('api.')
         Route::post('save-quiz', 'SaveQuiz');
         Route::get('getAll-quiz', 'getAllQuiz');
         Route::get('show-quiz/{id}', 'show');
-        Route::get('statistics', 'Statistics');
+        Route::get('statistics', 'statistics');
         Route::post('save-question-answer', 'SaveQuestionAnswer');
         Route::get('quiz-analysis', 'QuizAnalysis');
         Route::post('set-taken-time', 'SetTakenTime');

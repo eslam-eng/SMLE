@@ -2,7 +2,6 @@
 
 namespace SLIM\Quiz\App\Http\Controllers\Api;
 
-use App\Enum\SubscribeStatusEnum;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -30,7 +29,7 @@ class QuizController extends Controller
             $user = auth()->user();
             //get trainner subscrip active plan
             $trainerSubscribePlan = TraineeSubscribe::query()
-                ->where(['is_paid' => true, 'is_active' => true,'trainee_id' => $user->id])
+                ->where(['is_paid' => true, 'is_active' => true, 'trainee_id' => $user->id])
                 ->latest()
                 ->first();
             $quizData = $quizRequest->except('specialists', 'subSpecialists');
@@ -38,7 +37,7 @@ class QuizController extends Controller
             $quizData['quiz_date'] = date('Y-m-d');
 
             if ($trainerSubscribePlan->num_available_question < $quizRequest->question_no)
-                return $this->returnError("you cannont exceed available question number $trainerSubscribePlan->num_available_question", 422);
+                return $this->returnError("you cannot exceed available question number $trainerSubscribePlan->num_available_question", 422);
 
             if (!$trainerSubscribePlan->remaining_quizzes)
                 return $this->returnError("There is no quizzes available , please upgrade or renew plan", 422);
@@ -69,13 +68,13 @@ class QuizController extends Controller
         $user_id = auth()->id();
         try {
             $quiz = Quiz::query()
-                ->withCount(['listQuestions','correctAnswers','inCorrectAnswers'])
+                ->withCount(['listQuestions', 'correctAnswers', 'inCorrectAnswers'])
                 ->with(['listQuestions'])
                 ->where('id', $id)
                 ->where('trainee_id', $user_id)
                 ->first();
             if (!$quiz)
-                return $this->returnError('quiz not found');
+                return $this->returnError('quiz not found', 404);
             return new QuizResourceDetails($quiz);
         } catch (\Exception $exception) {
             return $this->returnError($exception->getMessage(), Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -125,11 +124,29 @@ class QuizController extends Controller
         return DB::table('quiz_question')->insert($quizQuestionData);
     }
 
-    public function Statistics()
+    public function statistics()
     {
-        $Statistic = StatisticQuizResource::make(auth()->user());
-        return $this->returnData($Statistic, 'Statistic');
+        $user = auth()->user()->loadCount([
+            'quizzes' => fn($query) => $query->withCount(['listQuestions', 'correctAnswers', 'inCorrectAnswers']),
 
+            'quizzes as list_questions_count' => fn($query) => $query
+                ->join('quiz_question', 'quizzes.id', '=', 'quiz_question.quiz_id')
+                ->select(DB::raw('count(quiz_question.id)')),
+
+            'quizzes as correct_answers_count' => fn($query) => $query
+                ->join('quiz_question', fn($subQuery) => $subQuery
+                    ->on('quizzes.id', '=', 'quiz_question.quiz_id'))
+                ->where('is_correct', 1)
+                ->select(DB::raw('count(quiz_question.id)')),
+
+            'quizzes as incorrect_answers_count' => fn($query) => $query
+                ->join('quiz_question', fn($subQuery) => $subQuery
+                    ->on('quizzes.id', '=', 'quiz_question.quiz_id'))
+                ->where('is_correct', 0)
+                ->select(DB::raw('count(quiz_question.id)')),
+
+        ]);
+        return new StatisticQuizResource($user);
     }
 
     public function SaveQuestionAnswer(QuestionAnswerRequest $questionAnswerRequest)
@@ -195,7 +212,7 @@ class QuizController extends Controller
             ->when(Arr::get($filters, 'is_complete') !== null, fn($q) => $q->where('is_complete', $filters['is_complete']))
             ->when(Arr::get($filters, 'start_date') !== null, fn($q) => $q->whereDate('quiz_date', '>=', $filters['start_date']))
             ->when(Arr::get($filters, 'end_date') !== null, fn($q) => $q->whereDate('quiz_date', '<=', $filters['end_date']))
-            ->where('trainee_id',$user_id);
+            ->where('trainee_id', $user_id);
 
         $quizzes = $quizzes->paginate();
         return QuizResorce::collection($quizzes);

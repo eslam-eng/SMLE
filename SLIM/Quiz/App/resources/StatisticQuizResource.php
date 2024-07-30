@@ -12,13 +12,12 @@ class StatisticQuizResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'quiz_count' =>$this->quizzes()->count(),
-            'question_count' =>$this->quizzes()->count(),
-            'correct_answer' =>$this->correctAnswers ? $this->correctAnswers()->count() :0,
-            'Incorrect_answer' =>$this->correctAnswers ? $this->inCorrectAnswers()->count() :0,
-            'result' =>$this->correctAnswers ? $this->correctAnswers()->count() / $this->quizzes()->count() *100 :0,
+            'quiz_count' => $this->quizzes_count,
+            'question_count' => $this->list_questions_count,
+            'correct_answer' => $this->correct_answers_count,
+            'incorrect_answer' => $this->incorrect_answers_count,
+            'result' => $this->list_questions_count > 0 ? ($this->correct_answers_count / $this->list_questions_count) * 100 : 0,
         ];
-
 
 
     }
