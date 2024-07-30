@@ -47,7 +47,8 @@ class TraineeController extends Controller
         $specializations = $this->specializationService->getAll();
         $sub_specializations = $this->subSpecializationService->getAll();
 
-        $trainees = $this->traineeService->withCount(['quizzes'])
+        $trainees = $this->traineeService
+            ->withCount(['quizzes'])
             ->with(['activeSubscribe.package'])
             ->getAllPaginated($request->all(), 15);
         if ($request->ajax()) {

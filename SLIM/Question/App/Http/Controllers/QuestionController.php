@@ -20,33 +20,32 @@ class QuestionController extends Controller
     private QuestionService $questionservice;
     private SpecializationService $specializationService;
     private SubSpecializationServiceInterface $subSpecializationService;
-    private  AbbreviationServiceInterface $abbreviationServiceInterface;
+    private AbbreviationServiceInterface $abbreviationServiceInterface;
 
-    public function __construct(QuestionService $questionservice,
-        SpecializationService $specializationService,
-        SubSpecializationServiceInterface $subSpecializationService,
-        AbbreviationServiceInterface $abbreviationServiceInterface
+    public function __construct(QuestionService                   $questionservice,
+                                SpecializationService             $specializationService,
+                                SubSpecializationServiceInterface $subSpecializationService,
+                                AbbreviationServiceInterface      $abbreviationServiceInterface
     )
     {
-        $this->questionservice          = $questionservice;
-        $this->specializationService    = $specializationService;
+        $this->questionservice = $questionservice;
+        $this->specializationService = $specializationService;
         $this->subSpecializationService = $subSpecializationService;
-        $this->abbreviationServiceInterface =$abbreviationServiceInterface;
+        $this->abbreviationServiceInterface = $abbreviationServiceInterface;
 
     }
 
     public function index(Request $request)
     {
-        $specializations     = $this->specializationService->getAll();
+        $specializations = $this->specializationService->getAll();
         $sub_specializations = $this->subSpecializationService->getAll();
 
         $questions = $this->questionservice
             ->getAllPaginated(
-            search: $request->all(),
-            withCountRelations: ['quizzes']);
+                search: $request->all(),
+                withCountRelations: ['quizzes']);
 
-        if ($request->ajax())
-        {
+        if ($request->ajax()) {
             return view('question::partial', compact('questions'));
         }
 
@@ -60,9 +59,9 @@ class QuestionController extends Controller
     public function create()
     {
         $specializations = $this->specializationService->getAll();
-        $abbreviations= $this->abbreviationServiceInterface->getAll();
+        $abbreviations = $this->abbreviationServiceInterface->getAll();
 
-        return view('question::create', compact('specializations','abbreviations'));
+        return view('question::create', compact('specializations', 'abbreviations'));
     }
 
     /**
@@ -71,8 +70,7 @@ class QuestionController extends Controller
     public function store(QuestionRequest $questionRequest)
     {
 
-        if ($questionRequest->hasFile('question_image'))
-        {
+        if ($questionRequest->hasFile('question_image')) {
             $fileName = $questionRequest->question_image->HashName();
             $questionRequest->question_image->storeAs('public/question', $fileName);
 
@@ -81,8 +79,8 @@ class QuestionController extends Controller
             ]);
         }
 
-        $question =$this->questionservice->create($questionRequest->all());
-        $question =$question->abbreviations()->sync($questionRequest->abbreviations);
+        $question = $this->questionservice->create($questionRequest->all());
+        $question = $question->abbreviations()->sync($questionRequest->abbreviations);
     }
 
     /**
@@ -103,13 +101,13 @@ class QuestionController extends Controller
         ];
 
 
-        $abbreviations= $this->abbreviationServiceInterface->getAll();
-        $specializations    = $this->specializationService->getAll();
+        $abbreviations = $this->abbreviationServiceInterface->getAll();
+        $specializations = $this->specializationService->getAll();
         $subSpecializations = $this->subSpecializationService->getAll($data);
-        $Selected_abbreviations=$question->abbreviations ? $question->abbreviations()->pluck('abbreviation_id')->toarray():[];
+        $Selected_abbreviations = $question->abbreviations ? $question->abbreviations()->pluck('abbreviation_id')->toarray() : [];
 
 
-        return view('question::edit', compact('specializations', 'question', 'subSpecializations','abbreviations','Selected_abbreviations'));
+        return view('question::edit', compact('specializations', 'question', 'subSpecializations', 'abbreviations', 'Selected_abbreviations'));
     }
 
     /**
@@ -118,8 +116,7 @@ class QuestionController extends Controller
     public function update(QuestionRequest $questionRequest, Question $question)
     {
 
-        if ($questionRequest->hasFile('question_image'))
-        {
+        if ($questionRequest->hasFile('question_image')) {
             $fileName = $questionRequest->question_image->HashName();
             $questionRequest->question_image->storeAs('public/question', $fileName);
             $questionRequest->merge([
@@ -128,7 +125,7 @@ class QuestionController extends Controller
         }
 
         $this->questionservice->update($question, $questionRequest->all());
-        $question =$question->abbreviations()->sync($questionRequest->abbreviations);
+        $question = $question->abbreviations()->sync($questionRequest->abbreviations);
 
     }
 
@@ -143,8 +140,8 @@ class QuestionController extends Controller
 
     public function export()
     {
-        $file_name = 'abbreviations' . now()->format('YmdHis') . '.xlsx';
-        $questions = Question::with(['specialist','sub_specialist'])->get();
+        $file_name = 'question_bank' . now()->format('YmdHis') . '.xlsx';
+        $questions = Question::with(['specialist', 'sub_specialist'])->get();
         return (new QuestionsExport($questions))->download($file_name);
     }
 

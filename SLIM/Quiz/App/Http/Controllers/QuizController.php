@@ -24,25 +24,24 @@ class QuizController extends Controller
     private SubSpecializationService $subSpecializationService;
     protected $service;
 
-    public function __construct(QuizService $quizService,
-        SpecializationService $specializationService,
-        SubSpecializationServiceInterface $subSpecializationService
+    public function __construct(QuizService                       $quizService,
+                                SpecializationService             $specializationService,
+                                SubSpecializationServiceInterface $subSpecializationService
     )
     {
-        $this->quizService              = $quizService;
-        $this->specializationService    = $specializationService;
+        $this->quizService = $quizService;
+        $this->specializationService = $specializationService;
         $this->subSpecializationService = $subSpecializationService;
     }
 
     public function index(Request $request)
     {
-        $specializations     = $this->specializationService->getAll();
+        $specializations = $this->specializationService->getAll();
         $sub_specializations = $this->subSpecializationService->getAll();
 
         $quizs = $this->quizService->with(['correctAnswers', 'trainee'])->getAllPaginated($request->all(), 15);
 
-        if ($request->ajax())
-        {
+        if ($request->ajax()) {
             return view('quiz::partial', compact('quizs'));
         }
 
@@ -71,7 +70,12 @@ class QuizController extends Controller
      */
     public function show(Quiz $quiz)
     {
-        $quiz->load('listQuestions');
+        $quiz->load([
+            'answerdQuestions'=>['specialist','sub_specialist'],
+            'unanswerdQuestions'=>['specialist','sub_specialist'],
+        ])
+            ->loadCount(['answers as correct_answers' => fn($query) => $query->where('is_correct', 1), 'answers as incorrect_answers' => fn($query) => $query->where('is_correct', 0)]);
+//        dd($quiz);
         return view('quiz::show', compact('quiz'));
     }
 

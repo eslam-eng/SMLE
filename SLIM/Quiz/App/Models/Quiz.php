@@ -34,6 +34,20 @@ class Quiz extends Model
             ->withPivot('is_correct', 'answer', 'user_answer');
     }
 
+    public function answerdQuestions()
+    {
+        return $this->belongsToMany(Question::class, 'quiz_question', 'quiz_id', 'question_id')
+            ->wherePivot('is_correct', 1)
+            ->withPivot('is_correct', 'answer', 'user_answer');
+    }
+
+    public function unanswerdQuestions()
+    {
+        return $this->belongsToMany(Question::class, 'quiz_question', 'quiz_id', 'question_id')
+            ->wherePivot('is_correct', null)
+            ->withPivot('is_correct', 'answer', 'user_answer');
+    }
+
     public function correctAnswers()
     {
         return $this->belongsToMany(Question::class, 'quiz_question', 'quiz_id', 'question_id')
@@ -43,6 +57,16 @@ class Quiz extends Model
     public function answers(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(QuizQuestion::class, 'quiz_id');
+    }
+
+    public function getLevelTextAttribute()
+    {
+        return match ($this->level) {
+            1 => 'easy',
+            2 => 'intermediate',
+            3 => 'difficult',
+            default => '-'
+        };
     }
 
 
