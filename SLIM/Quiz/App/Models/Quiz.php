@@ -45,6 +45,7 @@ class Quiz extends Model
         return $this->hasMany(QuizQuestion::class, 'quiz_id');
     }
 
+
     public function inCorrectAnswers()
     {
         return $this->belongsToMany(Question::class, 'quiz_question', 'quiz_id', 'question_id')

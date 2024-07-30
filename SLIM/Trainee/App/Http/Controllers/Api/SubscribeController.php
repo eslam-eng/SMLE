@@ -43,11 +43,6 @@ class SubscribeController extends Controller
             $end_date = $this->getPackagePeriod($request->package_type);
             DB::beginTransaction();
 
-            TraineeSubscribe::query()
-                ->where('trainee_id', $subscriber->id)
-                ->whereIn('subscribe_status', [SubscribeStatusEnum::INPROGRESS->value, SubscribeStatusEnum::PENDING->value])
-                ->update(['subscribe_status' => SubscribeStatusEnum::FINISHED->value, 'is_active' => false]);
-
             $traineeSubscribe = TraineeSubscribe::create([
                     'package_id' => $package->id,
                     'trainee_id' => $subscriber->id,

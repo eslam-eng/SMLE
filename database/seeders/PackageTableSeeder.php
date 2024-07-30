@@ -26,7 +26,7 @@ class PackageTableSeeder extends Seeder
                 'is_active' => true,
                 'description' => fake()->sentence,
             ]);
-            $specialization = Specialization::query()->inRandomOrder()->limit(fake()->numberBetween(1,10))->pluck('id')->toArray();
+            $specialization = Specialization::query()->inRandomOrder()->limit(fake()->numberBetween(1, 10))->pluck('id')->toArray();
             $package->specialist()->sync($specialization);
         }
     }

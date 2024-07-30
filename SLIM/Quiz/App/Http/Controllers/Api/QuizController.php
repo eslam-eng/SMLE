@@ -13,7 +13,7 @@ use SLIM\Quiz\App\Http\Requests\QuizRequest;
 use SLIM\Quiz\App\Models\Quiz;
 use SLIM\Quiz\App\Models\QuizQuestion;
 use SLIM\Quiz\App\resources\QuizAnalysisResource;
-use SLIM\Quiz\App\resources\QuizResorce;
+use SLIM\Quiz\App\resources\QuizResource;
 use SLIM\Quiz\App\resources\QuizResourceDetails;
 use SLIM\Quiz\App\resources\StatisticQuizResource;
 use SLIM\Trainee\App\Models\TraineeSubscribe;
@@ -126,26 +126,37 @@ class QuizController extends Controller
 
     public function statistics()
     {
-        $user = auth()->user()->loadCount([
-            'quizzes' => fn($query) => $query->withCount(['listQuestions', 'correctAnswers', 'inCorrectAnswers']),
+        $user = auth()->user()
+            ->load([
+                'quizzes' => fn($query) => $query
+                    ->limit(10)
+                    ->latest('id')
+                    ->orderBy('id', 'asc')
+                    ->withCount([
+                        'listQuestions',
+                        'answers as correct_answers' => fn($query) => $query->where('is_correct', 1),
+                        'answers as incorrect_answers' => fn($query) => $query->where('is_correct', 0)
+                    ])
+            ])->loadCount([
+                'quizzes',
 
-            'quizzes as list_questions_count' => fn($query) => $query
-                ->join('quiz_question', 'quizzes.id', '=', 'quiz_question.quiz_id')
-                ->select(DB::raw('count(quiz_question.id)')),
+                'quizzes as list_questions_count' => fn($query) => $query
+                    ->join('quiz_question', 'quizzes.id', '=', 'quiz_question.quiz_id')
+                    ->select(DB::raw('count(quiz_question.id)')),
 
-            'quizzes as correct_answers_count' => fn($query) => $query
-                ->join('quiz_question', fn($subQuery) => $subQuery
-                    ->on('quizzes.id', '=', 'quiz_question.quiz_id'))
-                ->where('is_correct', 1)
-                ->select(DB::raw('count(quiz_question.id)')),
+                'quizzes as correct_answers_count' => fn($query) => $query
+                    ->join('quiz_question', fn($subQuery) => $subQuery
+                        ->on('quizzes.id', '=', 'quiz_question.quiz_id'))
+                    ->where('is_correct', 1)
+                    ->select(DB::raw('count(quiz_question.id)')),
 
-            'quizzes as incorrect_answers_count' => fn($query) => $query
-                ->join('quiz_question', fn($subQuery) => $subQuery
-                    ->on('quizzes.id', '=', 'quiz_question.quiz_id'))
-                ->where('is_correct', 0)
-                ->select(DB::raw('count(quiz_question.id)')),
+                'quizzes as incorrect_answers_count' => fn($query) => $query
+                    ->join('quiz_question', fn($subQuery) => $subQuery
+                        ->on('quizzes.id', '=', 'quiz_question.quiz_id'))
+                    ->where('is_correct', 0)
+                    ->select(DB::raw('count(quiz_question.id)')),
 
-        ]);
+            ]);
         return new StatisticQuizResource($user);
     }
 
@@ -189,7 +200,9 @@ class QuizController extends Controller
             'answers as incorrect_answers_count' => fn($q) => $q->where('is_correct', 0),
             'answers as unanswered_count' => fn($q) => $q->whereNull('is_correct'),
             'listQuestions'
-        ])->with('listQuestions')->where('id', $request->quiz_id)
+        ])
+            ->with('listQuestions')
+            ->where('id', $request->quiz_id)
             ->first();
 
         $QuizAnalysis = QuizAnalysisResource::make($quiz);
@@ -208,14 +221,19 @@ class QuizController extends Controller
         $user_id = auth()->id();
 
         $quizzes = Quiz::query()
+            ->withCount([
+                'listQuestions',
+                'answers as correct_answers' => fn($query) => $query->where('is_correct', 1),
+            ])
+            ->select(['id', 'title', 'is_complete', 'level', 'quiz_date'])
             ->when(Arr::get($filters, 'title') !== null, fn($q) => $q->where('title', 'LIKE', '%' . $filters['title'] . '%'))
             ->when(Arr::get($filters, 'is_complete') !== null, fn($q) => $q->where('is_complete', $filters['is_complete']))
             ->when(Arr::get($filters, 'start_date') !== null, fn($q) => $q->whereDate('quiz_date', '>=', $filters['start_date']))
             ->when(Arr::get($filters, 'end_date') !== null, fn($q) => $q->whereDate('quiz_date', '<=', $filters['end_date']))
-            ->where('trainee_id', $user_id);
-
-        $quizzes = $quizzes->paginate();
-        return QuizResorce::collection($quizzes);
+            ->where('trainee_id', $user_id)
+            ->orderBy('id', 'desc')
+            ->paginate();
+        return QuizResource::collection($quizzes);
     }
 
     public function SetTakenTime(Request $request)
@@ -230,12 +248,17 @@ class QuizController extends Controller
 
     public function finishQuiz($id)
     {
-        $quiz = Quiz::query()->withCount(['listQuestions', 'correctAnswers', 'inCorrectAnswers'])->find($id);
+        $quiz = Quiz::query()->withCount(['listQuestions',
+            'answers as correct_answers' => fn($query) => $query->where('is_correct', 1),
+            'answers as incorrect_answers' => fn($query) => $query->where('is_correct', 0)])
+            ->find($id);
         if (!$quiz)
-            return $this->returnError('resource not found');
+            return $this->returnError('resource not found', 404);
 
-        $is_completed = $quiz->list_questions_count <= $quiz->correct_answers_count + $quiz->in_correct_answers_count ? true : false;
+        $is_completed = $quiz->list_questions_count <= $quiz->correct_answers + $quiz->incorrect_answers ? true : false;
+
         $quiz->update(['is_completed' => $is_completed]);
+
         return $this->returnSuccessMessage('Quiz status updated Successfully');
 
     }

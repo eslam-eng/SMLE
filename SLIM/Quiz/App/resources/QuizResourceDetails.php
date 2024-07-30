@@ -30,7 +30,7 @@ class QuizResourceDetails extends JsonResource
             'specialists' => SpecilizationResource::collection($this->specialist),
             'SubSpecialists' => subSpecializationResorce::collection($this->Subspecialist),
             'quiz_time' => (bool)$this->quiz_time,
-            'is_complete' => $this->is_complete,
+            'is_complete' =>(bool) $this->is_complete,
             'result' => $this->list_questions_count ? ($this->correct_answers_count / $this->list_questions_count) * 100 : 0,
             'question' => QuestionQuizResource::collection($this->whenLoaded('listQuestions')),
         ];

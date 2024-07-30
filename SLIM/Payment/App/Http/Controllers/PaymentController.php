@@ -93,14 +93,19 @@ class PaymentController extends Controller
         try {
             $response = (new MyfatoorahService())->checkMyfatoorhPayment($paymentId);
             if (isset($response) && $response['IsSuccess']) {
-                TraineeSubscribe::query()->where('id', Arr::get($response,'Data.CustomerReference'))
-                    ->update([
-                        'is_paid' => true,
-                        'is_active' => true,
-                        'subscribe_status' => SubscribeStatusEnum::INPROGRESS->value,
-                        'payment_transaction_id' => Arr::last(Arr::get($response, 'Data.InvoiceTransactions'))['TransactionId'],
-                        'payment_invoice_number' => Arr::get($response, 'Data.InvoiceId'),
-                    ]);
+                $traineeSubscribe = TraineeSubscribe::query()->where('id', Arr::get($response, 'Data.CustomerReference'))->first();
+                TraineeSubscribe::query()
+                    ->where('trainee_id', $traineeSubscribe->trainee->id)
+                    ->whereIn('subscribe_status', [SubscribeStatusEnum::INPROGRESS->value, SubscribeStatusEnum::PENDING->value])
+                    ->update(['subscribe_status' => SubscribeStatusEnum::FINISHED->value, 'is_active' => false]);
+
+                $traineeSubscribe->update([
+                    'is_paid' => true,
+                    'is_active' => true,
+                    'subscribe_status' => SubscribeStatusEnum::INPROGRESS->value,
+                    'payment_transaction_id' => Arr::last(Arr::get($response, 'Data.InvoiceTransactions'))['TransactionId'],
+                    'payment_invoice_number' => Arr::get($response, 'Data.InvoiceId'),
+                ]);
                 return response()->json([
                     'data' => null,
                     'message' => 'payment successes , your subscribe is confirmed',
