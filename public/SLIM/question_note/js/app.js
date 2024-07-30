@@ -131,23 +131,26 @@ $(document).on('click', '.delete', function (e) {
     })
 });
 $(document).on('change', '.specialization', function (e) {
-
-    $.ajax({
-        type: "GET",
-        url: '/get/sub-specialization',
-        data: {
-            'specialist_id': $(this).val(),
-        },
-        beforeSend: function () {
-        },
-        complete: function () {
-        },
-        success: function (response) {
-            $('.sub-specialization').html(response);
-        },
-        error: function (reject) {
-        }
-    });
+    let specialist_id = $(this).val();
+    $('.sub_specialization option').addClass('d-none')
+    $('.sub_specialization .select_sub_specialist').removeClass('d-none')
+    $('.sub_specialization .'+specialist_id).removeClass('d-none')
+    // $.ajax({
+    //     type: "GET",
+    //     url: '/get/sub-specialization',
+    //     data: {
+    //         'specialist_id': $(this).val(),
+    //     },
+    //     beforeSend: function () {
+    //     },
+    //     complete: function () {
+    //     },
+    //     success: function (response) {
+    //         $('.sub-specialization').html(response);
+    //     },
+    //     error: function (reject) {
+    //     }
+    // });
 
 });
 
@@ -174,6 +177,20 @@ $('body').on('click', '.pagination a , #searchBtn', function (e) {
         success: function (data) {
             $('.table-responsive').html(data);
 
+        }
+    });
+});
+
+$(document).on('click', '#ResetSearch', function (e) {
+    page = $(this).is("a") ? $(this).attr('href').split('page=')[1] : "";
+    $.ajax({
+        dataType: 'html',
+        url: '/question_note',
+        data: {
+            "page": $(this).is("a") ? $(this).attr('href').split('page=')[1] : "",
+        },
+        success: function (data) {
+            $('.table-responsive').html(data);
         }
     });
 });

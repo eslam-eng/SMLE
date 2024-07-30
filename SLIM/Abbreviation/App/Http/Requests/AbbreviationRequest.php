@@ -12,7 +12,7 @@ class AbbreviationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'char_abbreviations' =>'required|max:200',
+            'char_abbreviations' =>'required|max:200|unique:abbreviations,char_abbreviations',
             'word_abbreviations' =>'required|max:200',
             'description_abbreviations' =>'required|max:500',
             'is_active' =>'required|in:1,0',

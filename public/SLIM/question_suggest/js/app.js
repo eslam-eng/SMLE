@@ -155,26 +155,26 @@ $(document).on('change', '.specialization', function (e) {
 
 });
 
-$(document).on('change', '.specialization', function (e) {
-
-    $.ajax({
-        type: "GET",
-        url: '/get/sub-specialization',
-        data: {
-            'specialist_id': $(this).val(),
-        },
-        beforeSend: function () {
-        },
-        complete: function () {
-        },
-        success: function (response) {
-            $('.sub-specialization').html(response);
-        },
-        error: function (reject) {
-        }
-    });
-
-});
+// $(document).on('change', '.specialization', function (e) {
+//
+//     $.ajax({
+//         type: "GET",
+//         url: '/get/sub-specialization',
+//         data: {
+//             'specialist_id': $(this).val(),
+//         },
+//         beforeSend: function () {
+//         },
+//         complete: function () {
+//         },
+//         success: function (response) {
+//             $('.sub-specialization').html(response);
+//         },
+//         error: function (reject) {
+//         }
+//     });
+//
+// });
 
 
 
