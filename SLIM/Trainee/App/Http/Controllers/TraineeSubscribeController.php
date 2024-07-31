@@ -4,11 +4,11 @@ namespace SLIM\Trainee\App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use SLIM\Constants\App;
 use SLIM\Package\App\Models\Package;
 use SLIM\Package\interfaces\PackageServiceInterface;
 use SLIM\Payment\Interfaces\PaymentServiceInterfaces;
 use SLIM\Trainee\App\Http\Requests\SubscribeRequest;
+use SLIM\Trainee\App\Models\TraineeSubscribe;
 use SLIM\Trainee\interfaces\TraineeServiceInterface;
 
 class TraineeSubscribeController extends Controller
@@ -20,8 +20,8 @@ class TraineeSubscribeController extends Controller
     protected PackageServiceInterface $packageServiceInterface;
     protected PaymentServiceInterfaces $paymentServiceInterface;
 
-    public function __construct(TraineeServiceInterface $traineeServiceInterface, PackageServiceInterface $packageServiceInterface,
-        PaymentServiceInterfaces $paymentServiceInterface)
+    public function __construct(TraineeServiceInterface  $traineeServiceInterface, PackageServiceInterface $packageServiceInterface,
+                                PaymentServiceInterfaces $paymentServiceInterface)
     {
         $this->traineeServiceInterface = $traineeServiceInterface;
         $this->packageServiceInterface = $packageServiceInterface;
@@ -30,14 +30,25 @@ class TraineeSubscribeController extends Controller
 
     public function index(Request $request)
     {
-        $request['packages'] = 1;
-        $subscribes          = $this->traineeServiceInterface->with(['packages'])->getAllPaginated($request->all(), App::PAGINATE_LENGTH);
-        $packages            = $this->packageServiceInterface->getAll(['is_active' => 1]);
-        $trainees            = $this->traineeServiceInterface->getAll(['is_active' => 1]);
-        $payments            = $this->paymentServiceInterface->getAll(['is_active' => 1]);
+        $filters =  array_filter($request->all(), function ($value) {
+            return $value !== null && $value !== false && $value !== '';
+        });
 
-        if ($request->ajax())
-        {
+
+        $subscribesQuery = TraineeSubscribe::query();
+        $subscribesQuery = $this->applyFilters($subscribesQuery, $filters);
+
+        $subscribes = $subscribesQuery->with([
+            'package:id,name',
+            'trainee:id,full_name,phone',
+            'tranineeSubscribeSpecialization.specialist'
+        ])
+            ->paginate();
+
+        $packages = $this->packageServiceInterface->getAll(['is_active' => 1]);
+        $trainees = $this->traineeServiceInterface->getAll(['is_active' => 1]);
+        $payments = $this->paymentServiceInterface->getAll(['is_active' => 1]);
+        if ($request->ajax()) {
             return view('trainee::subscribe.partial', compact('subscribes'));
         }
 
@@ -55,9 +66,9 @@ class TraineeSubscribeController extends Controller
 
     public function edit($id)
     {
-        $packages  = $this->packageServiceInterface->getAll(['is_active' => 1]);
-        $trainees  = $this->traineeServiceInterface->getAll(['is_active' => 1]);
-        $payments  = $this->paymentServiceInterface->getAll(['is_active' => 1]);
+        $packages = $this->packageServiceInterface->getAll(['is_active' => 1]);
+        $trainees = $this->traineeServiceInterface->getAll(['is_active' => 1]);
+        $payments = $this->paymentServiceInterface->getAll(['is_active' => 1]);
         $subscribe = $this->traineeServiceInterface->with(['packages'])->findorfail($id);
 
         return view('trainee::subscribe.edit', compact('packages', 'trainees', 'payments', 'subscribe'));
@@ -67,16 +78,11 @@ class TraineeSubscribeController extends Controller
     {
         $package = Package::where('id', $request->package_id)->first();
 
-        if ($request->package_type == 'm')
-        {
+        if ($request->package_type == 'm') {
             return $package->monthly_price;
-        }
-        elseif ($request->package_type == 'y')
-        {
+        } elseif ($request->package_type == 'y') {
             return $package->yearly_price;
-        }
-        else
-        {
+        } else {
             return $package->price;
         }
 
@@ -85,8 +91,7 @@ class TraineeSubscribeController extends Controller
     public function store(SubscribeRequest $subscribeRequest)
     {
 
-        if ($subscribeRequest->hasFile('invoice'))
-        {
+        if ($subscribeRequest->hasFile('invoice')) {
             $fileName = $subscribeRequest->invoice->HashName();
             $subscribeRequest->invoice->storeAs('public/invoice', $fileName);
             $subscribeRequest->merge([
@@ -102,16 +107,13 @@ class TraineeSubscribeController extends Controller
     {
         $trainee = $this->traineeServiceInterface->findOrFail($subscribeRequest->trainee_id);
 
-        if ($subscribeRequest->hasFile('invoice'))
-        {
+        if ($subscribeRequest->hasFile('invoice')) {
             $fileName = $subscribeRequest->invoice->HashName();
             $subscribeRequest->invoice->storeAs('public/invoice', $fileName);
             $subscribeRequest->merge([
                 'invoice_file' => 'storage/invoice/' . $fileName
             ]);
-        }
-        else
-        {
+        } else {
             $subscribeRequest->merge([
                 'invoice_file' => $trainee['packages'][0]['pivot']['invoice_file']
             ]);
@@ -125,12 +127,9 @@ class TraineeSubscribeController extends Controller
     {
         $endDate = '';
 
-        if ($request->package_type == 'm')
-        {
+        if ($request->package_type == 'm') {
             $endDate = \Carbon\Carbon::parse($request->start_date)->addMonths(1)->format('Y-m-d');
-        }
-        elseif ($request->package_type == 'y')
-        {
+        } elseif ($request->package_type == 'y') {
             $endDate = \Carbon\Carbon::parse($request->start_date)->addMonths(12)->format('Y-m-d');
 
         }
@@ -143,6 +142,39 @@ class TraineeSubscribeController extends Controller
         $trainee = $this->traineeServiceInterface->findorfail($id);
         $trainee->packages()->detach();
         return $this->index($request);
+    }
+
+    private function applyFilters($query, $filters)
+    {
+
+        foreach ($filters as $key => $value) {
+            if (isset($value)) {
+                switch ($key) {
+                    case 'trainee_id':
+                        $query->where('trainee_id', $value);
+                        break;
+                    case 'package_id':
+                        $query->where('package_id', $value);
+                        break;
+                    case 'active':
+                        $query->where('is_active', $value);
+                        break;
+                    case 'is_paid':
+                        $query->where('is_paid', $value);
+                        break;
+                    case 'payment':
+                        $query->where('payment_method', $value);
+                        break;
+                    case 'package_type':
+                        $query->where('package_type', $value);
+                        break;
+                    // Add more filter conditions based on your requirements
+                    default:
+                        break;
+                }
+            }
+        }
+        return $query;
     }
 
 }

@@ -75,7 +75,6 @@ class QuizController extends Controller
             'unanswerdQuestions'=>['specialist','sub_specialist'],
         ])
             ->loadCount(['answers as correct_answers' => fn($query) => $query->where('is_correct', 1), 'answers as incorrect_answers' => fn($query) => $query->where('is_correct', 0)]);
-//        dd($quiz);
         return view('quiz::show', compact('quiz'));
     }
 

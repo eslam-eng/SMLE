@@ -4,9 +4,12 @@ namespace SLIM\Question\App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use SLIM\Abbreviation\App\Http\Requests\ImportAbbreviationRequest;
 use SLIM\Abbreviation\Interfaces\AbbreviationServiceInterface;
+use SLIM\Question\App\Exports\QuestionEmptyTemplate;
 use SLIM\Question\App\Exports\QuestionsExport;
 use SLIM\Question\App\Http\Requests\QuestionRequest;
+use SLIM\Question\App\Imports\QuestionsImport;
 use SLIM\Question\App\Models\Question;
 use SLIM\Question\services\QuestionService;
 use SLIM\Specialization\Service\SpecializationService;
@@ -144,5 +147,34 @@ class QuestionController extends Controller
         $questions = Question::with(['specialist', 'sub_specialist'])->get();
         return (new QuestionsExport($questions))->download($file_name);
     }
+    public function importForm()
+    {
+        return view('question::import.import');
+
+    }
+    public function downloadTemplate()
+    {
+        $file_name = 'questions' . now()->format('YmdHis') . '.xlsx';
+        return (new QuestionEmptyTemplate())->download($file_name);
+    }
+
+    public function import(ImportAbbreviationRequest $request)
+    {
+        $file = $request->file('file');;
+        try {
+            $import = new QuestionsImport();
+            $import->import($file);
+            return back()->with('success','imported successfully');
+        } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
+            $failures = $e->failures();
+            session()->flash('failures', $failures);
+            return back();
+        } catch (\Exception $e) {
+            session()->flash('server_error', 'there is an error while importing abbreviations');
+            return back();
+        }
+
+    }
+
 
 }

@@ -144,6 +144,21 @@ $('body').on('click', '.pagination a , #searchBtn', function (e) {
         }
     });
 });
+
+$(document).on('click', '#ResetSearch', function (e) {
+    page = $(this).is("a") ? $(this).attr('href').split('page=')[1] : "";
+
+    $.ajax({
+        dataType: 'html',
+        url: '/subscribe-trainee',
+        data: {
+            "page": $(this).is("a") ? $(this).attr('href').split('page=')[1] : "",
+        },
+        success: function (data) {
+            $('.table-responsive').html(data);
+        }
+    });
+});
 $(document).on('change', '.amount', function(e) {
 
 //alert($('#packageId').val());

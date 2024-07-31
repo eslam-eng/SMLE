@@ -27,7 +27,7 @@ class QuizController extends Controller
     {
         try {
             $user = auth()->user();
-            //get trainner subscrip active plan
+            //get trainer subscribe active plan
             $trainerSubscribePlan = TraineeSubscribe::query()
                 ->where(['is_paid' => true, 'is_active' => true, 'trainee_id' => $user->id])
                 ->latest()
@@ -220,19 +220,21 @@ class QuizController extends Controller
         ]);
         $user_id = auth()->id();
 
-        $quizzes = Quiz::query()
-            ->withCount([
-                'listQuestions',
-                'answers as correct_answers' => fn($query) => $query->where('is_correct', 1),
-            ])
-            ->select(['id', 'title', 'is_complete', 'level', 'quiz_date'])
+        $quizzesQuery = Quiz::query()
+            ->select(['id', 'title', 'is_complete', 'level', 'quiz_date','trainee_id'])
             ->when(Arr::get($filters, 'title') !== null, fn($q) => $q->where('title', 'LIKE', '%' . $filters['title'] . '%'))
             ->when(Arr::get($filters, 'is_complete') !== null, fn($q) => $q->where('is_complete', $filters['is_complete']))
             ->when(Arr::get($filters, 'start_date') !== null, fn($q) => $q->whereDate('quiz_date', '>=', $filters['start_date']))
             ->when(Arr::get($filters, 'end_date') !== null, fn($q) => $q->whereDate('quiz_date', '<=', $filters['end_date']))
-            ->where('trainee_id', $user_id)
-            ->orderBy('id', 'desc')
+            ->where('trainee_id', $user_id);
+
+        $quizzes = $quizzesQuery
+            ->withCount([
+                'listQuestions',
+                'answers as correct_answers' => fn($query) => $query->where('is_correct', 1),
+            ])->orderBy('id', 'desc')
             ->paginate();
+
         return QuizResource::collection($quizzes);
     }
 

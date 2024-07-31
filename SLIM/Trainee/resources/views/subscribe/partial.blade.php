@@ -1,7 +1,7 @@
 <span class="btn btn-dark" style="margin:10px 10px 10px 10px">Total ({{$subscribes->total()}})</span>
 
 <table
-    class="table table-vcenter table-mobile-md card-table">
+    class="table table-vcenter table-bordered table-mobile-md card-table">
     <thead>
     <tr>
 
@@ -15,6 +15,7 @@
         <th>S.end Date</th>
         <th>Is Paid</th>
         <th>Is Active</th>
+        <th>specialists</th>
         <th class="w-1">Control</th>
     </tr>
     </thead>
@@ -25,33 +26,37 @@
                 {{++$index}}
             </td>
             <td class="text-secondary" data-label="Role" >
-                {{$subscribe->full_name}}
+                {{$subscribe->trainee->full_name}}
             </td>
             <td class="text-secondary" data-label="Role" >
-                {{$subscribe['packages'][0]['name']}}
+                {{$subscribe->package->name}}
             </td>
             <td class="text-secondary" data-label="Role" >
-                {{$subscribe['packages'][0]['pivot']['amount']}}
+                {{$subscribe->amount}}
             </td>
             <td class="text-secondary" data-label="Role" >
-                {{\SLIM\Trainee\App\Models\Trainee::PAYMENT_TYPE[$subscribe['packages'][0]['pivot']['package_type']]}}
+                {{$subscribe->package_type=='m' ? "Monthly" : 'Yearly'}}
             </td>
             <td class="text-secondary" data-label="Role" >
-                {{$subscribe['packages'][0]['pivot']['payment_method']}}
+                {{$subscribe->payment_method}}
             </td>
             <td class="text-secondary" data-label="Role" >
-                {{$subscribe['packages'][0]['pivot']['start_date']}}
+                {{$subscribe->start_date}}
             </td>
             <td class="text-secondary" data-label="Role" >
-                {{$subscribe['packages'][0]['pivot']['end_date']}}
+                {{$subscribe->end_date}}
             </td>
             <td class="text-secondary" data-label="Role" >
-                {{\SLIM\Trainee\App\Models\Trainee::PAID_STATUS[$subscribe['packages'][0]['pivot']['is_paid']]}}
+                {{$subscribe->is_paid ? 'yes' : 'no'}}
             </td>
             <td class="text-secondary" data-label="Role" >
-                {{\SLIM\Trainee\App\Models\Trainee::ACTIVE_STATUS[$subscribe['packages'][0]['pivot']['is_active']]}}
+                {{$subscribe->is_active ? 'yes' : 'no'}}
             </td>
-
+            <td class="text-secondary" data-label="Role" >
+                @foreach($subscribe->tranineeSubscribeSpecialization as $subscribeSpecialist)
+                    {{implode(',',$subscribe->tranineeSubscribeSpecialization->pluck('specialist.name')->toArray())}}
+                @endforeach
+            </td>
             <td>
                 <div class="btn-list flex-nowrap">
                     <div class="dropdown">

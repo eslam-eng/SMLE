@@ -24,4 +24,7 @@ Route::group(['middleware' => 'auth'], function ()
     Route::resource('question_note', QuestionNoteController::class)->names('question_note');
     Route::resource('question_suggest', QuestionSuggestController::class)->names('question_suggest');
     Route::get('get/sub-specialization', [SubspecialtiesController::class, 'getSubSpecialization']);
+    Route::get('import', [QuestionController::class, 'importForm'])->name('questions.import-form');
+    Route::get('questions/download-template', [QuestionController::class, 'downloadTemplate'])->name('questions.download-template');
+    Route::post('import', [QuestionController::class, 'import'])->name('questions.import');
 });

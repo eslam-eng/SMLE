@@ -170,7 +170,7 @@
                                 <hr/>
                                 <div class="row row-cards mb-2">
                                     <h4>Answered Questions</h4>
-                                    <table class="table table-vcenter table-mobile-md card-table">
+                                    <table class="table table-vcenter table-bordered table-mobile-md card-table">
                                         <thead>
                                         <tr>
                                             <td>question</td>
@@ -207,7 +207,7 @@
                                 </div>
                                 <div class="row row-cards">
                                     <h4>Un Answered Questions</h4>
-                                    <table class="table table-vcenter table-mobile-md card-table">
+                                    <table class="table table-vcenter table-bordered table-mobile-md card-table">
                                         <thead>
                                         <tr>
                                             <td>question</td>

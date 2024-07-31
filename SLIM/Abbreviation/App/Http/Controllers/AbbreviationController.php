@@ -8,6 +8,7 @@ use SLIM\Abbreviation\App\Exports\AbbreviationExport;
 use SLIM\Abbreviation\App\Http\Requests\AbbreviationRequest;
 use SLIM\Abbreviation\App\Http\Requests\ImportAbbreviationRequest;
 use SLIM\Abbreviation\App\Imports\AbbreviationImport;
+use SLIM\Abbreviation\App\Imports\QuestionsImport;
 use SLIM\Abbreviation\App\Models\Abbreviation;
 use SLIM\Abbreviation\Interfaces\AbbreviationServiceInterface;
 
@@ -111,8 +112,7 @@ class AbbreviationController extends Controller
         try {
             $import = new AbbreviationImport();
             $import->import($file);
-            session()->flash('success', 'imported successfully');
-            return back();
+            return back()->with('success','imported successfully');
         } catch (\Maatwebsite\Excel\Validators\ValidationException $e) {
             $failures = $e->failures();
             session()->flash('failures', $failures);

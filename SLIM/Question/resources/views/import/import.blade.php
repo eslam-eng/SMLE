@@ -15,9 +15,11 @@
                     <div class="col-12">
                         <div class="card-header m-2">
                             <h3 class="card-title">import Abbreviation</h3>
-                            <a href="{{route('abbreviation.download-template')}}" role="button" class="btn btn-info ms-2"><i class="fa fa-download"></i>download Empty Template</a>
+                            <a href="{{route('questions.download-template')}}" role="button"
+                               class="btn btn-info ms-2"><i class="fa fa-download"></i>download Empty Template</a>
                         </div>
-                        <form method="post" action="{{route('abbreviation.import')}}" class="card" enctype="multipart/form-data">
+                        <form method="post" action="{{route('questions.import')}}" class="card"
+                              enctype="multipart/form-data">
                             @csrf
                             <div class="card-body">
 
@@ -28,7 +30,7 @@
                                             <input type="file" name="file" class="form-control" id="file" required>
                                         </div>
                                         @error('file')
-                                           <span class="text-danger"> {{ $message }}</span>
+                                        <span class="text-danger"> {{ $message }}</span>
                                         @enderror
                                     </div>
                                 </div>
