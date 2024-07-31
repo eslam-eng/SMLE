@@ -60,7 +60,7 @@ class CategoryController extends Controller
             ->where('question_category.id', $id)
             ->select(['question_category.*',
                 'questions.question', 'questions.answer_a', 'questions.answer_b', 'questions.answer_c', 'questions.answer_d',
-                'questions.model_answer', 'quizzes.title', 'quiz_question.answer', 'quiz_question.is_correct'
+                'questions.model_answer', 'quizzes.title', 'quiz_question.answer', 'quiz_question.user_answer', 'quiz_question.is_correct'
             ])
             ->first();
         $classified = new QuestionClassificationDetailsResource($classified);

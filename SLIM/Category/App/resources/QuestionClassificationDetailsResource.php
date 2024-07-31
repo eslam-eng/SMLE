@@ -22,7 +22,7 @@ class QuestionClassificationDetailsResource extends JsonResource
                 ['answer' => 'C', 'name' => $this->answer_c],
                 ['answer' => 'D', 'name' => $this->answer_d]
             ],
-            'user_answer' => $this->answer,
+            'user_answer' => $this->user_answer,
             'model_answer' => $this->model_answer,
 
 
