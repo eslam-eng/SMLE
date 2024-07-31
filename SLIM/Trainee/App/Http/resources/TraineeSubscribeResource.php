@@ -15,6 +15,7 @@ class TraineeSubscribeResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->package->name,
+            'package_id' => $this->package->id,
             'is_free_package' => ($this->package->monthly_price && $this->package->yearly_price),
             'description' => $this->package->description,
             'package_type' => $this->package_type,
