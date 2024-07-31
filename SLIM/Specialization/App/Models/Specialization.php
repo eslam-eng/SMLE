@@ -21,11 +21,6 @@ class Specialization extends Model
      */
     protected $fillable = ['name', 'number_question', 'number_user', 'is_active'];
 
-    protected static function newFactory(): SpecializationFactory
-    {
-        //return SpecializationFactory::new();
-    }
-
     public function trainees()
     {
         return $this->hasMany(Trainee::class, 'specialist_id');

@@ -15,9 +15,10 @@ use \SLIM\Specialization\App\Http\Controllers\Api\SpecializationController;
 */
 //
 Route::prefix('v1')->name('api.')
-    ->controller(\SLIM\Specialization\App\Http\Controllers\Api\SpecializationController::class)
+    ->controller(SpecializationController::class)
     ->group(function () {
         Route::get('specialists', 'specialists');
+        Route::get('trainee-specialists', 'traineeSpecialists')->middleware('auth:api');
     });
 
 
