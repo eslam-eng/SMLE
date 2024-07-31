@@ -93,7 +93,9 @@ class PaymentController extends Controller
         try {
             $response = (new MyfatoorahService())->checkMyfatoorhPayment($paymentId);
             if (isset($response) && $response['IsSuccess']) {
-                $traineeSubscribe = TraineeSubscribe::query()->where('id', Arr::get($response, 'Data.CustomerReference'))->first();
+                $traineeSubscribe = TraineeSubscribe::query()
+                    ->where('id', Arr::get($response, 'Data.CustomerReference'))
+                    ->first();
                 TraineeSubscribe::query()
                     ->where('trainee_id', $traineeSubscribe->trainee->id)
                     ->whereIn('subscribe_status', [SubscribeStatusEnum::INPROGRESS->value, SubscribeStatusEnum::PENDING->value])
