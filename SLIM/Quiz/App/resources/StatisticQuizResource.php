@@ -16,7 +16,7 @@ class StatisticQuizResource extends JsonResource
             'question_count' => $this->list_questions_count,
             'correct_answer' => $this->correct_answers_count,
             'incorrect_answer' => $this->incorrect_answers_count,
-            'result' => $this->list_questions_count > 0 ? ($this->correct_answers_count / $this->list_questions_count) * 100 : 0,
+            'result' => $this->list_questions_count > 0 ?( ($this->correct_answers_count / $this->list_questions_count) * 100) : 0,
             'quizzes'=>QuizResource::collection($this->quizzes)
         ];
 

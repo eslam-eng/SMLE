@@ -134,8 +134,8 @@ class QuizController extends Controller
                     ->orderBy('id', 'asc')
                     ->withCount([
                         'listQuestions',
-                        'answers as correct_answers' => fn($query) => $query->where('is_correct', 1),
-                        'answers as incorrect_answers' => fn($query) => $query->where('is_correct', 0)
+                        'correctAnswers',
+                        'inCorrectAnswers'
                     ])
             ])->loadCount([
                 'quizzes',
