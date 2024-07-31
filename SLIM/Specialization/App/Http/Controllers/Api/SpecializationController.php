@@ -32,8 +32,15 @@ class SpecializationController extends Controller
             $user = auth()->user();
             if (!$user)
                 return $this->returnError('resource not found', 400);
+
+            if (!isset($user->activeSubscribe->tranineeSubscribeSpecialization))
+                return $this->returnError('resource not found', 400);
+
             $activeTraineeSubscribeSpecialistsIds = $user->activeSubscribe->tranineeSubscribeSpecialization->pluck('specialist_id')->toArray();
-            $specialists = Specialization::query()->with('subSpecialist')->whereIn("id", $activeTraineeSubscribeSpecialistsIds)->get();
+            $specialists = Specialization::query()
+                ->with('subSpecialist')
+                ->whereIn("id", $activeTraineeSubscribeSpecialistsIds)
+                ->get();
             return SpecilizationResource::collection($specialists);
         } catch (\Exception $exception) {
             return $this->returnError('there is an error', 500);
