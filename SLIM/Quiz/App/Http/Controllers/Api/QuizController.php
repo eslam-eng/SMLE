@@ -259,7 +259,7 @@ class QuizController extends Controller
             return $this->returnError('resource not found', 404);
 
         $is_completed = !$quiz->unanswered_count;
-        $quiz->update(['is_complete' => $is_completed]);
+        Quiz::query()->where('id', $quiz->id)->update(['is_complete' => $is_completed]);
 
         return $this->returnSuccessMessage('Quiz status updated Successfully');
 
