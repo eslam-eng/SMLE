@@ -16,6 +16,8 @@ class QuestionClassificationDetailsResource extends JsonResource
             'question_classified_id' => $this->id,
             'quiz_title' => $this->title,
             'Question' => $this->question,
+            'image' =>  isset($this->image) ? asset('storage/question/'.$this->image) : null,
+            'description' => $this->question,
             'answers' => [
                 ['answer' => 'A', 'name' => $this->answer_a],
                 ['answer' => 'B', 'name' => $this->answer_b],
