@@ -231,7 +231,7 @@ class QuizController extends Controller
         $quizzes = $quizzesQuery
             ->withCount([
                 'listQuestions',
-                'answers as correct_answers' => fn($query) => $query->where('is_correct', 1),
+                'answers as correct_answers_count' => fn($q) => $q->where('is_correct', 1),
             ])->orderBy('id', 'desc')
             ->paginate();
 
