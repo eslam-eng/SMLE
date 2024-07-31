@@ -221,7 +221,7 @@ class QuizController extends Controller
         $user_id = auth()->id();
 
         $quizzesQuery = Quiz::query()
-            ->select(['id', 'title', 'is_complete', 'level', 'quiz_date','trainee_id'])
+            ->select(['id', 'title', 'is_complete', 'level', 'quiz_date', 'trainee_id'])
             ->when(Arr::get($filters, 'title') !== null, fn($q) => $q->where('title', 'LIKE', '%' . $filters['title'] . '%'))
             ->when(Arr::get($filters, 'is_complete') !== null, fn($q) => $q->where('is_complete', $filters['is_complete']))
             ->when(Arr::get($filters, 'start_date') !== null, fn($q) => $q->whereDate('quiz_date', '>=', $filters['start_date']))
@@ -252,14 +252,13 @@ class QuizController extends Controller
     {
         $quiz = Quiz::query()->withCount([
             'listQuestions',
-            'answers as correct_answers' => fn($query) => $query->where('is_correct', 1),
-            'answers as incorrect_answers' => fn($query) => $query->where('is_correct', 0)])
+            'answers as unanswered_count' => fn($query) => $query->whereNull('is_correct')
+        ])
             ->find($id);
         if (!$quiz)
             return $this->returnError('resource not found', 404);
 
-        $is_completed = $quiz->list_questions_count <= $quiz->correct_answers + $quiz->incorrect_answers ? true : false;
-
+        $is_completed = !$quiz->unanswered_count;
         $quiz->update(['is_complete' => $is_completed]);
 
         return $this->returnSuccessMessage('Quiz status updated Successfully');
