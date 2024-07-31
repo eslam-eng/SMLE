@@ -250,7 +250,8 @@ class QuizController extends Controller
 
     public function finishQuiz($id)
     {
-        $quiz = Quiz::query()->withCount(['listQuestions',
+        $quiz = Quiz::query()->withCount([
+            'listQuestions',
             'answers as correct_answers' => fn($query) => $query->where('is_correct', 1),
             'answers as incorrect_answers' => fn($query) => $query->where('is_correct', 0)])
             ->find($id);
@@ -259,7 +260,7 @@ class QuizController extends Controller
 
         $is_completed = $quiz->list_questions_count <= $quiz->correct_answers + $quiz->incorrect_answers ? true : false;
 
-        $quiz->update(['is_completed' => $is_completed]);
+        $quiz->update(['is_complete' => $is_completed]);
 
         return $this->returnSuccessMessage('Quiz status updated Successfully');
 
