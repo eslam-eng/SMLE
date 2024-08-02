@@ -22,7 +22,6 @@ class PackageController extends Controller
     public function index()
     {
         $packages = Package::query()
-            ->where('is_active', 1)
             ->where('id',14)
             ->with(['activeSubscribe' => fn($query) => $query->where('trainee_id', auth()->id())])
             ->get();
