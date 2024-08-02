@@ -3,9 +3,6 @@
 namespace SLIM\Package\App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use SLIM\Package\App\Models\Package;
 use SLIM\Package\App\resources\PackageResource;
 use SLIM\Package\interfaces\PackageServiceInterface;
@@ -16,18 +13,19 @@ class PackageController extends Controller
     use GeneralTrait;
 
     private PackageServiceInterface $packageService;
+
     public function __construct(PackageServiceInterface $packageService)
     {
-        $this->packageService  = $packageService;
+        $this->packageService = $packageService;
     }
 
     public function index()
     {
         $packages = Package::query()
             ->where('is_active', 1)
-            ->with('activeSubscribe')
+            ->with(['activeSubscribe' => fn($query) => $query->where('trainee_id', auth()->id())])
             ->get();
-        $packages =PackageResource::collection($packages);
-        return $this->returnData($packages,'Packages List');
+        $packages = PackageResource::collection($packages);
+        return $this->returnData($packages, 'Packages List');
     }
 }
