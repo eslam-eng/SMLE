@@ -14,7 +14,7 @@ use SLIM\Package\App\Http\Controllers\Api\PackageController;
     |
 */
 
-Route::prefix('v1')->name('api.')
+Route::prefix('v1')->middleware('auth:api')->name('api.')
     ->controller(PackageController::class)
     ->group(function () {
         Route::get('packages', 'index');
