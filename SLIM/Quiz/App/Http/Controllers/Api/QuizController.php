@@ -107,7 +107,7 @@ class QuizController extends Controller
             ->limit($quizRequest->question_no)
             ->get();
 
-        if (!count($questions))
+        if ($questions->isEmpty())
             return $this->returnError('There is no questions available', 422);
 
         $questions->each(function ($question) use (&$quizQuestionData, $trainerSubscribePlan, $quiz) {
