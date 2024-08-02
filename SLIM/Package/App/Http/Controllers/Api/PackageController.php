@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use SLIM\Package\App\Models\Package;
 use SLIM\Package\App\resources\PackageResource;
 use SLIM\Package\interfaces\PackageServiceInterface;
 use SLIM\Traits\GeneralTrait;
@@ -22,7 +23,11 @@ class PackageController extends Controller
 
     public function index()
     {
-        $packages =PackageResource::collection($this->packageService->getAll(['is_active' => 1]));
+        $packages = Package::query()
+            ->where('is_active', 1)
+            ->with('activeSubscribe')
+            ->get();
+        $packages =PackageResource::collection($packages);
         return $this->returnData($packages,'Packages List');
     }
 }

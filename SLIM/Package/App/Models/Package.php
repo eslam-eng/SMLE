@@ -5,6 +5,7 @@ namespace SLIM\Package\App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use SLIM\Package\Database\factories\PackageFactory;
 use SLIM\Specialization\App\Models\Specialization;
 use SLIM\Trainee\App\Models\Trainee;
@@ -38,6 +39,13 @@ class Package extends Model
     public function activeTraineeSubscribeSpecialists(): HasMany
     {
         return $this->hasMany(TraineeSubscribeSpecialize::class, 'package_id');
+    }
+
+    public function activeSubscribe(): HasOne
+    {
+        return $this->hasOne(TraineeSubscribe::class,'package_id')
+            ->where('is_active',1)
+            ->where('is_paid',1);
     }
 
     public function trainees()
