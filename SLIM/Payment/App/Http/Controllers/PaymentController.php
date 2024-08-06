@@ -5,12 +5,16 @@ namespace SLIM\Payment\App\Http\Controllers;
 use App\Enum\SubscribeStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Services\MyfatoorahService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use SLIM\Package\App\Models\Package;
 use SLIM\Payment\App\Http\Requests\PaymentRequest;
 use SLIM\Payment\App\Models\Payment;
 use SLIM\Payment\Interfaces\PaymentServiceInterfaces;
 use SLIM\Trainee\App\Models\TraineeSubscribe;
+use SLIM\Trainee\App\Models\TraineeSubscribeSpecialize;
 
 class PaymentController extends Controller
 {
@@ -85,41 +89,5 @@ class PaymentController extends Controller
         $this->paymentServiceInterfaces->delete($payment);
         return $this->index($request);
 
-    }
-
-    public function myfatoorahCallback(Request $request)
-    {
-        $paymentId = Arr::get($request->all(), 'paymentId');
-        try {
-            $response = (new MyfatoorahService())->checkMyfatoorhPayment($paymentId);
-            if (isset($response) && $response['IsSuccess']) {
-                $traineeSubscribe = TraineeSubscribe::query()
-                    ->where('id', Arr::get($response, 'Data.CustomerReference'))
-                    ->first();
-                TraineeSubscribe::query()
-                    ->where('trainee_id', $traineeSubscribe->trainee->id)
-                    ->whereIn('subscribe_status', [SubscribeStatusEnum::INPROGRESS->value, SubscribeStatusEnum::PENDING->value])
-                    ->update(['subscribe_status' => SubscribeStatusEnum::FINISHED->value, 'is_active' => false]);
-
-                $traineeSubscribe->update([
-                    'is_paid' => true,
-                    'is_active' => true,
-                    'subscribe_status' => SubscribeStatusEnum::INPROGRESS->value,
-                    'payment_transaction_id' => Arr::last(Arr::get($response, 'Data.InvoiceTransactions'))['TransactionId'],
-                    'payment_invoice_number' => Arr::get($response, 'Data.InvoiceId'),
-                ]);
-                return response()->json([
-                    'data' => null,
-                    'message' => 'payment successes , your subscribe is confirmed',
-                    'status' => true
-                ]);
-            }
-        } catch (\Exception $exception) {
-            return response()->json([
-                'data' => $exception->getMessage(),
-                'message' => 'payment successes , your subscribe is confirmed',
-                'status' => true
-            ]);
-        }
     }
 }

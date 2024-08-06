@@ -53,12 +53,14 @@
                 {{$subscribe->is_active ? 'yes' : 'no'}}
             </td>
             <td class="text-secondary" data-label="Role" >
-                @foreach($subscribe->tranineeSubscribeSpecialization as $subscribeSpecialist)
                     {{implode(',',$subscribe->tranineeSubscribeSpecialization->pluck('specialist.name')->toArray())}}
-                @endforeach
             </td>
             <td>
+
                 <div class="btn-list flex-nowrap">
+                    @if($subscribe->payment_method == 'external')
+                        <button data-invoice_url="{{$subscribe->invoice_file}}" class="btn btn-success">show invoice</button>
+                    @endif
                     <div class="dropdown">
                         <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">
                             Actions

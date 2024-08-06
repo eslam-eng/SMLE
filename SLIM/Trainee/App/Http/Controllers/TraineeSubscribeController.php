@@ -2,13 +2,19 @@
 
 namespace SLIM\Trainee\App\Http\Controllers;
 
+use App\Enum\SubscribeStatusEnum;
 use App\Http\Controllers\Controller;
+use App\Services\MyfatoorahService;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use SLIM\Package\App\Models\Package;
 use SLIM\Package\interfaces\PackageServiceInterface;
 use SLIM\Payment\Interfaces\PaymentServiceInterfaces;
 use SLIM\Trainee\App\Http\Requests\SubscribeRequest;
 use SLIM\Trainee\App\Models\TraineeSubscribe;
+use SLIM\Trainee\App\Models\TraineeSubscribeSpecialize;
 use SLIM\Trainee\interfaces\TraineeServiceInterface;
 
 class TraineeSubscribeController extends Controller
@@ -177,4 +183,72 @@ class TraineeSubscribeController extends Controller
         return $query;
     }
 
+
+    public function getPackagePeriod($type)
+    {
+        return $type == 'm' ? Carbon::now()->addMonth()->format('Y-m-d') : Carbon::now()->addYear()->format('Y-m-d');
+    }
+
+    public function myfatoorahCallback(Request $request)
+    {
+        $paymentId = Arr::get($request->all(), 'paymentId');
+        try {
+            $response = (new MyfatoorahService())->checkMyfatoorhPayment($paymentId);
+            if (isset($response) && $response['IsSuccess']) {
+                $requestData = json_decode(Arr::get($response, 'Data.UserDefinedField'), true);
+                $package = Package::query()
+                    ->where('id', Arr::get($response, 'Data.CustomerReference'))
+                    ->first();
+                $start_date = date('Y-m-d');
+                $end_date = $this->getPackagePeriod($requestData['package_type']);
+                DB::beginTransaction();
+                TraineeSubscribe::query()
+                    ->where('trainee_id', $requestData['trainee_id'])
+                    ->whereIn('subscribe_status', [SubscribeStatusEnum::INPROGRESS->value, SubscribeStatusEnum::PENDING->value])
+                    ->update(['subscribe_status' => SubscribeStatusEnum::FINISHED->value, 'is_active' => false]);
+
+                $traineeSubscribe = TraineeSubscribe::create([
+                        'package_id' => $package->id,
+                        'trainee_id' => $requestData['trainee_id'],
+                        'package_type' => $requestData['package_type'],
+                        'payment_method' => 'online',
+                        'subscribe_status' => SubscribeStatusEnum::INPROGRESS->value,
+                        'is_paid' => 1,
+                        'amount' => $requestData['amount'],
+                        'start_date' => $start_date,
+                        'end_date' => $end_date,
+                        'is_active' => true,
+                        'quizzes_count' => $package->num_available_quiz,
+                        'remaining_quizzes' => $package->num_available_quiz,
+                        'num_available_question' => $package->num_available_question,
+                        'payment_transaction_id' => Arr::last(Arr::get($response, 'Data.InvoiceTransactions'))['TransactionId'],
+                        'payment_invoice_number' => Arr::get($response, 'Data.InvoiceId'),
+                    ]
+                );
+                $traineeSubscribeSpecializeData = [];
+                foreach ($requestData['specialist_ids'] as $specialist_id) {
+                    $traineeSubscribeSpecializeData [] = [
+                        'trainee_subscribe_id' => $traineeSubscribe->id,
+                        'package_id' => $package->id,
+                        'specialist_id' => $specialist_id,
+                        'created_at' => Carbon::now(),
+                        'updated_at' => Carbon::now(),
+                    ];
+                }
+                TraineeSubscribeSpecialize::query()->insert($traineeSubscribeSpecializeData);
+                DB::commit();
+                return response()->json([
+                    'data' => null,
+                    'message' => 'payment successes , your subscribe is confirmed',
+                    'status' => true
+                ]);
+            }
+        } catch (\Exception $exception) {
+            return response()->json([
+                'data' => $exception->getMessage(),
+                'message' => 'payment successes , your subscribe is confirmed',
+                'status' => true
+            ]);
+        }
+    }
 }

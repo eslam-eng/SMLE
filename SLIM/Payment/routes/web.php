@@ -16,5 +16,4 @@ use SLIM\Payment\App\Http\Controllers\PaymentController;
 
 Route::group([], function () {
     Route::resource('payment', PaymentController::class)->names('payment');
-    Route::get('myfatoorah/callback', [PaymentController::class,'myfatoorahCallback'])->name('myfatoorah.callback');
 });

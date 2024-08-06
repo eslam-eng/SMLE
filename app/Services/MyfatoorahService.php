@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 
 class MyfatoorahService
@@ -20,26 +21,27 @@ class MyfatoorahService
     }
 
 
-    public function handleInvoiceLink($customer, $created_trainee_subscribe)
+    public function handleInvoiceLink($customer,$package, array $requestData = [])
     {
         $invoiceData = [
             "CustomerName" => $customer->full_name,
             "NotificationOption" => "LNK",
             "CustomerMobile" => $customer->phone,
             "CustomerEmail" => $customer->email,
-            "InvoiceValue" => $created_trainee_subscribe->amount,
+            "InvoiceValue" => Arr::get($requestData,'amount'),
             "MobileCountryCode"=> "966",
             "DisplayCurrencyIso" => "SAR",
-            "CustomerReference" => $created_trainee_subscribe->id,
+            "CustomerReference" => $package->id,
+            "UserDefinedField" =>json_encode($requestData),
             "CallBackUrl" => $this->myfatoorah_call_back_url,
             "Language" => "en",
             "InvoiceItems" => [
                 [
-                    "ItemName" => $created_trainee_subscribe->package->name,
+                    "ItemName" => $package->name,
                     "Quantity" => 1,
-                    "UnitPrice" => $created_trainee_subscribe->amount,
-                    "quizzes_number" => $created_trainee_subscribe->package->num_available_quiz,
-                    "questions_number" => $created_trainee_subscribe->package->num_available_question,
+                    "UnitPrice" =>Arr::get($requestData,'amount'),
+                    "quizzes_number" => $package->num_available_quiz,
+                    "questions_number" => $package->num_available_question,
                 ]
             ]
         ];

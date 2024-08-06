@@ -16,7 +16,7 @@ class SubscribeTraineeRequest extends FormRequest
             'package_id'     => 'required|numeric',
             'package_type'   => 'required|in:m,y',
             'payment_method' => 'required|string|in:online,external',
-            'invoice_file'   => 'sometimes|nullable|file',
+            'invoice_file'   => 'required_if:payment_method,external|nullable|file',
             'specialist_ids'   => 'required|array|min:1',
             'specialist_ids.*'   => 'required|exists:specializations,id',
         ];

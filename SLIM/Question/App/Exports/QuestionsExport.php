@@ -27,6 +27,7 @@ class QuestionsExport implements FromCollection, WithHeadings, WithMapping
     public function map($row): array
     {
         return [
+            $row->id,
             $row->question,
             $row->specialist->name,
             $row->sub_specialist->name,
@@ -44,6 +45,7 @@ class QuestionsExport implements FromCollection, WithHeadings, WithMapping
     public function headings(): array
     {
         return [
+            'id',
             'question',
             'specialization',
             'sub specialization',
