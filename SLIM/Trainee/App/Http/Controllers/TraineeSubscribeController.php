@@ -36,7 +36,7 @@ class TraineeSubscribeController extends Controller
 
     public function index(Request $request)
     {
-        $filters =  array_filter($request->all(), function ($value) {
+        $filters = array_filter($request->all(), function ($value) {
             return $value !== null && $value !== false && $value !== '';
         });
 
@@ -104,9 +104,45 @@ class TraineeSubscribeController extends Controller
                 'invoice_file' => 'storage/invoice/' . $fileName
             ]);
         }
+        DB::beginTransaction();
 
-        $trainee = $this->traineeServiceInterface->findOrFail($subscribeRequest->trainee_id);
-        $trainee->packages()->sync([1 => $subscribeRequest->except('_token', 'invoice')]);
+        TraineeSubscribe::query()
+            ->where('trainee_id', $subscribeRequest->trainee_id)
+            ->whereIn('subscribe_status', [SubscribeStatusEnum::INPROGRESS->value, SubscribeStatusEnum::PENDING->value])
+            ->update(['subscribe_status' => SubscribeStatusEnum::FINISHED->value, 'is_active' => false]);
+
+        $package = Package::query()->where('id', $subscribeRequest->package_id)->first();
+
+        $traineeSubscribe = TraineeSubscribe::create([
+                'package_id' => $subscribeRequest->package_id,
+                'trainee_id' => $subscribeRequest->trainee_id,
+                'package_type' => $subscribeRequest->package_type,
+                'payment_method' => 'external',
+                'subscribe_status' => SubscribeStatusEnum::INPROGRESS->value,
+                'is_paid' => 1,
+                'invoice_file' => $subscribeRequest->invoice_file,
+                'amount' => $subscribeRequest->package_type == 'm' ? $package->monthly_price : $package->yearly_price,
+                'start_date' => $subscribeRequest->start_date,
+                'end_date' => $subscribeRequest->end_date,
+                'is_active' => true,
+                'quizzes_count' => $package->num_available_quiz,
+                'remaining_quizzes' => $package->num_available_quiz,
+                'num_available_question' => $package->num_available_question,
+            ]
+        );
+        $traineeSubscribeSpecializeData = [];
+        foreach ($package->specialists as $specialist) {
+            $traineeSubscribeSpecializeData [] = [
+                'trainee_subscribe_id' => $traineeSubscribe->id,
+                'package_id' => $package->id,
+                'specialist_id' => $specialist->specialist_id,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ];
+        }
+        TraineeSubscribeSpecialize::query()->insert($traineeSubscribeSpecializeData);
+        DB::commit();
+        return redirect(route('subscribe-trainee.index'))->with('success', 'Subscribed successfully');
     }
 
     public function update(SubscribeRequest $subscribeRequest)
@@ -188,6 +224,33 @@ class TraineeSubscribeController extends Controller
     {
         return $type == 'm' ? Carbon::now()->addMonth()->format('Y-m-d') : Carbon::now()->addYear()->format('Y-m-d');
     }
+
+    public function approve($trainee_subscribe_id)
+    {
+        $traineeSubscribe = $this->traineeServiceInterface->findOrFail($trainee_subscribe_id);
+
+        TraineeSubscribe::query()
+            ->where('trainee_id', $traineeSubscribe->trainee_id)
+            ->whereIn('subscribe_status', [SubscribeStatusEnum::INPROGRESS->value, SubscribeStatusEnum::PENDING->value])
+            ->update(['subscribe_status' => SubscribeStatusEnum::FINISHED->value, 'is_active' => false]);
+
+        $traineeSubscribe->update([
+            'is_active' => 1,
+            'is_paid' => 1,
+            'subscribe_status' => SubscribeStatusEnum::INPROGRESS,
+            'start_date' => now()->format('Y-m-d'),
+            'end_date' => $this->getPackagePeriod($traineeSubscribe->package_type)
+        ]);
+        return back()->with('success', 'Subscribe Approved Successfully');
+    }
+
+    public function changeStatus($trainee_subscribe_id)
+    {
+        $traineeSubscribe = $this->traineeServiceInterface->findOrFail($trainee_subscribe_id);
+        $traineeSubscribe->update(['is_active' => !$traineeSubscribe->is_active]);
+        return back()->with('success', 'Subscribe status changed Successfully');
+    }
+
 
     public function myfatoorahCallback(Request $request)
     {

@@ -23,7 +23,7 @@ $(document).ready(function () {
                     });
                 } else {
                     toastr.success('Updated.');
-                     window.location.href="/subscribe-trainee"
+                    window.location.href = "/subscribe-trainee"
                 }
             },
             error: function (reject) {
@@ -65,7 +65,7 @@ $(document).ready(function () {
                     });
                 } else {
                     toastr.success('Saved.');
-                    window.location.href="/subscribe-trainee"
+                    window.location.href = "/subscribe-trainee"
                 }
             },
             error: function (reject) {
@@ -83,8 +83,7 @@ $(document).ready(function () {
 });
 
 
-
-$(document).on('click', '.delete', function(e) {
+$(document).on('click', '.delete', function (e) {
     var url = $(this).attr('href');
     page = $(this).is("a") ? $(this).attr('href').split('page=')[1] : "";
 
@@ -107,9 +106,9 @@ $(document).on('click', '.delete', function(e) {
                     "_token": token,
                     "page": page,
                 },
-            }).done(function(data) {
+            }).done(function (data) {
                 if (data.errors) {
-                    jQuery.each(data.errors, function(key, value) {
+                    jQuery.each(data.errors, function (key, value) {
                         toastr.error(value);
                     });
                 } else {
@@ -159,49 +158,56 @@ $(document).on('click', '#ResetSearch', function (e) {
         }
     });
 });
-$(document).on('change', '.amount', function(e) {
+$(document).on('change', '.amount', function (e) {
 
 //alert($('#packageId').val());
-     if($('#package_type').val() != null && $('#packageId').val() !=null){
-         $.ajax({
-             type: "GET",
-             url: '/get/subscribe-cost',
-             data: {
-                 'package_type':$('#package_type').val(),
-                 'package_id':$('#packageId').val(),
-             },
-             beforeSend: function () {
-             },
-             complete: function () {
-             },
-             success: function (response) {
-                 $('#amount').val(response);
-             },
-             error: function (reject) {
-             }
-         });
-     }
+    if ($('#package_type').val() != null && $('#packageId').val() != null) {
+        $.ajax({
+            type: "GET",
+            url: '/get/subscribe-cost',
+            data: {
+                'package_type': $('#package_type').val(),
+                'package_id': $('#packageId').val(),
+            },
+            beforeSend: function () {
+            },
+            complete: function () {
+            },
+            success: function (response) {
+                $('#amount').val(response);
+            },
+            error: function (reject) {
+            }
+        });
+    }
 
 });
-$(document).on('change', ['.startDate','.amount'], function(e) {
-     if($('#package_type').val() != null && $('.startDate').val() !=''){
-         $.ajax({
-             type: "GET",
-             url: '/get/subscribe-end-date',
-             data: {
-                 'package_type':$('#package_type').val(),
-                 'start_date':$(this).val(),
-             },
-             beforeSend: function () {
-             },
-             complete: function () {
-             },
-             success: function (response) {
-                 $('#endDate').val(response);
-             },
-             error: function (reject) {
-             }
-         });
-     }
+$(document).on('change', ['.startDate', '.amount'], function (e) {
+    if ($('#package_type').val() != null && $('.startDate').val() != '') {
+        $.ajax({
+            type: "GET",
+            url: '/get/subscribe-end-date',
+            data: {
+                'package_type': $('#package_type').val(),
+                'start_date': $(this).val(),
+            },
+            beforeSend: function () {
+            },
+            complete: function () {
+            },
+            success: function (response) {
+                $('#endDate').val(response);
+            },
+            error: function (reject) {
+            }
+        });
+    }
 
+});
+$(document).on('click','.show_invoice',function (event) {
+    alert('test')
+    let invoice_url = $(this).data('invoice_url');
+    let img = "<img height='500' src=storage/"+invoice_url+">"
+    console.log(invoice_url);
+    $('#modal_content').html(img);
 });

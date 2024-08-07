@@ -704,10 +704,10 @@
 </script>
 
 
-<script>
-    $('Resetsearch').on('click',function () {
-     // $(this).
-    })
+{{--<script>--}}
+{{--    $('Resetsearch').on('click',function () {--}}
+{{--     // $(this).--}}
+{{--    })--}}
 
-</script>
+{{--</script>--}}
 @stack('js')

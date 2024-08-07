@@ -4,13 +4,20 @@
         <!-- Page header -->
         <div class="page-header d-print-none">
             <div class="container-xl">
+
                 <div class="row g-2 align-items-center">
 
                     <div class="col" style="margin-left:831px">
                         <h2 class="page-title">
-                            <a  class="btn btn-danger" href="{{route('subscribe-trainee.create')}}">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none">
-                                    </path><path d="M12 5l0 14"></path><path d="M5 12l14 0"></path></svg>
+                            <a class="btn btn-danger" href="{{route('subscribe-trainee.create')}}">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24"
+                                     viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                                     stroke-linecap="round" stroke-linejoin="round">
+                                    <path stroke="none" d="M0 0h24v24H0z" fill="none">
+                                    </path>
+                                    <path d="M12 5l0 14"></path>
+                                    <path d="M5 12l14 0"></path>
+                                </svg>
                                 Add New Subscribe
                             </a>
                         </h2>
@@ -36,7 +43,7 @@
                                             <select class="form-select" name="trainee_id" id="trainee_id">
                                                 <option selected value="">Select Package</option>
                                                 @foreach($trainees as $trainee)
-                                                <option value="{{$trainee->id}}">{{$trainee->full_name}}</option>
+                                                    <option value="{{$trainee->id}}">{{$trainee->full_name}}</option>
                                                 @endforeach
 
                                             </select>
@@ -48,7 +55,7 @@
                                             <select class="form-select" name="package_id" id="package_id">
                                                 <option selected value="">Select Package</option>
                                                 @foreach($packages  as $package)
-                                                <option value="{{$package->id}}">{{$package->name}}</option>
+                                                    <option value="{{$package->id}}">{{$package->name}}</option>
                                                 @endforeach
 
                                             </select>
@@ -74,7 +81,7 @@
                                             <select class="form-select" name="payment" id="payment">
                                                 <option selected value="">Select Method</option>
                                                 @foreach($payments as $payment)
-                                                <option value="{{$payment->name}}">{{$payment->name}}</option>
+                                                    <option value="{{$payment->name}}">{{$payment->name}}</option>
                                                 @endforeach
 
                                             </select>
@@ -116,7 +123,16 @@
 
                 <div class="col-12">
                     <div class="card">
-
+                        @if(session('success'))
+                            <div class="alert alert-success" role="alert">
+                                {{session('success')}}
+                            </div>
+                        @endif
+                        @if(session('error'))
+                                <div class="alert alert-danger" role="alert">
+                                    {{session('error')}}
+                                </div>
+                        @endif
                         <div class="table-responsive">
                             @include('trainee::subscribe.partial')
 
@@ -129,6 +145,22 @@
     </div>
 
 @endsection
+<div class="modal modal-blur fade" id="modal-large" tabindex="-1" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">invoice file</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="modal_content">
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn me-auto" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 @push('js')
     <script src="{{Module::asset('subscribe:js/app.js')}}" defer></script>
 @endpush

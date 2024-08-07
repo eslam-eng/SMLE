@@ -28,5 +28,7 @@ Route::group(['middleware' => 'auth'], function ()
     Route::get('get/subscribe-cost', [TraineeSubscribeController::class, 'getCost']);
     Route::get('get/subscribe-end-date', [TraineeSubscribeController::class, 'getEndDate']);
     Route::get('export/trainee', [TraineeController::class, 'export'])->name('trainee.export');
+    Route::get('trainee-subscribe-approve/{id}', [TraineeSubscribeController::class, 'approve'])->name('trainee.subscribe.approve');
+    Route::get('trainee-subscribe-change-status/{id}', [TraineeSubscribeController::class, 'changeStatus'])->name('trainee.subscribe.changeStatus');
 });
 Route::get('myfatoorah/callback', [TraineeSubscribeController::class,'myfatoorahCallback'])->name('myfatoorah.callback');
