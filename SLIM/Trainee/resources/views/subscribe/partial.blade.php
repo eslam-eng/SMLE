@@ -41,10 +41,10 @@
                 {{$subscribe->payment_method}}
             </td>
             <td class="text-secondary" data-label="Role">
-                {{$subscribe->start_date}}
+                {{$subscribe->amount > 0 ? $subscribe->start_date : "-"}}
             </td>
             <td class="text-secondary" data-label="Role">
-                {{$subscribe->end_date}}
+                {{$subscribe->amount > 0 ? $subscribe->end_date : "-"}}
             </td>
             <td class="text-secondary" data-label="Role">
                 {{$subscribe->is_paid ? 'yes' : 'no'}}
