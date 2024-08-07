@@ -246,7 +246,11 @@ class TraineeSubscribeController extends Controller
 
     public function changeStatus($trainee_subscribe_id)
     {
-        $traineeSubscribe = $this->traineeServiceInterface->findOrFail($trainee_subscribe_id);
+        $traineeSubscribe = TraineeSubscribe::query()->findOrFail($trainee_subscribe_id);
+        TraineeSubscribe::query()
+            ->where('trainee_id', $traineeSubscribe->trainee_id)
+            ->update(['is_active' => false]);
+
         $traineeSubscribe->update(['is_active' => !$traineeSubscribe->is_active]);
         return back()->with('success', 'Subscribe status changed Successfully');
     }
