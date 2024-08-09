@@ -75,10 +75,13 @@
                                     </a>
                                 @endif
                             @endif
-                            <a class="dropdown-item"
-                               href="{{route('trainee.subscribe.changeStatus',$subscribe->id)}}">
-                                {{$subscribe->is_active ? 'InActive' : 'Active'}}
-                            </a>
+                            @if($subscribe->is_paid)
+                                <a class="dropdown-item"
+                                   href="{{route('trainee.subscribe.changeStatus',$subscribe->id)}}">
+                                    {{$subscribe->is_active ? 'InActive' : 'Active'}}
+                                </a>
+                            @endif
+
                             <a
                                 href="{{route('subscribe-trainee.edit',$subscribe->id)}}"
                                 class="dropdown-item">
