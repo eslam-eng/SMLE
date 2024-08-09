@@ -62,20 +62,21 @@ class SubscribeController extends Controller
             $traineeSubscribe = TraineeSubscribe::query()->updateOrCreate([
                 'package_id' => $package->id,
                 'trainee_id' => $subscriber->id,
-            ],[
+                'is_active' => 0,
+                'is_paid' => 0,
+            ], [
 
                     'invoice_file' => $path,
                     'package_type' => $request->package_type,
                     'payment_method' => 'external',
                     'subscribe_status' => SubscribeStatusEnum::IN_REVIEW->value,
-                    'is_paid' => 0,
+
                     'amount' => $amount,
                     'start_date' => $start_date,
                     'end_date' => $end_date,
-                    'is_active' => false,
                     'quizzes_count' => $package->no_limit_for_quiz ? null : $package->num_available_quiz,
                     'remaining_quizzes' => $package->no_limit_for_quiz ? null : $package->num_available_quiz,
-                    'num_available_question' =>  $package->no_limit_for_question ? null : $package->num_available_question,
+                    'num_available_question' => $package->no_limit_for_question ? null : $package->num_available_question,
                 ]
             );
             $this->createTraineeSubscribeSpecialization($traineeSubscribe, $package, $request->specialist_ids);
