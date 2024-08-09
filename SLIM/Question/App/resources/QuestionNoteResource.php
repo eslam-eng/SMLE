@@ -16,6 +16,8 @@ class QuestionNoteResource extends JsonResource
             'question_id' => $this->question_id,
             'quiz_id' => $this->quiz_id,
             'question' => $this->question->question,
+            'question_description' => $this->question->description,
+            'question_image' => asset('/storage'.$this->question->image),
             'quiz_title' => $this->quiz?->title,
             'note' => $this->note,
             'user_answer' => $this->getUserAnswer($this->quiz_id, $this->question_id)?->user_answer,
