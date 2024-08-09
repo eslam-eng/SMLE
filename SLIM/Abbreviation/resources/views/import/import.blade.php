@@ -17,7 +17,7 @@
                             <h3 class="card-title">import Abbreviation</h3>
                             <a href="{{route('abbreviation.download-template')}}" role="button" class="btn btn-info ms-2"><i class="fa fa-download"></i>download Empty Template</a>
                         </div>
-                        <form method="post" action="{{route('abbreviation.import')}}" class="card" enctype="multipart/form-data">
+                        <form method="post" action="{{route('abbreviations-import')}}" class="card" enctype="multipart/form-data">
                             @csrf
                             <div class="card-body">
 
