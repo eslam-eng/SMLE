@@ -27,7 +27,6 @@ class QuizAnalysisResource extends JsonResource
             'unanswered_count' => $this->unanswered_count,
             'result' => $this->list_questions_count ? ($this->correct_answers_count / $this->list_questions_count) * 100 : 0,
             'specialists' => SpecilizationResource::collection($this->specialist),
-            'SubSpecialists' => subSpecializationResorce::collection($this->Subspecialist),
             'question' => QuestionQuizResource::collection($this->whenLoaded('listQuestions')),
 
 
