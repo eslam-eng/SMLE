@@ -71,8 +71,8 @@ class SubscribeController extends Controller
                     'start_date' => $start_date,
                     'end_date' => $end_date,
                     'is_active' => false,
-                    'quizzes_count' => $package->num_available_quiz,
-                    'remaining_quizzes' => $package->num_available_quiz,
+                    'quizzes_count' => $package->no_limit_for_quiz ? null : $package->num_available_quiz,
+                    'remaining_quizzes' => $package->no_limit_for_quiz ? null : $package->num_available_quiz,
                     'num_available_question' => $package->num_available_question,
                 ]
             );

@@ -32,14 +32,15 @@ class QuizController extends Controller
                 ->where(['is_paid' => true, 'is_active' => true, 'trainee_id' => $user->id])
                 ->latest()
                 ->first();
+
             $quizData = $quizRequest->except('specialists', 'subSpecialists');
             $quizData['trainee_subscribe_id'] = $trainerSubscribePlan->id;
             $quizData['quiz_date'] = date('Y-m-d');
 
-            if ($trainerSubscribePlan->num_available_question < $quizRequest->question_no)
+            if (!is_null($trainerSubscribePlan->num_available_question) && $trainerSubscribePlan->num_available_question < $quizRequest->question_no)
                 return $this->returnError("you cannot exceed available question number $trainerSubscribePlan->num_available_question", 422);
 
-            if (!$trainerSubscribePlan->remaining_quizzes)
+            if (!is_null($trainerSubscribePlan->num_available_question) && !$trainerSubscribePlan->remaining_quizzes)
                 return $this->returnError("There is no quizzes available , please upgrade or renew plan", 422);
 
             DB::beginTransaction();
