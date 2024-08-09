@@ -125,9 +125,9 @@ class TraineeSubscribeController extends Controller
                 'start_date' => $subscribeRequest->start_date,
                 'end_date' => $subscribeRequest->end_date,
                 'is_active' => true,
-                'quizzes_count' => $package->num_available_quiz,
-                'remaining_quizzes' => $package->num_available_quiz,
-                'num_available_question' => $package->num_available_question,
+                'quizzes_count' => $package->no_limit_for_quiz ? null : $package->num_available_quiz,
+                'remaining_quizzes' => $package->no_limit_for_quiz ? null : $package->num_available_quiz,
+                'num_available_question' =>  $package->no_limit_for_question ? null : $package->num_available_question,
             ]
         );
         $traineeSubscribeSpecializeData = [];

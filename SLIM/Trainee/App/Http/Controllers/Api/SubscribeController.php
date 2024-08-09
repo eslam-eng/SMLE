@@ -59,10 +59,12 @@ class SubscribeController extends Controller
                 $image = $request->file('invoice_file');
                 $path = $image->store('invoices', 'public');
             }
-            $traineeSubscribe = TraineeSubscribe::create([
-                    'package_id' => $package->id,
+            $traineeSubscribe = TraineeSubscribe::query()->updateOrCreate([
+                'package_id' => $package->id,
+                'trainee_id' => $subscriber->id,
+            ],[
+
                     'invoice_file' => $path,
-                    'trainee_id' => $subscriber->id,
                     'package_type' => $request->package_type,
                     'payment_method' => 'external',
                     'subscribe_status' => SubscribeStatusEnum::IN_REVIEW->value,
