@@ -94,21 +94,17 @@ class QuizController extends Controller
         } else {
             $filters = ['specialist_id' => $trainerSubscribePlan->tranineeSubscribeSpecialization()->pluck('specialist_id')->toArray()];
         }
+        $filters['level'] = $quizRequest->level ?: null;
+        $filters['is_active'] = true;
         $filters = array_filter($filters);
 
 
-        $questions = Question::query()
-            ->where(function ($query) use ($filters) {
-                $query->when(Arr::get($filters, 'specialist_id') !== null, function ($q) use ($filters) {
-                    $q->whereIn('specialist_id', $filters['specialist_id']);
-                })->when(Arr::get($filters, 'sub_specialist_id') !== null, function ($q) use ($filters) {
-                    $q->whereIn('sub_specialist_id', $filters['sub_specialist_id']);
-                });
-            })
-            ->when($quizRequest->level, fn($q) => $q->where('level', $quizRequest->level))
+        $questionsQuery = Question::query();
+        $questions = $this->applyFilters($questionsQuery, $filters)
             ->inRandomOrder()
-            ->limit($quizRequest->question_no)
-            ->get();
+            ->limit($quizRequest->question_no);
+
+        $questions = $questions->get();
 
         if ($questions->isEmpty())
             return $questions->count();
@@ -267,4 +263,31 @@ class QuizController extends Controller
         return $this->returnSuccessMessage('Quiz status updated Successfully');
 
     }
+
+    private function applyFilters($query, $filters)
+    {
+
+        foreach ($filters as $key => $value) {
+            if (isset($value)) {
+                switch ($key) {
+                    case 'specialist_id':
+                        $query->whereIn('specialist_id', $filters['specialist_id']);
+                        break;
+                    case 'sub_specialist_id':
+                        $query->whereIn('sub_specialist_id', $filters['sub_specialist_id']);
+                        break;
+                    case 'level':
+                        $query->where('is_active', $value);
+                        break;
+                    case 'is_active':
+                        $query->where('is_active', 1);
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+        return $query;
+    }
+
 }
