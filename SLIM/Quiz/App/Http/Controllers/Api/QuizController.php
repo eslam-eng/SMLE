@@ -48,8 +48,11 @@ class QuizController extends Controller
                 ->create($quizData);
 
             $specialists = collect($quizRequest->specialists)->count() > 0 ? $quizRequest->specialists : $trainerSubscribePlan->tranineeSubscribeSpecialization()->pluck('specialist_id')->toArray();
+
             $quiz->specialist()->sync($specialists);
+
             $quiz->Subspecialist()->sync($quizRequest->subSpecialists);
+
             $questionsCount = $this->generateQuiz($quizRequest, $quiz, $trainerSubscribePlan);
             if ($questionsCount < 1)
                 return $this->returnError('There is no questions available in this specialists', 422);
