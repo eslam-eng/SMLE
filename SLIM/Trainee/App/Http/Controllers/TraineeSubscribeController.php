@@ -227,11 +227,11 @@ class TraineeSubscribeController extends Controller
 
     public function approve($trainee_subscribe_id)
     {
-        $traineeSubscribe = $this->traineeServiceInterface->findOrFail($trainee_subscribe_id);
+        $traineeSubscribe =  TraineeSubscribe::query()->findOrFail($trainee_subscribe_id);
 
         TraineeSubscribe::query()
             ->where('trainee_id', $traineeSubscribe->trainee_id)
-            ->whereIn('subscribe_status', [SubscribeStatusEnum::INPROGRESS->value, SubscribeStatusEnum::PENDING->value])
+            ->whereIn('subscribe_status', [SubscribeStatusEnum::INPROGRESS->value,SubscribeStatusEnum::IN_REVIEW->value, SubscribeStatusEnum::PENDING->value])
             ->update(['subscribe_status' => SubscribeStatusEnum::FINISHED->value, 'is_active' => false]);
 
         $traineeSubscribe->update([
