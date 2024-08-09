@@ -47,7 +47,8 @@ class QuizController extends Controller
             $quiz = auth()->user()->quizzes()
                 ->create($quizData);
 
-            $quiz->specialist()->sync($quizRequest->specialists);
+            $specialists = collect($quizRequest->specialists)->count() > 0 ? $quizRequest->specialists : $trainerSubscribePlan->tranineeSubscribeSpecialization()->pluck('specialist_id')->toArray();
+            $quiz->specialist()->sync($specialists);
             $quiz->Subspecialist()->sync($quizRequest->subSpecialists);
             $questionsCount = $this->generateQuiz($quizRequest, $quiz, $trainerSubscribePlan);
             if ($questionsCount < 1)
