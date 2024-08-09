@@ -73,7 +73,7 @@ class SubscribeController extends Controller
                     'is_active' => false,
                     'quizzes_count' => $package->no_limit_for_quiz ? null : $package->num_available_quiz,
                     'remaining_quizzes' => $package->no_limit_for_quiz ? null : $package->num_available_quiz,
-                    'num_available_question' => $package->num_available_question,
+                    'num_available_question' =>  $package->no_limit_for_question ? null : $package->num_available_question,
                 ]
             );
             $this->createTraineeSubscribeSpecialization($traineeSubscribe, $package, $request->specialist_ids);
