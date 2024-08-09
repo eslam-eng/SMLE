@@ -49,7 +49,9 @@ class QuizController extends Controller
 
             $quiz->specialist()->sync($quizRequest->specialists);
             $quiz->Subspecialist()->sync($quizRequest->subSpecialists);
-            $this->generateQuiz($quizRequest, $quiz, $trainerSubscribePlan);
+            $questionsCount = $this->generateQuiz($quizRequest, $quiz, $trainerSubscribePlan);
+            if ($questionsCount < 1)
+                return $this->returnError('There is no questions available', 422);
             $quiz->loadCount(['correctAnswers', 'incorrectAnswers', 'listQuestions']);
             //increment available quizzes
             $trainerSubscribePlan->decrement('remaining_quizzes');
@@ -109,7 +111,7 @@ class QuizController extends Controller
             ->get();
 
         if ($questions->isEmpty())
-            return $this->returnError('There is no questions available', 422);
+            return $questions->count();
 
         $questions->each(function ($question) use (&$quizQuestionData, $trainerSubscribePlan, $quiz) {
             $quizQuestionData[] = [
