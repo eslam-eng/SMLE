@@ -14,7 +14,6 @@ $(document).ready(function () {
             complete: function () {
                 $('#btnSubmit').removeClass('kt-spinner');
                 $('#btnSubmit').removeAttr('disabled');
-
             },
             success: function (response) {
                 if (response.errors) {
