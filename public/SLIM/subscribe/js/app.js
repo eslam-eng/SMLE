@@ -167,8 +167,8 @@ $(document).on('change', '#packageId', function (e) {
         success: function (response) {
             let items = response.specialists
             $('#specialists').empty();
-            $.each(items, function(index, value) {
-                $('#specialists').append('<option value="' + value + '">' + value + '</option>');
+            $.each(items, function (index, value) {
+                $('#specialists').append('<option value="' + index + '">' + value + '</option>');
             });
 
         },
@@ -200,9 +200,33 @@ $(document).on('change', '.startDate', function (e) {
     }
 
 });
-$(document).on('click','.show_invoice',function (event) {
+
+$(document).on('change', '#specialists, #package_type,#packageId', function (e) {
+    if (($('#package_type').val() != null || $('#package_type').val() != '')  && ( $('#packageId').val() != ''|| $('#packageId').val() != null)) {
+        $.ajax({
+            type: "GET",
+            url: '/subscribe-cost',
+            data: {
+                'package_type': $('#package_type option:selected').val(),
+                'package_id': $('#packageId option:selected').val(),
+                'specialists': $('#specialists').val()
+            },
+            success: function (response) {
+                console.log(response.amount)
+                $('#amount').val(response.amount);
+            },
+            error: function (reject) {
+                console.log(reject)
+                alert('there is an error')
+            }
+        });
+    }
+
+});
+
+$(document).on('click', '.show_invoice', function (event) {
     alert('test')
     let invoice_url = $(this).data('invoice_url');
-    let img = "<img height='500' src=storage/"+invoice_url+">"
+    let img = "<img height='500' src=storage/" + invoice_url + ">"
     $('#modal_content').html(img);
 });

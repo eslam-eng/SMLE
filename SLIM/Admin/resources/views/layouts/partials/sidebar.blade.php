@@ -298,7 +298,7 @@
                                 @endcan
                                 @can('subspecialties Menu')
                                     <div class="dropdown-menu-column">
-                                        <a class="dropdown-item" href="#">Classified Questions</a>
+                                        <a class="dropdown-item" href="{{route('classification.questions')}}">Classified Questions</a>
                                     </div>
                                 @endcan
                             </div>

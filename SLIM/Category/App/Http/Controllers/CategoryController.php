@@ -10,6 +10,8 @@ use SLIM\Category\App\Http\Requests\CategoryRequest;
 use SLIM\Category\App\Models\Category;
 use SLIM\Category\Interfaces\CategoryServiceInterfaces;
 use SLIM\Category\Service\CategoryService;
+use SLIM\Question\App\Models\QuestionCategory;
+
 class CategoryController extends Controller
 {
     /**
@@ -78,6 +80,13 @@ class CategoryController extends Controller
     {
         $this->categoryServiceInterfaces->delete($category);
         return $this->index($request);
+    }
+
+    public function questionsClassification()
+    {
+        $questions = QuestionCategory::query()
+            ->with(['question','trainee','category'])->paginate();
+        return view('category::question.index', compact('questions'));
 
     }
 }

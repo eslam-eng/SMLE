@@ -101,6 +101,9 @@
 
                 <div class="col-12">
                     <div class="card">
+                        @if(session('success'))
+                            <div class="alert alert-success">{{session('success')}}</div>
+                        @endif
                         <div class="table-responsive">
                             @include('trainee::partial')
 

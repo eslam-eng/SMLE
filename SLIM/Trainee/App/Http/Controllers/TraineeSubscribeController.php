@@ -73,18 +73,30 @@ class TraineeSubscribeController extends Controller
     {
         $packages = $this->packageServiceInterface->getAll(['is_active' => 1]);
         $trainees = $this->traineeServiceInterface->getAll(['is_active' => 1]);
-        $payments = $this->paymentServiceInterface->getAll(['is_active' => 1]);
-        $subscribe = $this->traineeServiceInterface->with(['packages'])->findorfail($id);
-
-        return view('trainee::subscribe.edit', compact('packages', 'trainees', 'payments', 'subscribe'));
+        $subscribe = TraineeSubscribe::query()->with('tranineeSubscribeSpecialization')->findOrFail($id);
+        $subscribeSpecialists = $subscribe->tranineeSubscribeSpecialization->pluck('specialist_id')->toArray();
+        $specialists_ids = $subscribe->package->specialists()->pluck('specialist_id')->toArray();
+        $specialists = Specialization::query()->whereIn('id', $specialists_ids)->pluck('name', 'id')->toArray();
+        return view('trainee::subscribe.edit', compact('packages', 'trainees', 'subscribe','specialists','subscribeSpecialists'));
     }
 
     public function packageSpecialists(Request $request)
     {
         $package = Package::where('id', $request->package_id)->first();
         $specialists_ids = $package->specialists()->pluck('specialist_id')->toArray();
-        $specialists = Specialization::query()->whereIn('id', $specialists_ids)->pluck('name','id')->toArray();
-        return response()->json(['specialists'=>$specialists]);
+        $specialists = Specialization::query()->whereIn('id', $specialists_ids)->pluck('name', 'id')->toArray();
+        return response()->json(['specialists' => $specialists]);
+    }
+
+    public function subscribeCost(Request $request)
+    {
+        $package = Package::where('id', $request->package_id)->first();
+        $column = $request->package_type == 'm' ? 'monthly_price' : 'yearly_price';
+        if (isset($request->specialists) && collect($request->specialists)->count() > 0 ){
+            $amount = $package->specialists()->whereIn('specialist_id',$request->specialists)->sum($column);
+        }else
+            $amount = $package->$column;
+        return response()->json(['amount' => $amount]);
     }
 
     public function store(SubscribeRequest $subscribeRequest)
@@ -100,7 +112,7 @@ class TraineeSubscribeController extends Controller
 
         TraineeSubscribe::query()
             ->where('trainee_id', $subscribeRequest->trainee_id)
-            ->whereIn('subscribe_status', [SubscribeStatusEnum::INPROGRESS->value,SubscribeStatusEnum::IN_REVIEW->value, SubscribeStatusEnum::PENDING->value])
+            ->whereIn('subscribe_status', [SubscribeStatusEnum::INPROGRESS->value, SubscribeStatusEnum::IN_REVIEW->value, SubscribeStatusEnum::PENDING->value])
             ->update(['subscribe_status' => SubscribeStatusEnum::FINISHED->value, 'is_active' => false]);
 
         $package = Package::query()->where('id', $subscribeRequest->package_id)->first();
@@ -140,24 +152,52 @@ class TraineeSubscribeController extends Controller
         return redirect(route('subscribe-trainee.index'))->with('success', 'Subscribed successfully');
     }
 
-    public function update(SubscribeRequest $subscribeRequest)
+    public function update(SubscribeRequest $subscribeRequest,$trainee_subscribe_id)
     {
-        $trainee = $this->traineeServiceInterface->findOrFail($subscribeRequest->trainee_id);
-
         if ($subscribeRequest->hasFile('invoice')) {
             $fileName = $subscribeRequest->invoice->HashName();
             $subscribeRequest->invoice->storeAs('public/invoice', $fileName);
             $subscribeRequest->merge([
                 'invoice_file' => 'storage/invoice/' . $fileName
             ]);
-        } else {
-            $subscribeRequest->merge([
-                'invoice_file' => $trainee['packages'][0]['pivot']['invoice_file']
-            ]);
-
         }
+        DB::beginTransaction();
+        $traineeSubscribe = TraineeSubscribe::query()->findOrFail($trainee_subscribe_id);
 
-        $trainee->packages()->sync([1 => $subscribeRequest->except('_token', 'invoice')]);
+        TraineeSubscribeSpecialize::query()->where('trainee_subscribe_id', $trainee_subscribe_id)->delete();
+        $package = Package::query()->where('id', $subscribeRequest->package_id)->first();
+        $specialists = count($subscribeRequest->specialists) ? $subscribeRequest->specialists : $package->specialists->pluck('specialist_id')->toArray();
+        $traineeSubscribe->update([
+            'package_id' => $subscribeRequest->package_id,
+            'trainee_id' => $subscribeRequest->trainee_id,
+            'package_type' => $subscribeRequest->package_type,
+            'payment_method' => 'external',
+            'subscribe_status' => SubscribeStatusEnum::INPROGRESS->value,
+            'is_paid' => 1,
+            'invoice_file' => $subscribeRequest->invoice_file,
+            'amount' => $subscribeRequest->amount,
+            'start_date' => $subscribeRequest->start_date,
+            'end_date' => $subscribeRequest->end_date,
+            'is_active' => true,
+            'quizzes_count' => $package->no_limit_for_quiz ? null : $package->num_available_quiz,
+            'remaining_quizzes' => $package->no_limit_for_quiz ? null : $package->num_available_quiz,
+            'num_available_question' => $package->no_limit_for_question ? null : $package->num_available_question,
+        ]);
+
+        $traineeSubscribeSpecializeData = [];
+
+        foreach ($specialists as $specialist_id) {
+            $traineeSubscribeSpecializeData [] = [
+                'trainee_subscribe_id' => $traineeSubscribe->id,
+                'package_id' => $package->id,
+                'specialist_id' => $specialist_id,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ];
+        }
+        TraineeSubscribeSpecialize::query()->insert($traineeSubscribeSpecializeData);
+        DB::commit();
+        return redirect(route('subscribe-trainee.index'))->with('success', 'Subscribed Updated successfully');
     }
 
     public function getEndDate(Request $request)
@@ -176,8 +216,11 @@ class TraineeSubscribeController extends Controller
 
     public function delete(Request $request, $id)
     {
-        $trainee = $this->traineeServiceInterface->findorfail($id);
-        $trainee->packages()->detach();
+        DB::beginTransaction();
+        $traineeSubscribe = TraineeSubscribe::query()->findOrFail($id);
+        TraineeSubscribeSpecialize::query()->where('trainee_subscribe_id', $id)->delete();
+        $traineeSubscribe->delete();
+        DB::commit();
         return $this->index($request);
     }
 

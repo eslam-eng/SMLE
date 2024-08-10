@@ -16,4 +16,5 @@ use SLIM\Category\App\Http\Controllers\CategoryController;
 
 Route::group(['middleware'=>'auth'], function () {
     Route::resource('category', CategoryController::class)->names('category');
+    Route::get('classification/questions', [CategoryController::class,'questionsClassification'])->name('classification.questions');
 });
