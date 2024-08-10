@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use SLIM\Package\App\Models\Package;
 use SLIM\Package\interfaces\PackageServiceInterface;
 use SLIM\Payment\Interfaces\PaymentServiceInterfaces;
+use SLIM\Specialization\App\Models\Specialization;
 use SLIM\Trainee\App\Http\Requests\SubscribeRequest;
 use SLIM\Trainee\App\Models\TraineeSubscribe;
 use SLIM\Trainee\App\Models\TraineeSubscribeSpecialize;
@@ -65,9 +66,7 @@ class TraineeSubscribeController extends Controller
     {
         $packages = $this->packageServiceInterface->getAll(['is_active' => 1]);
         $trainees = $this->traineeServiceInterface->getAll(['is_active' => 1]);
-        $payments = $this->paymentServiceInterface->getAll(['is_active' => 1]);
-
-        return view('trainee::subscribe.create', compact('packages', 'trainees', 'payments'));
+        return view('trainee::subscribe.create', compact('packages', 'trainees'));
     }
 
     public function edit($id)
@@ -80,23 +79,16 @@ class TraineeSubscribeController extends Controller
         return view('trainee::subscribe.edit', compact('packages', 'trainees', 'payments', 'subscribe'));
     }
 
-    public function getCost(Request $request)
+    public function packageSpecialists(Request $request)
     {
         $package = Package::where('id', $request->package_id)->first();
-
-        if ($request->package_type == 'm') {
-            return $package->monthly_price;
-        } elseif ($request->package_type == 'y') {
-            return $package->yearly_price;
-        } else {
-            return $package->price;
-        }
-
+        $specialists_ids = $package->specialists()->pluck('specialist_id')->toArray();
+        $specialists = Specialization::query()->whereIn('id', $specialists_ids)->pluck('name','id')->toArray();
+        return response()->json(['specialists'=>$specialists]);
     }
 
     public function store(SubscribeRequest $subscribeRequest)
     {
-
         if ($subscribeRequest->hasFile('invoice')) {
             $fileName = $subscribeRequest->invoice->HashName();
             $subscribeRequest->invoice->storeAs('public/invoice', $fileName);
@@ -108,10 +100,11 @@ class TraineeSubscribeController extends Controller
 
         TraineeSubscribe::query()
             ->where('trainee_id', $subscribeRequest->trainee_id)
-            ->whereIn('subscribe_status', [SubscribeStatusEnum::INPROGRESS->value, SubscribeStatusEnum::PENDING->value])
+            ->whereIn('subscribe_status', [SubscribeStatusEnum::INPROGRESS->value,SubscribeStatusEnum::IN_REVIEW->value, SubscribeStatusEnum::PENDING->value])
             ->update(['subscribe_status' => SubscribeStatusEnum::FINISHED->value, 'is_active' => false]);
 
         $package = Package::query()->where('id', $subscribeRequest->package_id)->first();
+        $specialists = count($subscribeRequest->specialists) ? $subscribeRequest->specialists : $package->specialists->pluck('specialist_id')->toArray();
 
         $traineeSubscribe = TraineeSubscribe::create([
                 'package_id' => $subscribeRequest->package_id,
@@ -121,21 +114,23 @@ class TraineeSubscribeController extends Controller
                 'subscribe_status' => SubscribeStatusEnum::INPROGRESS->value,
                 'is_paid' => 1,
                 'invoice_file' => $subscribeRequest->invoice_file,
-                'amount' => $subscribeRequest->package_type == 'm' ? $package->monthly_price : $package->yearly_price,
+                'amount' => $subscribeRequest->amount,
                 'start_date' => $subscribeRequest->start_date,
                 'end_date' => $subscribeRequest->end_date,
                 'is_active' => true,
                 'quizzes_count' => $package->no_limit_for_quiz ? null : $package->num_available_quiz,
                 'remaining_quizzes' => $package->no_limit_for_quiz ? null : $package->num_available_quiz,
-                'num_available_question' =>  $package->no_limit_for_question ? null : $package->num_available_question,
+                'num_available_question' => $package->no_limit_for_question ? null : $package->num_available_question,
             ]
         );
+
         $traineeSubscribeSpecializeData = [];
-        foreach ($package->specialists as $specialist) {
+
+        foreach ($specialists as $specialist_id) {
             $traineeSubscribeSpecializeData [] = [
                 'trainee_subscribe_id' => $traineeSubscribe->id,
                 'package_id' => $package->id,
-                'specialist_id' => $specialist->specialist_id,
+                'specialist_id' => $specialist_id,
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ];
@@ -227,11 +222,11 @@ class TraineeSubscribeController extends Controller
 
     public function approve($trainee_subscribe_id)
     {
-        $traineeSubscribe =  TraineeSubscribe::query()->findOrFail($trainee_subscribe_id);
+        $traineeSubscribe = TraineeSubscribe::query()->findOrFail($trainee_subscribe_id);
 
         TraineeSubscribe::query()
             ->where('trainee_id', $traineeSubscribe->trainee_id)
-            ->whereIn('subscribe_status', [SubscribeStatusEnum::INPROGRESS->value,SubscribeStatusEnum::IN_REVIEW->value, SubscribeStatusEnum::PENDING->value])
+            ->whereIn('subscribe_status', [SubscribeStatusEnum::INPROGRESS->value, SubscribeStatusEnum::IN_REVIEW->value, SubscribeStatusEnum::PENDING->value])
             ->update(['subscribe_status' => SubscribeStatusEnum::FINISHED->value, 'is_active' => false]);
 
         $traineeSubscribe->update([

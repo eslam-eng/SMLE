@@ -25,7 +25,7 @@ Route::group(['middleware' => 'auth'], function ()
     Route::delete('subscribe-trainee/{id}', [TraineeSubscribeController::class, 'delete'])->name('subscribe-trainee.destroy');
     Route::get('subscribe-trainee/edit/{id}', [TraineeSubscribeController::class, 'edit'])->name('subscribe-trainee.edit');
     Route::post('subscribe-trainee/update/{id}', [TraineeSubscribeController::class, 'update'])->name('subscribe-trainee.update');
-    Route::get('get/subscribe-cost', [TraineeSubscribeController::class, 'getCost']);
+    Route::get('package-specialists', [TraineeSubscribeController::class, 'packageSpecialists']);
     Route::get('get/subscribe-end-date', [TraineeSubscribeController::class, 'getEndDate']);
     Route::get('export/trainee', [TraineeController::class, 'export'])->name('trainee.export');
     Route::get('trainee-subscribe-approve/{id}', [TraineeSubscribeController::class, 'approve'])->name('trainee.subscribe.approve');

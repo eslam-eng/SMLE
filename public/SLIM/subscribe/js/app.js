@@ -57,7 +57,6 @@ $(document).ready(function () {
 
             },
             success: function (response) {
-                console.log('succ');
                 if (response.errors) {
                     jQuery.each(response.errors, function (key, value) {
                         //toastr.error(value);
@@ -158,31 +157,28 @@ $(document).on('click', '#ResetSearch', function (e) {
         }
     });
 });
-$(document).on('change', '.amount', function (e) {
+$(document).on('change', '#packageId', function (e) {
+    $.ajax({
+        type: "GET",
+        url: '/package-specialists',
+        data: {
+            'package_id': $('#packageId').val(),
+        },
+        success: function (response) {
+            let items = response.specialists
+            $('#specialists').empty();
+            $.each(items, function(index, value) {
+                $('#specialists').append('<option value="' + value + '">' + value + '</option>');
+            });
 
-//alert($('#packageId').val());
-    if ($('#package_type').val() != null && $('#packageId').val() != null) {
-        $.ajax({
-            type: "GET",
-            url: '/get/subscribe-cost',
-            data: {
-                'package_type': $('#package_type').val(),
-                'package_id': $('#packageId').val(),
-            },
-            beforeSend: function () {
-            },
-            complete: function () {
-            },
-            success: function (response) {
-                $('#amount').val(response);
-            },
-            error: function (reject) {
-            }
-        });
-    }
+        },
+        error: function (reject) {
+            alert('there is an error')
+        }
+    });
 
 });
-$(document).on('change', ['.startDate', '.amount'], function (e) {
+$(document).on('change', '.startDate', function (e) {
     if ($('#package_type').val() != null && $('.startDate').val() != '') {
         $.ajax({
             type: "GET",
@@ -208,6 +204,5 @@ $(document).on('click','.show_invoice',function (event) {
     alert('test')
     let invoice_url = $(this).data('invoice_url');
     let img = "<img height='500' src=storage/"+invoice_url+">"
-    console.log(invoice_url);
     $('#modal_content').html(img);
 });
