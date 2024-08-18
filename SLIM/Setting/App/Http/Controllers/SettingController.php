@@ -72,7 +72,7 @@ class SettingController extends Controller
             // Store the image in the 'public/images' directory
             $filePath = $settingRequest->file('web_icon')->store('settings','public');
 
-            $setting->web_icon = $filePath;
+            $setting->website_icon = $filePath;
             $setting->save();
         }
 
