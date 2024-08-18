@@ -6,7 +6,7 @@
         </button>
         <h1 class="navbar-brand navbar-brand-autodark">
             <a href=".">
-                <img src="{{ asset('storage/'.$setting->logo) }}" width="110" height="32" alt="SMLE"
+                <img src="{{ asset('storage/'.$setting->logo) }}" width="250" height="125" alt="SMLE"
                     class="navbar-brand-image">
             </a>
         </h1>
