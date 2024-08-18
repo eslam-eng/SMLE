@@ -52,7 +52,7 @@
                                         <div class="mb-3">
                                             <label class="form-label">Logo</label>
                                             <input type="file" class="form-control" name="web_logo" placeholder="Logo">
-                                            <img src="{{asset($setting->logo)}}" style="height:100px;width:100px;margin-top:10px">
+                                            <img src="{{asset('storage/'.$setting->logo)}}" style="height:100px;width:100px;margin-top:10px">
 
                                         </div>
                                     </div>
@@ -60,7 +60,7 @@
                                         <div class="mb-3">
                                             <label class="form-label">Website Icon</label>
                                             <input type="file" class="form-control" name="web_icon" placeholder="Website Icon">
-                                             <img src="{{asset($setting->website_icon)}}" style="height:100px;width:100px;margin-top:10px">
+                                             <img src="{{asset('storage/'.$setting->website_icon)}}" style="height:100px;width:100px;margin-top:10px">
                                          </div>
                                     </div>
                                     <div class="col-md-4">
