@@ -126,6 +126,7 @@ class AuthController extends Controller
                 'package_id' => $package->id,
                 'trainee_id' => $trainee->id,
                 'package_type' => 'y',
+                'start_date' => now()->format('Y-m-d'),
                 'is_paid' => 1,
                 'amount' => 0,
                 'is_active' => true,

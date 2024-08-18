@@ -55,7 +55,7 @@ class QuizController extends Controller
 
             $questionsCount = $this->generateQuiz($quizRequest, $quiz, $trainerSubscribePlan);
             if ($questionsCount < 1)
-                return $this->returnError('There is no questions available in this specialists', 422);
+                return $this->returnError('Sorry, there are no questions available for these specializations at the moment or the specified difficulty level.', 422);
             $quiz->loadCount(['correctAnswers', 'incorrectAnswers', 'listQuestions']);
             //increment available quizzes
             $trainerSubscribePlan->decrement('remaining_quizzes');
@@ -175,6 +175,8 @@ class QuizController extends Controller
                 ])
                 ->with('quiz')
                 ->first();
+            if (!is_null($questionAnswer->user_answer))
+                return $this->returnError('you already answer this question before',422);
             $questionAnswer->update([
                 'user_answer' => $questionAnswerRequest->answer,
                 'is_correct' => $questionAnswer->answer == $questionAnswerRequest->answer

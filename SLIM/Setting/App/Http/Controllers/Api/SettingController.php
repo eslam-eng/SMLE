@@ -21,8 +21,9 @@ class SettingController extends Controller
     public function AppSetting()
     {
         $setting = Setting::query()
-            ->select(['app_name','logo', 'about_app', 'phone', 'whatsapp', 'email', 'facebook', 'youtube', 'linked_in', 'url_play_store', 'url_apple_store'])
+            ->select(['app_name', 'logo', 'about_app', 'phone', 'whatsapp', 'email', 'facebook', 'youtube', 'linked_in', 'url_play_store', 'url_apple_store'])
             ->first();
+        $setting->logo = asset('storage/'.$setting->logo);
         return $this->returnData($setting, 'App Quiz');
     }
 }

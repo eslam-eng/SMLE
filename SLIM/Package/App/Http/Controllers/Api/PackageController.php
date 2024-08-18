@@ -23,7 +23,7 @@ class PackageController extends Controller
     {
         $packages = Package::query()
             ->where('is_active',1)
-            ->with(['activeSubscribe' => fn($query) => $query->where('trainee_id', auth()->id())])
+            ->with(['activeSubscribe' => fn($query) => $query->where('is_active',true)->where('trainee_id', auth()->id())])
             ->get();
         $packages = PackageResource::collection($packages);
         return $this->returnData($packages, 'Packages List');

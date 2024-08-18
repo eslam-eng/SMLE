@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\SettingRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 use SLIM\Setting\App\Models\Setting;
 
 class SettingController extends Controller
@@ -16,9 +16,9 @@ class SettingController extends Controller
      */
     public function index()
     {
-        $setting = Setting::orderby('id','desc')->first();
+        $setting = Setting::orderby('id', 'desc')->first();
 
-        return view('setting::edit',compact('setting'));
+        return view('setting::edit', compact('setting'));
     }
 
     /**
@@ -58,29 +58,40 @@ class SettingController extends Controller
      */
     public function update(SettingRequest $settingRequest, Setting $setting)
     {
-        if($settingRequest->hasFile('web_icon'))
-        {
-            $settingRequest->web_icon->storeAs('public/setting/',$settingRequest->web_icon->HashName());
-            $settingRequest['website_icon']='storage/setting/'.$settingRequest->web_icon->HashName();
-        }
-        else
-        {
-            $settingRequest['website_icon']=$setting->website_icon;
-        }
+        $settingRequest->validate([
+            'web_icon' => 'required|image',
+            'web_logo' => 'required|image',
+        ]);
+        if ($settingRequest->hasFile('web_icon')) {
+            $currentImagePath = $setting->website_icon;
 
-        if($settingRequest->hasFile('web_logo'))
-        {
-            $settingRequest->web_logo->storeAs('public/setting/',$settingRequest->web_logo->HashName());
-            $settingRequest['logo']='storage/setting/'.$settingRequest->web_logo->HashName();
-        }
-        else
-        {
-            $settingRequest['logo']=$setting->logo;
+            // Check if the current image exists and delete it
+            if ($currentImagePath && Storage::exists($currentImagePath)) {
+                Storage::delete($currentImagePath);
+            }
+            // Store the image in the 'public/images' directory
+            $filePath = $settingRequest->file('web_icon')->store('settings','public');
+
+            $setting->logo = $filePath;
+            $setting->save();
         }
 
+        if ($settingRequest->hasFile('web_logo')) {
+            $currentImagePath = $setting->logo;
 
+            // Check if the current image exists and delete it
+            if ($currentImagePath && Storage::exists($currentImagePath)) {
+                Storage::delete($currentImagePath);
+            }
 
-        $setting->update($settingRequest->all());
+            // Store the image in the 'public/images' directory
+            $filePath = $settingRequest->file('web_logo')->store('settings','public');
+
+            $setting->logo = $filePath;
+            $setting->save();
+        }
+
+        $setting->update($settingRequest->except(['web_icon', 'web_logo']));
     }
 
     /**

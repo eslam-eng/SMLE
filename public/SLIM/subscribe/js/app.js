@@ -201,7 +201,7 @@ $(document).on('change', '.startDate', function (e) {
 });
 
 $(document).on('change', '#specialists, #package_type,#packageId', function (e) {
-    if (($('#package_type').val() != null || $('#package_type').val() != '')  && ( $('#packageId').val() != ''|| $('#packageId').val() != null)) {
+    if (($('#package_type').val() != null || $('#package_type').val() != '') && ($('#packageId').val() != '' || $('#packageId').val() != null)) {
         $.ajax({
             type: "GET",
             url: '/subscribe-cost',
