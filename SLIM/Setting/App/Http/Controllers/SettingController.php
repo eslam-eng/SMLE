@@ -59,8 +59,8 @@ class SettingController extends Controller
     public function update(SettingRequest $settingRequest, Setting $setting)
     {
         $settingRequest->validate([
-            'web_icon' => 'required|image',
-            'web_logo' => 'required|image',
+            'web_icon' => 'nullable|image',
+            'web_logo' => 'nullable|image',
         ]);
         if ($settingRequest->hasFile('web_icon')) {
             $currentImagePath = $setting->website_icon;
