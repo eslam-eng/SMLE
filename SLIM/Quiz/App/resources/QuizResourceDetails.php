@@ -18,6 +18,7 @@ class QuizResourceDetails extends JsonResource
             'title' => $this->title,
             'question_no' => $this->question_no,
             'level' => $this->level,
+            'quiz_duration'=>$this->time_taken,
             'quiz_date' => $this->quiz_date,
             'question_stop_watch' => $this->question_stop_watch,
             'question_time' => $this->question_time,
