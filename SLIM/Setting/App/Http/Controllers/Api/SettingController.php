@@ -13,7 +13,7 @@ class SettingController extends Controller
     public function QuizSetting()
     {
         $setting = Setting::
-        select(['is_difficult', 'timer', 'automatic_correct', 'try_answer'])
+        select(['is_difficult', 'timer', 'automatic_correct', 'try_answer','question_timer'])
             ->orderby('id', 'desc')->first();
         return $this->returnData($setting, 'Setting Quiz');
     }
