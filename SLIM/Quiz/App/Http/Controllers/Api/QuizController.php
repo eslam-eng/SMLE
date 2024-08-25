@@ -246,10 +246,7 @@ class QuizController extends Controller
     public function SetTakenTime(Request $request)
     {
         $quiz = Quiz::where('id', $request->quiz_id)->first();
-        $quiz->update([
-            'time_taken' => $request->taken_time
-        ]);
-
+        $quiz->increment($request->taken_time);
         return $this->returnSuccessMessage('Quiz Taken Time set Successfully');
     }
 
