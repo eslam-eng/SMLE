@@ -119,7 +119,9 @@ class Trainee extends Authenticatable implements JWTSubject
     public function activeSubscribe(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(TraineeSubscribe::class, 'trainee_id')
-            ->where('is_active', 1)->where('is_paid', 1)->latest('id');
+            ->where('is_active', 1)
+            ->where('is_paid', 1)
+            ->latest('id');
     }
 
 }
