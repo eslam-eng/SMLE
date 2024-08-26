@@ -72,11 +72,11 @@
                                                     <p class="card-text">Paid:
                                                         {{ $trainee->activeSubscribe?->is_paid ? 'Yes' : 'No' }}
                                                     </p>
-                                                    <p class="card-text">Package quizes count:
-                                                        {{ $trainee->activeSubscribe->quizzes_count}}
+                                                    <p class="card-text">Trainee quizzes count:
+                                                        {{ $trainee->activeSubscribe->quizzes_count ?? 'No Limit'}}
                                                     </p>
-                                                    <p class="card-text">Trainee quezes available:
-                                                        {{ $trainee->activeSubscribe->remaining_quizzes}}
+                                                    <p class="card-text">Trainee Remaining Quizzes:
+                                                        {{ $trainee->activeSubscribe->remaining_quizzes ?? '-'}}
                                                     </p>
                                                     <p class="card-text">
                                                         Amount: {{ $trainee->activeSubscribe->amount }}</p>
@@ -86,7 +86,7 @@
                                                     <p class="card-text">Start Date:
                                                         {{  $trainee->activeSubscribe->start_date }}</p>
                                                     <p class="card-text">End
-                                                        Date: {{  $trainee->activeSubscribe->end_date }}
+                                                        Date: {{  $trainee->activeSubscribe->end_date ?? '-' }}
                                                     </p>
                                                     <p class="card-text">Payment method:
                                                         {{  $trainee->activeSubscribe->payment_method }}
@@ -102,6 +102,18 @@
                                                 @endisset
 
 
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h3 class="text-dark">Trainee Subscribe Specialization</h3>
+                                                <ul>
+                                                    @foreach($trainee->activeSubscribe->tranineeSubscribeSpecialization as $traineeSpecialization)
+                                                        <li>{{$traineeSpecialization->specialist->name}}</li>
+                                                    @endforeach
+                                                </ul>
                                             </div>
                                         </div>
                                     </div>
@@ -163,13 +175,6 @@
                                                                    href="{{ route('quiz.destroy', $quiz->id) }}">
                                                                     Delete
                                                                 </a>
-
-                                                                @if ($quiz->trainee_id)
-                                                                    <a class="dropdown-item"
-                                                                       href="{{ route('trainee.show', $quiz->trainee_id) }}">
-                                                                        Trainee profile
-                                                                    </a>
-                                                                @endif
                                                             </div>
                                                         </div>
                                                     </div>

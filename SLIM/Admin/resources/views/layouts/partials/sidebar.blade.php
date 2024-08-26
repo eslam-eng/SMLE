@@ -4,10 +4,10 @@
             aria-controls="sidebar-menu" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <h1 class="navbar-brand navbar-brand-autodark">
+        <h1 class="navbar-brand">
             <a href=".">
-                <img src="{{ asset('storage/'.$setting->logo) }}" width="250" height="125" alt="SMLE"
-                    class="navbar-brand-image">
+                <img src="{{ asset('storage/'.$setting->logo) }}" alt="SMLE"
+                    class="navbar-brand-image" style="height: 3rem;">
             </a>
         </h1>
         <div class="navbar-nav flex-row d-lg-none">

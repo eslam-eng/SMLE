@@ -29,7 +29,7 @@
                     {{ $question?->specialist->name }}
                 </td>
                 <td class="text-secondary" data-label="Role">
-                    {{ $question?->sub_specialist->name }}
+                    {{ $question?->sub_specialist?->name  ?? '-'}}
                 </td>
                 <td class="text-secondary" data-label="Role">
                     {{ $question->model_answer }}

@@ -4,6 +4,7 @@
     <thead>
     <tr>
         <th>#</th>
+        <th>Classification</th>
         <th>Trainee name</th>
         <th>quiz number</th>
         <th>Question Id</th>
@@ -18,6 +19,9 @@
             <tr>
                 <td class="text-secondary">
                     {{ ++$index }}
+                </td>
+                <td class="text-secondary">
+                    {{$questionClassification->category->name}}
                 </td>
                 <td class="text-secondary" data-label="Role">
                     {{ $questionClassification->trainee?->full_name }}

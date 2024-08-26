@@ -9,6 +9,7 @@ use Carbon\Carbon;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use SLIM\Package\App\Models\Package;
+use SLIM\Payment\App\Models\Payment;
 use SLIM\Trainee\App\Http\Requests\SubscribeTraineeRequest;
 use SLIM\Trainee\App\Models\TraineeSubscribe;
 use SLIM\Trainee\App\Models\TraineeSubscribeSpecialize;
@@ -23,6 +24,7 @@ class SubscribeController extends Controller
         try {
 
             $subscriber = auth()->user();
+            $payment = Payment::query()->find($request->payment_id);
             //get package with specialists
             $package = Package::query()
                 ->with('specialist')
@@ -42,46 +44,49 @@ class SubscribeController extends Controller
             $requestData['amount'] = $amount;
             $requestData['trainee_id'] = $subscriber->id;
 
-            if ($request->payment_method != 'external') {
+            if (strtoupper($payment->name) == 'BANK ACCOUNT') {
                 $invoicePaymentData = (new MyfatoorahService())->handleInvoiceLink($subscriber, $package, $requestData);
                 return $this->returnData([
                     'amount' => $amount,
                     'payment_link' => Arr::get($invoicePaymentData, 'Data.InvoiceURL')
                 ], 'Subscribe Successfully will approve after confirm payment');
+            }elseif (strtoupper($payment->name) == 'EXTERNAL') {
+                if(!isset($request->invoice_file))
+                    return $this->returnError('Please upload payment file',422);
+                $start_date = date('Y-m-d');
+                $end_date = $this->getPackagePeriod($request->package_type);
+
+                DB::beginTransaction();
+                $path = '';
+                if ($request->hasFile('invoice_file')) {
+                    $image = $request->file('invoice_file');
+                    $path = $image->store('invoices', 'public');
+                }
+                $traineeSubscribe = TraineeSubscribe::query()->updateOrCreate([
+                    'package_id' => $package->id,
+                    'trainee_id' => $subscriber->id,
+                    'is_active' => 0,
+                    'is_paid' => 0,
+                ], [
+
+                        'invoice_file' => $path,
+                        'package_type' => $request->package_type,
+                        'payment_method' => $payment->name,
+                        'subscribe_status' => SubscribeStatusEnum::IN_REVIEW->value,
+                        'amount' => $amount,
+                        'start_date' => $start_date,
+                        'end_date' => $end_date,
+                        'quizzes_count' => $package->no_limit_for_quiz ? null : $package->num_available_quiz,
+                        'remaining_quizzes' => $package->no_limit_for_quiz ? null : $package->num_available_quiz,
+                        'num_available_question' => $package->no_limit_for_question ? null : $package->num_available_question,
+                    ]
+                );
+                $this->createTraineeSubscribeSpecialization($traineeSubscribe, $package, $request->specialist_ids);
+                DB::commit();
+                return $this->returnSuccessMessage('The receipt will be reviewed and payment will confirmed.');
             }
 
-            $start_date = date('Y-m-d');
-            $end_date = $this->getPackagePeriod($request->package_type);
 
-            DB::beginTransaction();
-            $path = '';
-            if ($request->hasFile('invoice_file')) {
-                $image = $request->file('invoice_file');
-                $path = $image->store('invoices', 'public');
-            }
-            $traineeSubscribe = TraineeSubscribe::query()->updateOrCreate([
-                'package_id' => $package->id,
-                'trainee_id' => $subscriber->id,
-                'is_active' => 0,
-                'is_paid' => 0,
-            ], [
-
-                    'invoice_file' => $path,
-                    'package_type' => $request->package_type,
-                    'payment_method' => 'external',
-                    'subscribe_status' => SubscribeStatusEnum::IN_REVIEW->value,
-
-                    'amount' => $amount,
-                    'start_date' => $start_date,
-                    'end_date' => $end_date,
-                    'quizzes_count' => $package->no_limit_for_quiz ? null : $package->num_available_quiz,
-                    'remaining_quizzes' => $package->no_limit_for_quiz ? null : $package->num_available_quiz,
-                    'num_available_question' => $package->no_limit_for_question ? null : $package->num_available_question,
-                ]
-            );
-            $this->createTraineeSubscribeSpecialization($traineeSubscribe, $package, $request->specialist_ids);
-            DB::commit();
-            return $this->returnSuccessMessage('The receipt will be reviewed and payment will confirmed.');
         } catch (\Exception $exception) {
             return $this->returnError($exception->getMessage(), 500);
         }

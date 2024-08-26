@@ -92,7 +92,7 @@ class TraineeController extends Controller
      */
     public function show(Trainee $trainee)
     {
-        $trainee->load(['activeSubscribe.package'])->loadCount('quizzes');
+        $trainee->load(['activeSubscribe.package','activeSubscribe.tranineeSubscribeSpecialization.specialist'])->loadCount('quizzes');
         $active_subscribe_specialization_ids = $trainee->activeSubscribe->tranineeSubscribeSpecialization()->pluck('specialist_id')->toArray();
         $trainee->loadMissing(['activeSubscribe.package.specialist' => fn($query) => $query->whereIn('specializations.id', $active_subscribe_specialization_ids)]);
         $quizzes = Quiz::where('trainee_id', $trainee->id)->paginate(10);

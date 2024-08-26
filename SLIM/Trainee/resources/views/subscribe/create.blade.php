@@ -61,7 +61,9 @@
                                         <div class="mb-3">
                                             <label class="form-label">Payment Method</label>
                                             <select class="form-select" name="payment_method" id="payment_method">
-                                                <option value="external" selected>external</option>
+                                                @foreach($paymentMethods as $paymentMethod)
+                                                    <option value="{{$paymentMethod->id}}" selected>{{$paymentMethod->name}}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                     </div>
@@ -79,8 +81,8 @@
                                     <div class="col-md-4">
                                         <div class="mb-3">
                                             <label class="form-label" id="StartDate">Start Date</label>
-                                            <input type="date" class="form-control startDate" name="start_date"
-                                                   placeholder="Start Date" required>
+                                            <input type="date" class="form-control startDate" name="start_date" readonly
+                                                   placeholder="Start Date" value="{{now()->format('Y-m-d')}}" required>
                                         </div>
                                     </div>
                                     <div class="col-md-4">

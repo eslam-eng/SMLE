@@ -60,7 +60,6 @@ $(document).ready(function () {
 
             },
             success: function (response) {
-                console.log('succ');
                 if (response.errors) {
                     jQuery.each(response.errors, function (key, value) {
                         //toastr.error(value);
@@ -77,7 +76,6 @@ $(document).ready(function () {
 
             },
             error: function (reject) {
-
                 if (reject.status === 422) {
                     var reponse = $.parseJSON(reject.responseText);
                     jQuery.each(reponse.errors, function (key, value) {

@@ -13,6 +13,9 @@
         <div class="page-body">
             <div class="container-xl">
                 <div class="row row-cards">
+                    @if(session('package_error'))
+                        <div class="alert alert-danger">{{session('package_error')}}</div>
+                    @endif
                     <div class="col-12">
                         <form class="card" id="createForm">
                             @csrf

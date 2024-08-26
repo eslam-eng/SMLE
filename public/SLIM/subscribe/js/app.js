@@ -224,7 +224,6 @@ $(document).on('change', '#specialists, #package_type,#packageId', function (e) 
 });
 
 $(document).on('click', '.show_invoice', function (event) {
-    alert('test')
     let invoice_url = $(this).data('invoice_url');
     let img = "<img height='500' src=storage/" + invoice_url + ">"
     $('#modal_content').html(img);

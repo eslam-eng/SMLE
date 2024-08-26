@@ -21,7 +21,7 @@ class QuestionRequest extends FormRequest
             'question_mark' =>'required|numeric',
             'level' =>'required|numeric',
             'specialist_id' =>'required|numeric',
-            'sub_specialist_id' =>'required|numeric',
+            'sub_specialist_id' =>'nullable|numeric',
             'is_active' =>'required|in:1,0',
             'question_image' =>'sometimes|nullable|image|mimes:jpeg,png,jpg',
             'description' =>'sometimes|nullable|string|max:200',

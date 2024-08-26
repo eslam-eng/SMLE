@@ -34,12 +34,9 @@
                             <label for="password" class="col-md-4 col-form-label text-md-end">{{ __('Password') }}</label>
 
                             <div class="col-md-6">
-                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password"
-
-                                >
+                                <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password">
                                 <span class="input-group-btn">
-                                       <button id="show_password" class="btn btn-secondary" type="button" style="padding: 1px;margin-left: 380px;margin-top: -65px;size: 4px;" onmouseover="showPassword()"
-                                               onmouseleave="DisablePassword()">
+                                       <button id="show_password" class="btn btn-secondary" type="button" style="padding: 1px;margin-left: 380px;margin-top: -65px;size: 4px;" onclick="togglePassword()">
                                            <span class="glyphicon fa fa-eye-slash">
 
                                            </span>

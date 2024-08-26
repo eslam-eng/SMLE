@@ -62,9 +62,10 @@ class QuestionController extends Controller
     public function create()
     {
         $specializations = $this->specializationService->getAll();
+        $subSpecializations = $this->subSpecializationService->getAll();
         $abbreviations = $this->abbreviationServiceInterface->getAll();
 
-        return view('question::create', compact('specializations', 'abbreviations'));
+        return view('question::create', compact('specializations', 'abbreviations','subSpecializations'));
     }
 
     /**
@@ -83,7 +84,7 @@ class QuestionController extends Controller
         }
 
         $question = $this->questionservice->create($questionRequest->all());
-        $question = $question->abbreviations()->sync($questionRequest->abbreviations);
+        $question->abbreviations()->sync($questionRequest->abbreviations);
     }
 
     /**

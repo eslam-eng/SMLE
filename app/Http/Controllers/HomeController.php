@@ -37,9 +37,9 @@ class HomeController extends Controller
         $subSpecializationCount   = SubSpecialties::count();
         $classificationCount      = Category::count();
         $packageCount             = Package::count();
-        $subscriptionCount        = TraineeSubscribe::where('is_active', 1)->where('is_paid', 1)->count();
-        $monthlySubscriptionCount = TraineeSubscribe::where('is_active', 1)->where('is_paid', 1)->where('package_type', 'm')->sum('amount');
-        $yearlySubscriptionCount  = TraineeSubscribe::where('is_active', 1)->where('is_paid', 1)->where('package_type', 'y')->sum('amount');
+        $subscriptionCount        = TraineeSubscribe::where('is_active', 1)->count();
+        $monthlySubscriptionCount = TraineeSubscribe::where('is_paid', 1)->where('package_type', 'm')->sum('amount');
+        $yearlySubscriptionCount  = TraineeSubscribe::where('is_paid', 1)->where('package_type', 'y')->sum('amount');
 
         // trainee most has quiz
         $traineesMostHasQuiz = Trainee::query()

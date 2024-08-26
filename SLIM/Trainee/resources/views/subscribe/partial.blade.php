@@ -35,13 +35,17 @@
                 {{$subscribe->amount}}
             </td>
             <td class="text-secondary" data-label="Role">
-                {{$subscribe->package_type=='m' ? "Monthly" : 'Yearly'}}
+                @if($subscribe->amount > 0 )
+                    {{$subscribe->package_type=='m' ? "Monthly" : 'Yearly'}}
+                @else
+                    -
+                @endif
             </td>
             <td class="text-secondary" data-label="Role">
                 {{$subscribe->payment_method}}
             </td>
             <td class="text-secondary" data-label="Role">
-                {{$subscribe->amount > 0 ? $subscribe->start_date : "-"}}
+                {{$subscribe->start_date}}
             </td>
             <td class="text-secondary" data-label="Role">
                 {{$subscribe->amount > 0 ? $subscribe->end_date : "-"}}

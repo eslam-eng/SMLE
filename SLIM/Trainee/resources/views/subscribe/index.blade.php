@@ -34,7 +34,7 @@
                     <div class="col-12">
                         <form class="card">
                             <div class="card-body">
-                                <h3 class="card-title">Filter Package</h3>
+                                <h3 class="card-title">Filter Subscriptions</h3>
                                 <div class="row row-cards">
 
                                     <div class="col-md-4">

@@ -19,8 +19,9 @@ class PackageRequest extends FormRequest
             'is_active'                  => 'required|in:1,0',
             'no_limit_for_quiz'          => 'nullable|in:1,0',
             'no_limit_for_question'      => 'nullable|in:1,0',
-            'specialist'                 => 'nullable|array',
-            'speialist.*'                => 'nullable',
+            'specialist'                 => 'required|array|min:1',
+            'specialist.monthly_price.*' => 'required|numeric|min:0',
+            'specialist.yearly_price.*' => 'required|numeric|min:0',
             'specialist.specialist_id.*' => 'nullable|distinct|exists:specializations,id',
             'description'                => 'nullable|string:max:500'
         ];

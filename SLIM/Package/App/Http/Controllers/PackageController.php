@@ -69,6 +69,17 @@ class PackageController extends Controller
                 $packageRequest->merge(['num_available_question' => 0]);
             }
 
+            //check if there is any free package
+            if ($packageRequest->monthly_price < 1 && $packageRequest->yearly_price < 1){
+                if (Package::query()->where('monthly_price', $packageRequest->monthly_price)
+                    ->where('yearly_price',$packageRequest->yearly_price)->exists())
+                    return response()->json([
+                        'errors'=>[
+                            'cannot make more than free package'
+                        ]
+                    ],422);
+            }
+
             $package = $this->packageService->create($packageRequest->all());
 
             if ($packageRequest->specialist)

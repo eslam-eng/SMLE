@@ -11,6 +11,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 use SLIM\Package\App\Models\Package;
 use SLIM\Package\interfaces\PackageServiceInterface;
+use SLIM\Payment\App\Models\Payment;
 use SLIM\Payment\Interfaces\PaymentServiceInterfaces;
 use SLIM\Specialization\App\Models\Specialization;
 use SLIM\Trainee\App\Http\Requests\SubscribeRequest;
@@ -49,7 +50,7 @@ class TraineeSubscribeController extends Controller
             'package:id,name',
             'trainee:id,full_name,phone',
             'tranineeSubscribeSpecialization.specialist'
-        ])
+        ])->orderByDesc('id')
             ->paginate();
 
         $packages = $this->packageServiceInterface->getAll(['is_active' => 1]);
@@ -66,7 +67,8 @@ class TraineeSubscribeController extends Controller
     {
         $packages = $this->packageServiceInterface->getAll(['is_active' => 1]);
         $trainees = $this->traineeServiceInterface->getAll(['is_active' => 1]);
-        return view('trainee::subscribe.create', compact('packages', 'trainees'));
+        $paymentMethods = Payment::query()->where('is_active',1)->get();
+        return view('trainee::subscribe.create', compact('packages', 'trainees','paymentMethods'));
     }
 
     public function edit($id)
@@ -115,14 +117,17 @@ class TraineeSubscribeController extends Controller
             ->whereIn('subscribe_status', [SubscribeStatusEnum::INPROGRESS->value, SubscribeStatusEnum::IN_REVIEW->value, SubscribeStatusEnum::PENDING->value])
             ->update(['subscribe_status' => SubscribeStatusEnum::FINISHED->value, 'is_active' => false]);
 
+        $paymentMethod = Payment::query()->find($subscribeRequest->payment_method);
+
         $package = Package::query()->where('id', $subscribeRequest->package_id)->first();
+
         $specialists = count($subscribeRequest->specialists) ? $subscribeRequest->specialists : $package->specialists->pluck('specialist_id')->toArray();
 
         $traineeSubscribe = TraineeSubscribe::create([
                 'package_id' => $subscribeRequest->package_id,
                 'trainee_id' => $subscribeRequest->trainee_id,
                 'package_type' => $subscribeRequest->package_type,
-                'payment_method' => 'external',
+                'payment_method' => $paymentMethod->name,
                 'subscribe_status' => SubscribeStatusEnum::INPROGRESS->value,
                 'is_paid' => 1,
                 'invoice_file' => $subscribeRequest->invoice_file,

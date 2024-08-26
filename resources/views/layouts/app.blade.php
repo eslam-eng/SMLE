@@ -9,6 +9,7 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
+    <link rel="icon" type="image/x-icon" href="/storage/{{$setting->website_icon}}">
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=Nunito" rel="stylesheet">
@@ -17,15 +18,18 @@
 
     <!-- Scripts -->
     @vite(['resources/sass/app.scss', 'resources/js/app.js'])
+    <style>
+        .navbar-brand-image{
+            height:3rem !important;
+        }
+    </style>
 </head>
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    <img src="{{asset($setting->logo)}}" width="110" height="32" alt="Tabler" class="navbar-brand-image">
-
-
+                    <img src="{{asset('storage/'.$setting->logo)}}" width="110" height="32" alt="Tabler" class="navbar-brand-image">
                     {{ config('app.name', 'Laravel') }}
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -87,8 +91,16 @@
 
 <script>
 
-    function showPassword(){
 
+    function togglePassword(){
+       let password_field_type = $('#password').attr('type');
+       if(password_field_type == 'password'){
+           showPAssword();
+       }else {
+           DisablePassword();
+       }
+    }
+    function showPAssword(){
         $('#password').attr('type', 'text');
         $('.glyphicon').removeClass('fa fa-eye-slash').addClass('fa fa-eye');
     }

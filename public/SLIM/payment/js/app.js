@@ -95,7 +95,7 @@ $(document).on('click', '.edit', function(e) {
     var url = $(this).attr('href');
     $('#updateForm').attr('action', url);
     $('#is_active').val($(this).attr('is_active'));
-    $('#name').val($(this).attr('name'));
+    $('#name').text($(this).attr('name'));
 });
 
 

@@ -5,18 +5,17 @@
                 <h5 class="modal-title">Update Payment Method</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+
             <form id="updateForm">
                 @csrf
                 {{method_field('PUT')}}
                 <div class="modal-body">
                     <div class="row">
                         <div class="col-lg-6">
-                             <label class="form-label">Name</label>
-                                <input type="text" class="form-control" name="name" placeholder="Payment Name"
-                                       id="name">
+                            <label class="form-label">Name</label>
+                            <p class="form-control" id="name"></p>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-lg-4">
                             <div class="mb-3">
@@ -25,6 +24,18 @@
                                     <option value="1">Active</option>
                                     <option value="0">InActive</option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label class="form-label">wallet number</label>
+                                <input class="form-control" name="wallet_number">
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label class="form-label">bank account</label>
+                                <input class="form-control" name="bank_account_number">
                             </div>
                         </div>
                     </div>

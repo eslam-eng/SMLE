@@ -125,7 +125,7 @@ class AuthController extends Controller
         $traineeSubscribe = TraineeSubscribe::create([
                 'package_id' => $package->id,
                 'trainee_id' => $trainee->id,
-                'package_type' => 'y',
+                'package_type' => null,
                 'start_date' => now()->format('Y-m-d'),
                 'is_paid' => 1,
                 'amount' => 0,

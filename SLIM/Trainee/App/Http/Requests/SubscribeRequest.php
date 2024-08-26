@@ -16,9 +16,9 @@ class SubscribeRequest extends FormRequest
             'package_id'=>'required|numeric',
             'amount' =>'required',
             'package_type' =>'required|in:m,p,y',
-            'start_date'=>'required|date',
+            'start_date'=>'nullable|date|date_format:Y-m-d',
             'end_date'=>'required_if:package_type,==,m',
-            'payment_method'=>'required|string',
+            'payment_method'=>'required|integer|exists:payments,id',
             'invoice_file'=>'sometimes|nullable|file',
         ];
     }
@@ -29,5 +29,10 @@ class SubscribeRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
+    }
+
+    protected function prepareForValidation()
+    {
+        return $this->merge(['start_date' => now()->format("Y-m-d")]);
     }
 }

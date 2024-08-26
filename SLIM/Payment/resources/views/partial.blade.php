@@ -22,29 +22,27 @@
             <td class="text-secondary" data-label="Role" >
                 {{$payment->is_active?  'Yes' :'No' }}
             </td>
-
-            <td>
-                <div class="btn-list flex-nowrap">
-                    <div class="dropdown">
-                        <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">
-                            Actions
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end">
-                            <a
-                                name="{{$payment->name}}"
-                                is_active="{{$payment->is_active}}"
-                                href="{{route('payment.update',$payment->id)}}"
-                                class="dropdown-item edit" data-bs-toggle="modal" data-bs-target="#modal-update-payment">
-                                edit
-                            </a>
-                            <a class="dropdown-item delete"
-                               href="{{route('payment.destroy',$payment->id)}}">
-                                Delete
-                            </a>
+            @if(strtoupper($payment->name) == 'EXTERNAL')
+                <td>
+                    <div class="btn-list flex-nowrap">
+                        <div class="dropdown">
+                            <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">
+                                Actions
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a
+                                    name="{{$payment->name}}"
+                                    is_active="{{$payment->is_active}}"
+                                    href="{{route('payment.update',$payment->id)}}"
+                                    class="dropdown-item edit" data-bs-toggle="modal" data-bs-target="#modal-update-payment">
+                                    edit
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </td>
+                </td>
+            @endif
+
         </tr>
     @endforeach
     </tbody>
