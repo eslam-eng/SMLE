@@ -33,3 +33,6 @@ Route::group(['middleware' => 'auth'], function ()
     Route::get('trainee-subscribe-change-status/{id}', [TraineeSubscribeController::class, 'changeStatus'])->name('trainee.subscribe.changeStatus');
 });
 Route::get('myfatoorah/callback', [TraineeSubscribeController::class,'myfatoorahCallback'])->name('myfatoorah.callback');
+Route::get('test',function (){
+   return 'thank you';
+});
