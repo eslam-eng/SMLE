@@ -13,6 +13,7 @@ class PaymentResource extends JsonResource
         return [
             'id'                     => $this->id,
             'name'                   => $this->name,
+            'additional_date'        => strtoupper($this->name) == 'EXTERNAL' ? $this->additional_data : null
         ];
     }
 }

@@ -12,8 +12,8 @@ class PaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'=>'required|string|max:100',
-            'is_active'=>'required|in:1,0'
+            'is_active'=>'required|in:1,0',
+            'additional_data'=>'required|array'
         ];
     }
 

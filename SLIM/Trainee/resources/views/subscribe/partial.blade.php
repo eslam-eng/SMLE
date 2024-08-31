@@ -66,10 +66,11 @@
                             Actions
                         </button>
                         <div class="dropdown-menu dropdown-menu-end">
+                            <a target="_blank" href="{{route('trainee.show',$subscribe->trainee_id)}}" class="dropdown-item">
+                                trainee details
+                            </a>
                             @if($subscribe->payment_method == 'external')
-                                <a href="#" class="dropdown-item show_invoice"
-                                   data-invoice_url="{{$subscribe->invoice_file}}" data-bs-toggle="modal"
-                                   data-bs-target="#modal-large">
+                                <a target="_blank" href="{{$subscribe->invoice_file}}" class="dropdown-item">
                                     show invoice
                                 </a>
                                 @if(!$subscribe->is_paid && !$subscribe->is_active)

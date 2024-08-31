@@ -28,14 +28,28 @@
                         </div>
                         <div class="col-lg-4">
                             <div class="mb-3">
-                                <label class="form-label">wallet number</label>
-                                <input class="form-control" name="wallet_number">
+                                <label class="form-label">bank account/instapay</label>
+                                <input class="form-control" name="additional_data[bank_or_instapay]">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label class="form-label">paypal account</label>
+                                <input class="form-control" name="additional_data[paypal_account]">
+                            </div>
+                        </div>
+
+                        <div class="col-lg-4">
+                            <div class="mb-3">
+                                <label class="form-label">mobile wallet</label>
+                                <input class="form-control" name="additional_data[mobile_wallet]">
                             </div>
                         </div>
                         <div class="col-lg-4">
                             <div class="mb-3">
-                                <label class="form-label">bank account</label>
-                                <input class="form-control" name="bank_account_number">
+                                <label class="form-label">fawry</label>
+                                <input class="form-control" name="additional_data[fawry]">
                             </div>
                         </div>
                     </div>

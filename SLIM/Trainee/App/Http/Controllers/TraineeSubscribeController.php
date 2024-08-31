@@ -223,7 +223,6 @@ class TraineeSubscribeController extends Controller
     {
         DB::beginTransaction();
         $traineeSubscribe = TraineeSubscribe::query()->findOrFail($id);
-        TraineeSubscribeSpecialize::query()->where('trainee_subscribe_id', $id)->delete();
         $traineeSubscribe->delete();
         DB::commit();
         return $this->index($request);

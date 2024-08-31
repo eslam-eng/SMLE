@@ -13,7 +13,11 @@ class Payment extends Model
     /**
      * The attributes that are mass assignable.
      */
-    protected $fillable = ['name', 'is_active'];
+    protected $fillable = ['name', 'is_active','additional_data'];
+
+    protected $casts = [
+      'additional_data' => 'array'
+    ];
 
     protected static function newFactory(): PaymentFactory
     {
