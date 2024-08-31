@@ -81,6 +81,15 @@ class PaymentController extends Controller
         return $this->index($paymentRequest);
     }
 
+    public function changeStatus($payment_id)
+    {
+        $payment = Payment::find($payment_id);
+        $payment->is_active = !$payment->is_active;
+        $payment->save();
+
+        return response()->json(['status'=>true,'message'=>'status changed successfully']);
+    }
+
     /**
      * Remove the specified resource from storage.
      */

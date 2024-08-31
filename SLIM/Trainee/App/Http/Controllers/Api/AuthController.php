@@ -131,8 +131,8 @@ class AuthController extends Controller
                 'amount' => 0,
                 'is_active' => true,
                 'for_all_specialities' => true,
-                'quizzes_count' =>$package->no_limit_for_quiz ? null :  $package->num_available_quiz,
-                'remaining_quizzes' => $package->no_limit_for_quiz ? null :  $package->num_available_quiz,
+                'quizzes_count' => $package->no_limit_for_quiz ? null : $package->num_available_quiz,
+                'remaining_quizzes' => $package->no_limit_for_quiz ? null : $package->num_available_quiz,
                 'num_available_question' => $package->num_available_question,
                 'subscribe_status' => SubscribeStatusEnum::INPROGRESS->value
             ]
@@ -148,5 +148,14 @@ class AuthController extends Controller
         });
 
         TraineeSubscribeSpecialize::query()->insert($traineeSubscribeSpecializeData);
+    }
+
+    public function delete($id)
+    {
+        $trainee = Trainee::find($id);
+        if (!$trainee)
+            return $this->returnError('resource not found', 404);
+        $trainee->delete();
+        return $this->returnSuccessMessage('account deactivated successfully');
     }
 }

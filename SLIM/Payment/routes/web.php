@@ -16,4 +16,5 @@ use SLIM\Payment\App\Http\Controllers\PaymentController;
 
 Route::group([], function () {
     Route::resource('payment', PaymentController::class)->names('payment');
+    Route::post('payment-status/{id}', [PaymentController::class,'changeStatus'])->name('payment.change-status');
 });

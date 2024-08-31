@@ -16,32 +16,47 @@
             <td class="text-secondary">
                 {{++$index}}
             </td>
-            <td class="text-secondary" data-label="Role" >
+            <td class="text-secondary" data-label="Role">
                 {{$payment->name}}
             </td>
-            <td class="text-secondary" data-label="Role" >
-                {{$payment->is_active?  'Yes' :'No' }}
+            <td class="text-secondary" data-label="Role">
+                <div class="mb-3">
+                    <label class="form-check form-switch">
+                        <span class="form-check-label">{{$payment->is_active?  'Yes' :'No' }}</span>
+                    </label>
+                </div>
+
             </td>
-            @if(strtoupper($payment->name) == 'EXTERNAL')
-                <td>
-                    <div class="btn-list flex-nowrap">
-                        <div class="dropdown">
-                            <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">
-                                Actions
-                            </button>
-                            <div class="dropdown-menu dropdown-menu-end">
+
+            <td>
+                <div class="btn-list flex-nowrap">
+                    <div class="dropdown">
+                        <button class="btn dropdown-toggle align-text-top" data-bs-toggle="dropdown">
+                            Actions
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            @if(strtoupper($payment->name) == 'EXTERNAL')
                                 <a
                                     name="{{$payment->name}}"
                                     is_active="{{$payment->is_active}}"
                                     href="{{route('payment.update',$payment->id)}}"
-                                    class="dropdown-item edit" data-bs-toggle="modal" data-bs-target="#modal-update-payment">
+                                    class="dropdown-item edit" data-bs-toggle="modal"
+                                    data-bs-target="#modal-update-payment">
                                     edit
                                 </a>
-                            </div>
+                            @endif
+
+                            <button
+
+                                data-url="{{route('payment.change-status',$payment->id)}}"
+                                class="dropdown-item change_status" data-bs-toggle="modal">
+                                {{$payment->is_active?  'Deactivate' :'Activate' }}
+                            </button>
+
                         </div>
                     </div>
-                </td>
-            @endif
+                </div>
+            </td>
 
         </tr>
     @endforeach

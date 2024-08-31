@@ -30,6 +30,7 @@ Route::middleware(['middleware' => 'auth:api'])->prefix('v1')->name('api.')
     ->controller(AuthController::class)->group(function () {
         Route::get('profile', 'profile');
         Route::post('change-password', 'change_password');
+        Route::delete('trainee/{id}/delete', 'delete');
     })
     ->controller(SubscribeController::class)->group(function () {
         Route::post('subscribe', 'subscribe');

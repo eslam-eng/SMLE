@@ -3,6 +3,7 @@
 namespace SLIM\Trainee\App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
 use SLIM\Category\App\Models\Category;
@@ -16,7 +17,7 @@ use SLIM\Trainee\Database\factories\TraineeFactory;
 
 class Trainee extends Authenticatable implements JWTSubject
 {
-    use HasFactory;
+    use HasFactory,SoftDeletes;
 
     /**
      * The attributes that are mass assignable.

@@ -138,6 +138,44 @@ $(document).on('click', '.delete', function(e) {
 });
 
 
+$(document).on('click', '.change_status', function(e) {
+    var url = $(this).data('url');
+    page = $(this).is("a") ? $(this).attr('href').split('page=')[1] : "";
+
+    var token = $("meta[name='csrf-token']").attr("content");
+    e.preventDefault();
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You want to change this for this payment",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                url: url,
+                type: 'POST',
+                data: {
+                    "_token": token,
+                    "page": page,
+                },
+            }).done(function(data) {
+                if (data.status) {
+                    toastr.success('changed successfully');
+                  window.location.reload();
+
+                } else {
+                    jQuery.each(data.errors, function(key, value) {
+                        toastr.error(value);
+                    });
+                }
+            })
+        }
+    })
+});
+
 
 var page = 1;
 $('body').on('click', '.pagination a , #searchBtn', function (e) {
