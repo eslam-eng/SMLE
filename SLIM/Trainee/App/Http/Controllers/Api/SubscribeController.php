@@ -24,7 +24,10 @@ class SubscribeController extends Controller
         try {
 
             $subscriber = auth()->user();
-            $payment = Payment::query()->find($request->payment_id);
+            $payment = Payment::query()->where('is_active', true)->find($request->payment_method);
+
+            if (!$payment)
+                return $this->returnError('payment not found', 404);
             //get package with specialists
             $package = Package::query()
                 ->with('specialist')
@@ -50,9 +53,9 @@ class SubscribeController extends Controller
                     'amount' => $amount,
                     'payment_link' => Arr::get($invoicePaymentData, 'Data.InvoiceURL')
                 ], 'Subscribe Successfully will approve after confirm payment');
-            }elseif (strtoupper($payment->name) == 'EXTERNAL') {
-                if(!isset($request->invoice_file))
-                    return $this->returnError('Please upload payment file',422);
+            } elseif (strtoupper($payment->name) == 'EXTERNAL') {
+                if (!isset($request->invoice_file))
+                    return $this->returnError('Please upload payment file', 422);
                 $start_date = date('Y-m-d');
                 $end_date = $this->getPackagePeriod($request->package_type);
 
