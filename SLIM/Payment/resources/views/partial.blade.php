@@ -7,6 +7,7 @@
         <th>#</th>
         <th>Name</th>
         <th>Is Active</th>
+        <th>additional data</th>
         <th class="w-1">Control</th>
     </tr>
     </thead>
@@ -27,6 +28,20 @@
                 </div>
 
             </td>
+
+            <td class="text-secondary" data-label="Role">
+                <div class="mb-3">
+                    @isset($payment->additional_data)
+                        <ul>
+                            @foreach($payment->additional_data as $key=>$value)
+                                <li>{{$key ." : " . $value}}</li>
+                            @endforeach
+                        </ul>
+                    @endisset
+                </div>
+
+            </td>
+
 
             <td>
                 <div class="btn-list flex-nowrap">
