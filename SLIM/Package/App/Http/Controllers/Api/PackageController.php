@@ -25,7 +25,7 @@ class PackageController extends Controller
         $packages = Package::query()
             ->where('is_active',1)
             ->with(['activeSubscribe' => fn($query) => $query->where('is_active',true)
-                ->where('status','!=',SubscribeStatusEnum::FINISHED->value)->where('trainee_id', auth()->id())])
+                ->where('subscribe_status','!=',SubscribeStatusEnum::FINISHED->value)->where('trainee_id', auth()->id())])
             ->get();
         $packages = PackageResource::collection($packages);
         return $this->returnData($packages, 'Packages List');
